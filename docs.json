@@ -1,34 +1,26 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Documentation",
+  "name": "acai.sh",
   "colors": {
     "primary": "#0D9373"
   },
   "navigation": {
-    "tabs": [
+    "groups": [
       {
-        "tab": "Tab1",
-        "groups": [
-          {
-            "group": "Home",
-            "pages": [
-              "home"
-            ]
-          }
+        "group": "Product Overview",
+        "pages": [
+          "apge2",
+          "the-mapperoni-method"
         ]
       },
       {
-        "tab": "Tab2",
-        "groups": [
-          {
-            "group": "Group 2.1",
-            "pages": [
-              "page-1"
-            ]
-          }
+        "group": "FRD.yaml",
+        "pages": [
+          "untitled-page"
         ]
       }
     ]
-  }
+  },
+  "description": "A toolkit for spec-driven development."
 }
