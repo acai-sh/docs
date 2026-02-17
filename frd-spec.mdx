@@ -31,12 +31,12 @@ A **Feature** is be a clearly dilineated "slice" of your software that brings va
 
 **Example 2**: If you are building a REST API for weather data, some features might be `"get-by-geocoordinate"`, `"16-day-forecast"`, `"chance-of-rain"`
 
-Features are totally separate from your system's components, modules, and views. They only care about your user and the user's end-goal. Most features will touch _every_ component.
+Features are totally separate from your system's components, modules, and views. They only care about your user and the user's end-goal.
 
 **Bad examples of features:**
 
 - ❌ Fixing a bug or improving performance is not a feature, and does not need an FRD.
-- ❌ A style or color theme is not a feature and does not need an FRD.
+- ❌ A style or layout or color theme is not a feature and does not need an FRD.
 - ❌  Choosing a faster algorithm under-the-hood, that your user can't control or see, is not a feature and doesn't need an FRD.
 
 ## Requirement
@@ -104,23 +104,6 @@ PROPMAP.PANEL.3-1
 PROPMAP.PANEL.4
 ```
 
-## Including markdown in your requirements
-
-This can be rendered cleanly in the ACAI dashboard, useful for including hyperlinks etc. You will need to use the yaml multi-line string character: `|`
-
-```yaml
-components:
-  PANEL:
-    name: Property Details Panel
-    requirements:
-      1: Disables interaction of the map below
-      2: Focus is trapped for accessibility and tab navigation
-      3: Queries fresh property details by property id (never show stale data)
-      4: |
-        # Here is some example markdown
-        **Important:** see [issue ticket #123](github.com/123) for a11y compliance guidelines
-```
-
 ## Cross-Referencing Requirements
 
 References to other requirements from within a requirement MUST be done with the full ACID `MYFEATURE.COMPONENT.1`
@@ -142,6 +125,23 @@ components:
 ```
 
 The parent requirement is enumerated as `-0` implicitly, so the first sub-requirement must always be `-1`, as shown above.
+
+## Including markdown in your requirements
+
+Markdown can be rendered cleanly in tools like the ACAI dashboard, which is useful for including hyperlinks etc. To include markdown you just need to use the standard yaml multiline block syntax, which is indicated by the `|` pipe character.
+
+```yaml
+components:
+  PANEL:
+    name: Property Details Panel
+    requirements:
+      1: Disables interaction of the map below
+      2: Focus is trapped for accessibility and tab navigation
+      3: Queries fresh property details by property id (never show stale data)
+      4: |
+        # Here is some example markdown
+        **Important:** see [issue ticket #123](github.com/123) for a11y compliance guidelines
+```
 
 ## Recommendations for status tracking
 
