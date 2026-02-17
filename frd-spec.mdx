@@ -1,0 +1,237 @@
+---
+title: "FRD.yaml Specification"
+description: "This document specifies how to write a compliant FRD.yaml document, and includes additional guidance for how to write a high quality feature spec."
+sidebarTitle: "Specification"
+icon: "book"
+---
+
+FRD stands for Feature Requirements Document. They are the 'spec' in 'spec-driven development'. They are where you should spend most of your time as a builder of quality products.
+
+FRDs contain a list of Requirements (AKA acceptance criteria), that your software should adhere to. Writing them in a .yaml file makes it easy for us to parse, then push and pull requirements to external sources.
+
+<Warning>
+  The FRD should specify the _intended behavior _of your feature, _NOT the current state_ of your code! They are not a tracking or status tool. To track things like implementation status, completion, and requirements coverage, you need to use a toolkit like acai.sh.
+</Warning>
+
+# Key Definitions
+
+It's very important to know what we mean when we say feature, product, and requirement.
+
+## Product
+
+A **Product** is any software that has many features. It can be a microservice, an API, an SDK, a robot, a data pipeline, a mobile app, a website. 
+
+## Feature
+
+To make the most of spec-driven development, you should specify requirements at the _feature_ level, which is why it's called a Feature Requirements Document.
+
+A **Feature** is be a clearly dilineated "slice" of your software that brings value to the user. One helpful way to draw your boundary around features is to think, can I enable/disable this behind a feature flag in my code? The answer should always be yes.
+
+**Example 1**: If you are building a Zoom/Skype/Meet clone, some features might be `"screen-share"`, `"message-reactions"`, `"mute-speaker"`
+
+**Example 2**: If you are building a REST API for weather data, some features might be `"get-by-geocoordinate"`, `"16-day-forecast"`, `"chance-of-rain"`
+
+Features are totally separate from your system's components, modules, and views. They only care about your user and the user's end-goal. Most features will touch _every_ component.
+
+**Bad examples of features:**
+
+- ❌ Fixing a bug or improving performance is not a feature, and does not need an FRD.
+- ❌ A style or color theme is not a feature and does not need an FRD.
+- ❌  Choosing a faster algorithm under-the-hood, that your user can't control or see, is not a feature and doesn't need an FRD.
+
+## Requirement
+
+A **Requirement** is a functional behavior of your feature. They are the criteria that must be met for your feature to be acceptable. That's why we use the term Acceptance Criteria (AC) and Requirement interchangeably.
+
+Example Requirements:
+
+- Accepts input A
+- Provides output B
+- Handles case C
+- Renders data D
+- Does not violate constraint E
+- Performs faster than F
+- Triggers side effect G
+
+Requirements should not be subjective, and not overly specific. Don't mix design, layout, theme, animation etc. with requirements unless absolutely neccesary. Requirements are always functional.
+
+# Minimal Example of FRD.yaml
+
+Here is an example feature spec for a product that helps a user manage their rental properties.
+
+```yaml
+# my-product/features/PROPMAP_FRD.yaml
+feature:
+  name: Property Map
+  descripton: Show the user all of their properties at a glance. Includes an interactive map (mapbox), and an info panel that pops out.
+  slug: PROPMAP
+
+components:
+  MAP:
+    name: Interactive Map
+    requirements:
+      1: Renders all the user's properties as dots in a MapBox map
+      2: When clicking a property on the map it...
+      2-1: Opens the [Property Details Panel](PANEL)
+      2-2: Visually highlights the selected property's map dot
+      2-3: Sends analytics event
+
+  PANEL:
+    name: Property Details Panel
+    requirements:
+      1: Disables interaction of the map below
+      2: Focus is trapped for accessibility and tab navigation
+      3: Queries fresh property details by property id (never show stale data)
+      3-1: If property details change, they are not reflected until panel is closed and reopened
+      4: Can deep link to the panel via stable URL
+```
+
+# FRD.yaml Spec
+
+## File Structure
+
+The root of your repository should have a `features/` directory. Each feature should have a name with kebab-case dashes `features/my-feature-name` Each feature must have 1 FRD.yaml file. We recommend including the Feature Slug in the file name, e.g. `features/my-feature-name/PROPMAP_FRD.yml`
+
+## Deriving Requirement IDs ("ACIDs")
+
+Every requirement has a stable id, which is the feature slug + component slug + requirement number. In the minimal example above, we have 10 unique IDs, for example:
+
+```md
+PROPMAP.MAP.1
+PROPMAP.MAP.2
+[...]
+PROPMAP.PANEL.3-1
+PROPMAP.PANEL.4
+```
+
+## Including markdown in your requirements
+
+This can be rendered cleanly in the ACAI dashboard, useful for including hyperlinks etc. You will need to use the yaml multi-line string character: `|`
+
+```yaml
+components:
+  PANEL:
+    name: Property Details Panel
+    requirements:
+      1: Disables interaction of the map below
+      2: Focus is trapped for accessibility and tab navigation
+      3: Queries fresh property details by property id (never show stale data)
+      4: |
+        # Here is some example markdown
+        **Important:** see [issue ticket #123](github.com/123) for a11y compliance guidelines
+```
+
+## Cross-Referencing Requirements
+
+References to other requirements from within a requirement MUST be done with the full ACID `MYFEATURE.COMPONENT.1`
+
+## Deep nesting
+
+Components may NOT be nested. You may attach an unlimited number of sub-requirements to a single parent requirement, but only up to 1 level of depth.
+
+Example of sub-requirements:
+
+```yaml
+components:
+  MAP:
+    name: Interactive Map
+    requirements:
+      1: When clicking a property on the map, it opens the [Property Details Panel](PANEL)
+      1-1: And it visually highlights the selected property's map dot
+      1-2: Sends analytics event
+```
+
+The parent requirement is enumerated as `-0` implicitly, so the first sub-requirement must always be `-1`, as shown above.
+
+## Recommendations for status tracking
+
+Status of implementation is not maintained in the yaml file, it is only managed externally. But if you do track status we recommend adhereing to the following standard status keys:
+
+| Status        | Description                                                                                              |
+| :------------ | :------------------------------------------------------------------------------------------------------- |
+| `NOT_STARTED` | This requirement exists only in the spec, and needs to be implemented.                                   |
+| `ASSIGNED`    | This requirement has been assigned and work is in progress.                                              |
+| `IMPLEMENTED` | This requirement is referenced in code and tests, and marked by the reviewer agent as fully implemented. |
+| `INCOMPLETE`  | This requirement is referenced in code or tests, but still needs more work.                              |
+| `ACCEPTED`    | Implemented + Accepted by human QA and ready for production.                                             |
+
+So the happy path for agentic development is `NOT_STARTED` -\> `ASSIGNED` -\> `IMPLEMENTED` -\> `ACCEPTED` Proper status tracking can be very important because this is how your agents can determine what to ship next. See the acai.sh docs for more info.
+
+## Special flags: deprecate, skip, replace
+
+What if a requirement was poorly written, or users hate it, or it's been replaced by a new requirement? If you wanted, you could simply erase requirements from the FRD, but this is not recommended if the feature has already made it to production.
+
+Instead, if you want to maintain a useful history, the better option is to mark your requirements with special flags;
+
+| Flag          | Description                                                                                             |
+| :------------ | :------------------------------------------------------------------------------------------------------ |
+| `deprecated`  | This requirement is no longer supported. Tests should be deleted and code references should be removed. |
+| `skipped`     | This requirement should simply be ignored.                                                              |
+| `replaced_by` | This requirement is deprecated, and replaced by the referenced ids (list of strings)                    |
+
+```yaml
+components:
+  MAP:
+    name: Interactive Map
+    requirements:
+      1: Renders all the user's properties as dots in a MapBox map
+      1-1: Clicking a dot opens the **Property details drawer**
+      1-2:
+        deprecated: true 
+        requirement: Trigger a map tutorial when the map loads
+        note: Deprecated and removed this functionality due to negative user feedback
+      1-3:
+        skipped: true
+        requirement: renders a location search box
+        note: Skipped until we resolve the geolocation service issue, see \#1234
+      1-4:
+        replaced_by: ["PROPMAP.MAP.1-5", "PROPMAP.MAP.1-6"]
+        requirement: Searching for a location flies the map to the location
+        note: replaced by a better UX in Feb 2026
+      1-5: Searching a location renders a results list
+      1-6: Selecting a search result from the results list flies the map to that location
+```
+
+## Comments
+
+Normal yaml `#` comments can be used for providing context to other spec-writers and agents, but they are not parsed by any tooling, so they should not used as metadata.. Instead, use Notes (see below)
+
+## Notes
+
+You can attach a note to a requirement with the `note:` field, or with an alternative `1-note:` syntax. The only difference between `note:` and `1-note:` is that the latter keeps your PRD.yaml slightly more neat and readable.
+
+Here are examples
+
+```yaml
+components:
+  MAP:
+    name: Interactive Map
+    requirements:
+      1: Renders all the user's properties as dots in a Mapbox map
+      
+      # This is the concise way to add a note, simply add the -note suffix after the requirement id.
+      1-1: Clicking a dot opens the **Property details drawer**
+      1-1-note: Customer request, see gh issue ticket \#1234 for discussion
+      
+      # This is the verbose way to add a note
+      1-2:
+         requirement: Does not show the address or exact location if the property is flagged as sensitive
+         note: Customer request, see gh issue ticket \#2345 for discussion
+```
+
+## Gherkin support
+
+If you like gherkin syntax, just embed it right in your requirement
+
+```yaml
+components:
+  PANEL:
+      name: Property Details Panel
+      requirements:
+        1: Disables interaction of the map below
+        2: |
+          Scenario: Gherkin syntax example
+            Given I am logged in as Team A
+            When I try to view Team B's property details
+            Then I should see "401 Unauthorized"
+```

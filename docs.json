@@ -17,7 +17,8 @@
       {
         "group": "FRD.yaml",
         "pages": [
-          "untitled-page"
+          "untitled-page",
+          "frd-spec"
         ]
       }
     ]
