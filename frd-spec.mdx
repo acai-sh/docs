@@ -219,19 +219,26 @@ components:
          note: Customer request, see gh issue ticket \#2345 for discussion
 ```
 
-## Gherkin support
+## Additonal Constraints
 
-If you like gherkin syntax, just embed it right in your requirement
+It's very common that you will need to define additional constraints and considerations to ensure that a feature is acceptable and production ready. This might relate to authorization, authentication, data privacy, architecture or performance. In many cases these additional requirements can't be fit cleanly under one specific component.
+
+For this purpose, FRD.yaml supports a top level `constraints` field, which lives alongside the `components` field.  Just like components, they are defined by a constraint slug key, and it must be unique, and may not clash with any existing component slugs.
+
+Example of additional constraints:
 
 ```yaml
 components:
-  PANEL:
-      name: Property Details Panel
-      requirements:
-        1: Disables interaction of the map below
-        2: |
-          Scenario: Gherkin syntax example
-            Given I am logged in as Team A
-            When I try to view Team B's property details
-            Then I should see "401 Unauthorized"
+    TABLE:
+		requirements:
+ 			1. Renders a list of all records related to the user
+			2. Can be sorted by date
+			3. Can be sorted by id
+constraints:
+    SORT:
+        requirements:
+            1: Internally, sort is maintained via keyset pagination, not offset pagination.
+            2: Sort by creation date is powered by primary key sort, as these records utilize UUIDv7
+            2-note: This is to avoid creation of a new index on creation date
+            3: Sort by last updated date requires an index on `(:features, [:updated_at])`
 ```
