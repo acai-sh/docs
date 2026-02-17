@@ -10,7 +10,7 @@
       {
         "group": "Product Overview",
         "pages": [
-          "",
+          "home",
           "quickstart"
         ]
       },
