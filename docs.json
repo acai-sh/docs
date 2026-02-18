@@ -9,7 +9,7 @@
         "groups": [
             {
                 "group": "Product",
-                "pages": ["home", "quickstart"]
+                "pages": ["home"]
             },
             {
                 "group": "FRD.yaml",

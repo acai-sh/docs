@@ -1,37 +1,33 @@
 ---
 title: "acai.sh"
-description: "The toolkit for spec-driven development. Engineers and product managers use acai to minimize slop, ship better quality software and build more ambitious products."
+description: "The toolkit for spec-driven development. Minimize slop. Ship better quality software. Build more ambitious products."
 sidebarTitle: "Overview"
 icon: "grape"
 mode: "default"
 ---
 
 <Callout icon="grape" iconType="regular" color="purple">
-    ACAI - **A**cceptance **C**riteria for **AI** (and people too).
+    ACAI - **A**cceptance **C**riteria for **AI**  
 </Callout>
 
-Acai.sh is centered around **Feature Requirements** (i.e. Acceptance Criteria) written in plain language.
+## What is it?
 
-Acai gives each requirement an ID (ACID) that is unique, stable, and easy to remember. These ACIDs are then synced to a local sqlite datastore (or our remote cloud offering). This makes them easy to query, tracked, annotiate and and monitor, using acai's CLI and MCP tools.
+Acai.sh is tooling for **Feature Requirements** (i.e. Acceptance Criteria) written in plain language. 
 
-This makes it possible for you and your agent to share an understanding of feature implementation progress, bugs, acceptance coverage, test coverage, changes and much more.
+Acai gives each requirement an ID (ACID) that is unique, stable, and readible. These ACIDs are then synced to a datastore. This makes it easy to query, track, annotiate and monitor progress. Your feature requirements are accessible via CLI, MCP, and a web dashboard.
 
-It is open source, and works for any tech stack, and any software product (frontend, backend, CLI, SDK, API, microservice, monolith, etc.). It can be incrementally adopted into existing products.
+ The result is a workflow that largely replaces your messy GitHub and Linear tickets. This makes it possible for you, your agents, and your product manager to **share implementation progress, bugs, acceptance coverage, test coverage, product changes, and more.**
+
+It is open source, and works for any tech stack. It can be incrementally adopted into existing product (frontend, backend, CLI, SDK, API, microservice, monolith, etc.)
 
 ## Very Quick Start
 
-**Prerequisites**  
-✅ You take pride in your products. You set a high bar for quality. User happyness is your primary focus.  
-✅ You ship incrementally, feature-by-feature.
+**Prerequisites:**  
+✅ You build and ship incrementally, feature-by-feature.  
+✅ You can write a good spec. You set a high bar for quality. User happyness is your primary focus.  
 
-**Steps:**
-1. Specify. Define your next feature by writing key requirements in `FRD.yaml`.
-2. Sync. `acai push` syncs your requirements to the datastore.
-3. Implement. Ask your agent to reference the requirement IDs in code comments and tests.
-4. Review. AI is helpful here, but you are the ultimate tastemaker and gatekeeper.
-
-Here is a simple example:
-
+**Simple Example**  
+Here is a sample spec, implementation, and tests.
 <CodeGroup>
 
 ```yaml features/block-user/FRD.yaml
@@ -57,7 +53,7 @@ components:
       2-1: On block, navigates away from the blocked profile
 ```
 
-```tsx src/profile.ts
+```tsx src/profile.tsx
 // BLOCK.BUTTON.1
 export function BlockButton({ userId, isOwnProfile, isBlocked }) {
   // BLOCK.BUTTON.1-1
@@ -77,14 +73,104 @@ describe('BLOCK.MENU', () => {
 
 </CodeGroup>
 
+**Core Workflow:**
+1. **Specify.**  
+Define your next feature by writing key requirements in `FRD.yaml`.
+2. **Sync.**  
+`acai push` syncs your spec to the datastore and tracker
+3. **Implement.**  
+Your agents pull relevant ACIDs and reference them in code and in tests.
+
+
+# Key Features
+
+## Turn your spec into tickets
+
+Write simple, plain language, easy-to-read requirements. Run `acai push` and they are synced to your acai dashboard.
+
+```
+$ acai push
+
+🎉 Success!
+Synced 2 feature specs (15 features unchanged)
+
+12 requirements changed
+- 10 new ACIDs added
+- 2 ACIDs deprecated or replaced
+```
+
+## Turn your tickets into assignments
+
+The acai database becomes your agent's preferred source of truth. They pull requirements to inform implementation and plan the next PR.
+
+```json
+$ acai status block-user --json --status TODO
+
+{
+  "feature": "Block User",
+  "slug": "BLOCK",
+  "results": [
+    {
+      "id": "BLOCK.MENU.2",
+      "requirement": "On click, blocks the user",
+      "status": "TODO"
+    },
+    {
+      "id": "BLOCK.MENU.2-1",
+      "requirement": "On block, navigates away from the blocked profile",
+      "status": "TODO"
+    }
+  ]
+}
+```
+
+## Monitor progress
+
+Happy path: `TODO` -> `ASSIGNED` -> `IMPLEMENTED` -> `ACCEPTED`
+
+```
+# Claude Opus 4.6
+I've reviewed BLOCK.MENU.2.
+I see no issues with the implementation.
+Unit tests are satisfactory.
+I am marking the requirement as "IMPLEMENTED" and merging to the feature branch...
+
+$ git merge task/BLOCK.3
+$ acai status BLOCK.MENU.2 IMPLEMENTED
+``` 
+## Find references
+See exactly where in your product the requirement has been implemented & tested.
+
+```
+$ acai references BLOCK.MENU.2
+
+{
+  "id": "BLOCK.MENU.2",
+  "locations": [
+    "features/block-user/FRD.yaml:15",
+    "features/block-user/block_user.test.ts:42"
+  ]
+}
+```
+
+## See coverage
+
+```
+$ acai coverage block-user
+
+100% implemented (100 of 100)
+100% tested (100 of 100)
+20% accepted (20 of 100)
+```
+
 # Why acai?
 **Greppable, traceable**  
 Every requirement in your spec gets an id, like `BLOCK.MENU.1`. LLM agents love these. They are easy to grep, and provide an anchor to pull in more context as-needed.
 
-IDs also help with code review. It's extremely useful to see "why" the developer or agent did something-- what specific requirement were they trying to satisfy?
+IDs also help with code review. It's extremely useful to see "why" the developer or agent did something... like what specific requirement were they trying to satisfy?
 
-**Stable, durable**
-As token context window increases, projects and specs evolve, and priorities change, acai specs create a dependable source of truth, and continuous project history.
+**Stable, durable**  
+Structured spec docs create a dependable source of truth, and continuous project history. Acai makes sure your code referencs are up-to-date and relevant.
 
 **Rapidly iterate**  
 By maintaining a spec at the feature level (rather than product or function level) it's effortless to 1-shot prototypes, create throwaway implementations, and improve the spec itself before touching production code. The result is that you spend far less time prompting and wrangling, more time on high-value engineering and product thinking.

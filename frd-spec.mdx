@@ -5,12 +5,16 @@ sidebarTitle: "Specification"
 icon: "book"
 ---
 
-FRD stands for Feature Requirements Document. They are the 'spec' in 'spec-driven development'. They are where you should spend most of your time as a builder of quality products.
+FRD stands for *Feature Requirements Document*.
 
-FRDs contain a list of Requirements (AKA acceptance criteria), that your software should adhere to. Writing them in a .yaml file makes it easy for us to parse, then push and pull requirements to external sources.
+The FRD is the 'spec' in 'spec-driven development'.
+
+FRDs contain a list of Requirements (AKA acceptance criteria), that your software should adhere to. Writing them in .yaml is ensures readability for both humans and machines.
+
+# Important: what makes for a good FRD?
 
 <Warning>
-  The FRD should specify the _intended behavior_ of your feature, _NOT the current state_ of your code! They are not a tracking or status tool. To track things like implementation status, completion, and requirements coverage, you need to use a toolkit like acai.sh.
+  The FRD should specify the _intended behavior_ of your feature, _NOT the current state_ of your code! The FRD is not a tracking or status tool. If you want to track things like implementation status, completion, and requirements coverage, you need to use a toolkit like Acai
 </Warning>
 
 # Key Definitions
@@ -25,7 +29,7 @@ A **Product** is any software that has many features. It can be a microservice, 
 
 To make the most of spec-driven development, you should specify requirements at the _feature_ level, which is why it's called a Feature Requirements Document.
 
-A **Feature** is be a clearly dilineated "slice" of your software that brings value to the user. One helpful way to draw your boundary around features is to think, can I enable/disable this behind a feature flag in my code? The answer should always be yes.
+A **Feature** is a clearly dilineated "slice" of your software that brings value to the user. One helpful way to draw a boundary is to ask, can I enable/disable this behind a feature flag? The answer should always be yes.
 
 **Example 1**: If you are building a Zoom/Skype/Meet clone, some features might be `"screen-share"`, `"message-reactions"`, `"mute-speaker"`
 
@@ -41,7 +45,7 @@ Features are totally separate from your system's components, modules, and views.
 
 ## Requirement
 
-A **Requirement** is a functional behavior of your feature. They are the criteria that must be met for your feature to be acceptable. That's why we use the term Acceptance Criteria (AC) and Requirement interchangeably.
+A **Requirement** is a behavior that must work for your feature to be accepted.
 
 Example Requirements:
 
@@ -53,7 +57,7 @@ Example Requirements:
 - Performs faster than F
 - Triggers side effect G
 
-Requirements should not be subjective, and not overly specific. Don't mix design, layout, theme, animation etc. with requirements unless absolutely neccesary. Requirements are always functional.
+Requirements should not be subjective, and should not be too specific. *Requirements are always functional.*. They help your user *do* something. Do not focus on design, layout, theme, code patterns, etc.
 
 # Minimal Example of FRD.yaml
 
@@ -149,17 +153,19 @@ Status of implementation is not maintained in the yaml file, it is only managed 
 
 | Status        | Description                                                                                              |
 | :------------ | :------------------------------------------------------------------------------------------------------- |
-| `NOT_STARTED` | This requirement exists only in the spec, and needs to be implemented.                                   |
+| `TODO` | This requirement exists only in the spec, and needs to be implemented.                                   |
 | `ASSIGNED`    | This requirement has been assigned and work is in progress.                                              |
 | `IMPLEMENTED` | This requirement is referenced in code and tests, and marked by the reviewer agent as fully implemented. |
 | `INCOMPLETE`  | This requirement is referenced in code or tests, but still needs more work.                              |
 | `ACCEPTED`    | Implemented + Accepted by human QA and ready for production.                                             |
 
-So the happy path for agentic development is `NOT_STARTED` -\> `ASSIGNED` -\> `IMPLEMENTED` -\> `ACCEPTED` Proper status tracking can be very important because this is how your agents can determine what to ship next. See the acai.sh docs for more info.
+So the happy path for agentic development is `TODO` -\> `ASSIGNED` -\> `IMPLEMENTED` -\> `ACCEPTED`
+
+Proper status tracking is very important because this is how your agents determine what to ship next.
 
 ## Special flags: deprecate, skip, replace
 
-What if a requirement was poorly written, or users hate it, or it's been replaced by a new requirement? If you wanted, you could simply erase requirements from the FRD, but this is not recommended if the feature has already made it to production.
+What if a requirement was poorly written, or users hate it, or it has been replaced by a new requirement? If you wanted, you could simply erase requirements from the FRD, but this is not recommended.
 
 Instead, if you want to maintain a useful history, the better option is to mark your requirements with special flags;
 
