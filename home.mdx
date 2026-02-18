@@ -1,38 +1,97 @@
 ---
-title: "ACAI"
-description: "ACAI is a toolkit for spec-driven software development. ACAI makes it possible to ship _better quality_ and _more ambitious_ software, that minimizes slop.
-
-"
-icon: "home"
+title: "acai.sh"
+description: "The toolkit for spec-driven development. Engineers and product managers use acai to minimize slop, ship better quality software and build more ambitious products."
+sidebarTitle: "Overview"
+icon: "grape"
 mode: "default"
 ---
 
-## **Very Concise Summary**
+<Callout icon="grape" iconType="regular" color="purple">
+    ACAI - **A**cceptance **C**riteria for **AI** (and people too).
+</Callout>
 
-The toolkit is centered around **Feature Requirements** (AKA, Acceptance Criteria), written in plain language in a very simple .yaml file.
+Acai.sh is centered around **Feature Requirements** (i.e. Acceptance Criteria) written in plain language.
 
-It **automatically syncs and tracks requirements** across your project, so you can ask:
+Acai gives each requirement an ID (ACID) that is unique, stable, and easy to remember. These ACIDs are then synced to a local sqlite datastore (or our remote cloud offering). This makes them easy to query, tracked, annotiate and and monitor, using acai's CLI and MCP tools.
 
-- Which requirements have test coverage?
-- Which requirements have changed, are being implemented, or need attention?
-- Which parts of my codebase are related to this requirement?
-- Which requirements have passed QA and engineering review?
+This makes it possible for you and your agent to share an understanding of feature implementation progress, bugs, acceptance coverage, test coverage, changes and much more.
 
-It does this via a **command-line tool and dashboard UI**.
+It is open source, and works for any tech stack, and any software product (frontend, backend, CLI, SDK, API, microservice, monolith, etc.). It can be incrementally adopted into existing products.
 
-These tools help you to:
+## Very Quick Start
 
-- Rapidly iterate by adding and changing requirements at the spec level.
-- Maintain specifications that actually reflect reality.
+**Prerequisites**  
+✅ You take pride in your products. You set a high bar for quality. User happyness is your primary focus.  
+✅ You ship incrementally, feature-by-feature.
 
-It is open source, and works for any tech stack, and any software product (frontend, backend, CLI, SDK, API, microservice, monolith, etc.)
+**Steps:**
+1. Specify. Define your next feature by writing key requirements in `FRD.yaml`.
+2. Sync. `acai push` syncs your requirements to the datastore.
+3. Implement. Ask your agent to reference the requirement IDs in code comments and tests.
+4. Review. AI is helpful here, but you are the ultimate tastemaker and gatekeeper.
 
-# Why ACAI? Why now?
+Here is a simple example:
 
-Thanks to LLMs, the tedium of writing, referencing, and testing ACs has been completely eliminated.
+<CodeGroup>
 
-None of these ideas are new, but they were far too cumbersome for most teams.
+```yaml features/block-user/FRD.yaml
+feature:
+  name: Block User
+  descripton: Block other users so they can't view my profile.
+  slug: BLOCK
 
-ACAI is purpose built to serve as part of a larger agentic software development workflow. You've probably already observed that AI agents (at least, today's iterations) LOVE to self-reference their prompt and track requirements.
+components:
+  BUTTON:
+    name: The block button
+    requirements:
+      1: Renders a button that says says "BLOCK" on all user profiles
+      1-1: If looking at my own profile, it does not render
+      1-2: If the user is already blocked, it says "UNBLOCK"
+      2: On click, opens the Block User Menu
 
-Giving them stable identifiers to track improves the quality of their output, and gives you a new window into their rationale. Next time your agent goes off the rails, you will be able course-correct much quicker.
+  MENU:
+    name: The Block User Menu
+    requirements:
+      1: Renders the target user's profile name and a confirmation message
+      2: On click, blocks the user
+      2-1: On block, navigates away from the blocked profile
+```
+
+```tsx src/profile.ts
+// BLOCK.BUTTON.1
+export function BlockButton({ userId, isOwnProfile, isBlocked }) {
+  // BLOCK.BUTTON.1-1
+  if (isOwnProfile) return null 
+  // BLOCK.BUTTON.1-2
+  return <button>{isBlocked ? 'UNBLOCK' : 'BLOCK'}</button> 
+}
+```
+
+```ts test/profile.test.ts
+describe('BLOCK.MENU', () => {
+  it('BLOCK.MENU.1: renders profile name and confirmation', () => {...})
+  it('BLOCK.MENU.2: blocks user on click', () => {...})
+  it('BLOCK.MENU.2-1: navigates away after block', () => {...})
+})
+```
+
+</CodeGroup>
+
+# Why acai?
+**Greppable, traceable**  
+Every requirement in your spec gets an id, like `BLOCK.MENU.1`. LLM agents love these. They are easy to grep, and provide an anchor to pull in more context as-needed.
+
+IDs also help with code review. It's extremely useful to see "why" the developer or agent did something-- what specific requirement were they trying to satisfy?
+
+**Stable, durable**
+As token context window increases, projects and specs evolve, and priorities change, acai specs create a dependable source of truth, and continuous project history.
+
+**Rapidly iterate**  
+By maintaining a spec at the feature level (rather than product or function level) it's effortless to 1-shot prototypes, create throwaway implementations, and improve the spec itself before touching production code. The result is that you spend far less time prompting and wrangling, more time on high-value engineering and product thinking.
+
+**Self documenting**  
+The spec is a trusted source of truth for generating documentation. Acai makes it possible to evolve your product without the spec becoming another outdated artifact.
+
+**This is no longer tedious**  
+Spamming IDs all over the code is a bit too painful for a human engineer, but it is painless for an agent.
+Now it's actually possible to maintain spec as source of truth, and to guage how compliant your code is.

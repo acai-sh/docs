@@ -1,26 +1,24 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "acai.sh",
-  "colors": {
-    "primary": "#0D9373"
-  },
-  "navigation": {
-    "groups": [
-      {
-        "group": "Product Overview",
-        "pages": [
-          "home",
-          "quickstart"
+    "$schema": "https://mintlify.com/docs.json",
+    "theme": "maple",
+    "name": "acai.sh",
+    "colors": {
+        "primary": "#930d7a"
+    },
+    "navigation": {
+        "groups": [
+            {
+                "group": "Product",
+                "pages": ["home", "quickstart"]
+            },
+            {
+                "group": "FRD.yaml",
+                "pages": ["frd-spec"]
+            }
         ]
-      },
-      {
-        "group": "FRD.yaml",
-        "pages": [
-          "frd-spec"
-        ]
-      }
-    ]
-  },
-  "description": "A toolkit for spec-driven development."
+    },
+    "description": "A toolkit for spec-driven development.",
+    "icons": {
+        "library": "lucide"
+    }
 }
