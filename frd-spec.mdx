@@ -11,6 +11,38 @@ The FRD is the 'spec' in 'spec-driven development'.
 
 FRDs contain a list of Requirements (AKA acceptance criteria), that your software should adhere to. Writing them in .yaml is ensures readability for both humans and machines.
 
+# Minimal Example of FRD.yaml
+
+Here is an example feature spec for a product that helps a user manage their rental properties.
+
+```yaml
+# my-product/features/PROPMAP_FRD.yaml
+feature:
+  name: Property Map
+  descripton: Show the user all of their properties at a glance. Includes an interactive map (mapbox), and an info panel that pops out.
+  slug: PROPMAP
+
+components:
+  MAP:
+    name: Interactive Map
+    requirements:
+      1: Renders all the user's properties as dots in a MapBox map
+      2: When clicking a property on the map it...
+      2-1: Opens the [Property Details Panel](PANEL)
+      2-2: Visually highlights the selected property's map dot
+      2-3: Sends analytics event
+
+  PANEL:
+    name: Property Details Panel
+    requirements:
+      1: Disables interaction of the map below
+      2: Focus is trapped for accessibility and tab navigation
+      3: Queries fresh property details by property id (never show stale data)
+      3-1: If property details change, they are not reflected until panel is closed and reopened
+      4: Can deep link to the panel via stable URL
+```
+
+
 # Important: what makes for a good FRD?
 
 <Warning>
@@ -58,37 +90,6 @@ Example Requirements:
 - Triggers side effect G
 
 Requirements should not be subjective, and should not be too specific. *Requirements are always functional.*. They help your user *do* something. Do not focus on design, layout, theme, code patterns, etc.
-
-# Minimal Example of FRD.yaml
-
-Here is an example feature spec for a product that helps a user manage their rental properties.
-
-```yaml
-# my-product/features/PROPMAP_FRD.yaml
-feature:
-  name: Property Map
-  descripton: Show the user all of their properties at a glance. Includes an interactive map (mapbox), and an info panel that pops out.
-  slug: PROPMAP
-
-components:
-  MAP:
-    name: Interactive Map
-    requirements:
-      1: Renders all the user's properties as dots in a MapBox map
-      2: When clicking a property on the map it...
-      2-1: Opens the [Property Details Panel](PANEL)
-      2-2: Visually highlights the selected property's map dot
-      2-3: Sends analytics event
-
-  PANEL:
-    name: Property Details Panel
-    requirements:
-      1: Disables interaction of the map below
-      2: Focus is trapped for accessibility and tab navigation
-      3: Queries fresh property details by property id (never show stale data)
-      3-1: If property details change, they are not reflected until panel is closed and reopened
-      4: Can deep link to the panel via stable URL
-```
 
 # FRD.yaml Spec
 
