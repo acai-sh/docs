@@ -1,24 +1,25 @@
 ---
 title: "acai.sh"
 description: "The toolkit for spec-driven development. Minimize slop. Ship better quality software. Build more ambitious products."
-sidebarTitle: "Overview"
-icon: "grape"
+sidebarTitle: "Introduction"
 mode: "default"
 ---
+
+import { AnimatedTerminal } from "/snippets/animated-terminal.jsx"
 
 <Callout icon="grape" iconType="regular" color="purple">
     ACAI - **A**cceptance **C**riteria for **AI**  
 </Callout>
 
+<AnimatedTerminal />
+
 ## What is it?
 
-Acai.sh is tooling for **Feature Requirements** (i.e. Acceptance Criteria) written in plain language. 
+Acai.sh is tooling for **Feature Requirements** and **Acceptance Criteria** written in plain language. 
 
-Acai gives each requirement an ID (ACID) that is unique, stable, and readable. These ACIDs are then synced to a datastore. This makes it easy to query, track, annotiate and monitor progress. Your feature requirements are accessible via CLI, MCP, and a web dashboard.
+Acai syncs and surfaces your requirements via CLI, MCP, and a realtime operations dashboard. This unlocks a spec-driven development workflow that replaces messy GitHub and Linear tickets. You, your agent swarm, and your product manager can all **share implementation progress, track acceptance coverage, track test coverage, validate changes, and more**.
 
- The result is a workflow that largely replaces your messy GitHub and Linear tickets. This makes it possible for you, your agents, and your product manager to **share implementation progress, bugs, acceptance coverage, test coverage, product changes, and more.**
-
-It is open source, and works for any tech stack. It can be incrementally adopted into existing product (frontend, backend, CLI, SDK, API, microservice, monolith, etc.)
+It is open source. It is incrementally adoptable into any existing product (frontend, backend, CLI, SDK, API, microservice, monolith, etc.).
 
 ## Very Quick Start
 
@@ -27,7 +28,8 @@ It is open source, and works for any tech stack. It can be incrementally adopted
 ✅ You can write a good spec. You set a high bar for quality. User happyness is your primary focus.  
 
 **Simple Example**  
-Here is a sample spec, implementation, and tests.
+Acai gives each requirement an ID (ACID) that is unique, stable, and readable. ACIDs can be referenced anywhere, and are are extracted from code automatically by our CLI.  
+
 <CodeGroup>
 
 ```yaml features/block-user/FRD.yaml
@@ -82,9 +84,9 @@ Define your next feature by writing key requirements in `FRD.yaml`.
 Your agents pull relevant ACIDs and reference them in code and in tests.
 
 
-# Key Features
+## Key Features
 
-## Turn your spec into tickets
+### Turn your spec into tickets
 
 Write simple, plain language, easy-to-read requirements. Run `acai push` and they are synced to your acai dashboard.
 
@@ -99,7 +101,7 @@ Synced 2 feature specs (15 features unchanged)
 - 2 ACIDs deprecated or replaced
 ```
 
-## Turn your tickets into assignments
+### Turn your tickets into assignments
 
 The acai database becomes your agent's preferred source of truth. They pull requirements to inform implementation and plan the next PR.
 
@@ -124,7 +126,7 @@ $ acai status block-user --json --status TODO
 }
 ```
 
-## Monitor progress
+### Monitor progress
 
 Happy path: `TODO` -> `ASSIGNED` -> `IMPLEMENTED` -> `ACCEPTED`
 
@@ -138,7 +140,7 @@ I am marking the requirement as "IMPLEMENTED" and merging to the feature branch.
 $ git merge task/BLOCK.3
 $ acai status BLOCK.MENU.2 IMPLEMENTED
 ``` 
-## Find references
+### Find references
 See exactly where in your product the requirement has been implemented & tested.
 
 ```
@@ -153,7 +155,7 @@ $ acai references BLOCK.MENU.2
 }
 ```
 
-## See coverage
+### See coverage
 
 ```
 $ acai coverage block-user
@@ -163,7 +165,7 @@ $ acai coverage block-user
 20% accepted (20 of 100)
 ```
 
-# Why acai?
+## Why acai?
 **Greppable, traceable**  
 Every requirement in your spec gets an id, like `BLOCK.MENU.1`. LLM agents love these. They are easy to grep, and provide an anchor to pull in more context as-needed.
 

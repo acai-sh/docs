@@ -1,0 +1,27 @@
+feature:
+    name: Animated Terminal
+    descripton: |
+        A mock terminal animation that tells a little story and demonstrates how an AI agent uses the acai toolkit to work on a software project.
+        Inspired by example screenshots in the artifacts folder.
+    slug: TERM
+
+components:
+    FRAME:
+        name: Terminal frame and container
+        requirements:
+            1: Not actually interactive, accepts no user inputs
+            2: Appears like a terminal window on a Mac with a TUI instance running inside it
+            3: The TUI instance is like a minimal, simple version of OpenCode or Claude Code (input box at bottom, chat history above)
+
+    STORY:
+        name: Rough storyboard for the animation
+        requirements:
+            1: User types "Continue working on the `animated-terminal` feature"
+            2: The agent says "Sure! First let me see what's left."
+            3: The TUI history shows a background command being run - `acai status animated-terminal`
+            4: The agent says "There is only 1 requirements left to complete, I will handle it."
+            5: The TUI history shows a background command being run - `acai assign TERM.STORY.6`
+            6: The agent says "I need more context. I'll start with references to the ACID"
+            7: The TUI history shows a background command being run - `acai list references TERM.STORY.6`
+            8: Great! I have a clear path for implementation...
+            9: The animation pauses here for a few seconds and then resets.

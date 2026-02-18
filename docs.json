@@ -1,6 +1,6 @@
 {
     "$schema": "https://mintlify.com/docs.json",
-    "theme": "maple",
+    "theme": "linden",
     "name": "acai.sh",
     "colors": {
         "primary": "#930d7a"
@@ -8,8 +8,9 @@
     "navigation": {
         "groups": [
             {
-                "group": "Product",
-                "pages": ["home"]
+                "group": "Overview",
+                "pages": ["home"],
+                "icon": { "name": "grape" }
             },
             {
                 "group": "FRD.yaml",
