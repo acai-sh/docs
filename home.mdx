@@ -25,24 +25,24 @@ It is open source. It is incrementally adoptable into any existing product (fron
 
 **Prerequisites:**  
 ✅ You build and ship incrementally, feature-by-feature.  
-✅ You can write a good spec. You set a high bar for quality. User happyness is your primary focus.  
+✅ You can write a good spec. You set a high bar for quality. User happiness is your primary focus.  
 
 **Simple Example**  
-Acai gives each requirement an ID (ACID) that is unique, stable, and readable. ACIDs can be referenced anywhere, and are are extracted from code automatically by our CLI.  
+Acai gives each requirement an ID (ACID) that is unique, stable, and readable. ACIDs can be referenced anywhere, and are extracted from code automatically by our CLI.  
 
 <CodeGroup>
 
 ```yaml features/block-user/FRD.yaml
 feature:
   name: Block User
-  descripton: Block other users so they can't view my profile.
+  description: Block other users so they can't view my profile.
   slug: BLOCK
 
 components:
   BUTTON:
     name: The block button
     requirements:
-      1: Renders a button that says says "BLOCK" on all user profiles
+      1: Renders a button that says "BLOCK" on all user profiles
       1-1: If looking at my own profile, it does not render
       1-2: If the user is already blocked, it says "UNBLOCK"
       2: On click, opens the Block User Menu
@@ -172,7 +172,7 @@ Every requirement in your spec gets an id, like `BLOCK.MENU.1`. LLM agents love 
 IDs also help with code review. It's extremely useful to see "why" the developer or agent did something... like what specific requirement were they trying to satisfy?
 
 **Stable, durable**  
-Structured spec docs create a dependable source of truth, and continuous project history. Acai makes sure your code referencs are up-to-date and relevant.
+Structured spec docs create a dependable source of truth, and continuous project history. Acai makes sure your code references are up-to-date and relevant.
 
 **Rapidly iterate**  
 By maintaining a spec at the feature level (rather than product or function level) it's effortless to 1-shot prototypes, create throwaway implementations, and improve the spec itself before touching production code. The result is that you spend far less time prompting and wrangling, more time on high-value engineering and product thinking.
@@ -182,4 +182,4 @@ The spec is a trusted source of truth for generating documentation. Acai makes i
 
 **This is no longer tedious**  
 Spamming IDs all over the code is a bit too painful for a human engineer, but it is painless for an agent.
-Now it's actually possible to maintain spec as source of truth, and to guage how compliant your code is.
+Now it's actually possible to maintain spec as source of truth, and to gauge how compliant your code is.
