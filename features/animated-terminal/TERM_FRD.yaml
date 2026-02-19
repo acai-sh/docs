@@ -3,25 +3,42 @@ feature:
     descripton: |
         A mock terminal animation that tells a little story and demonstrates how an AI agent uses the acai toolkit to work on a software project.
         Inspired by example screenshots in the artifacts folder.
+    notes: The requirement status lifecycle is TODO -> ASSIGNED -> IMPLEMENTED -> ACCEPTED
     slug: TERM
 
 components:
     FRAME:
         name: Terminal frame and container
         requirements:
-            1: Not actually interactive, accepts no user inputs
-            2: Appears like a terminal window on a Mac with a TUI instance running inside it
-            3: The TUI instance is like a minimal, simple version of OpenCode or Claude Code (input box at bottom, chat history above)
+            1: The chat history area is scrollable by the user, but the component otherwise accepts no user inputs (no typing, no buttons)
+            2: Auto-scrolling to the bottom only occurs when a new message is added if the user is already near the bottom of the history.
+            3: Appears like a terminal window on a Mac with a TUI instance running inside it
+            4: The TUI instance is like a minimal, simple version of OpenCode or Claude Code (input box at bottom, chat history above)
+            5: When the `acai` command is called in the story it is always bold and gold
+            6: The component has a stable, fixed height (420px) to prevent layout shifts during loading or animation.
 
     STORY:
         name: Rough storyboard for the animation
         requirements:
             1: User types "Continue working on the `animated-terminal` feature"
-            2: The agent says "Sure! First let me see what's left."
+            2: The agent says "Sure! First let me peek at the spec, and then see what's left."
             3: The TUI history shows a background command being run - `acai status animated-terminal`
-            4: The agent says "There is only 1 requirements left to complete, I will handle it."
+            4: The agent says "I can see we are building a mock terminal animation for your docs site. There is only 1 requirement left to complete, I will handle it."
             5: The TUI history shows a background command being run - `acai assign TERM.STORY.6`
-            6: The agent says "I need more context. I'll start with references to the ACID"
-            7: The TUI history shows a background command being run - `acai list references TERM.STORY.6`
-            8: Great! I have a clear path for implementation...
-            9: The animation pauses here for a few seconds and then resets.
+            6: The agent says "I need more context. I'll start by finding references to the requirement id"
+            7: The TUI history shows a background command being run - `acai list references TERM.STORY.6` with many files output
+            8: Tool commands display a brief mock output snippet (3-4 lines) after completion to simulate data retrieval.
+            9: Great! It looks like work was already started on this requirement. I will pick up where they left off.
+            10: TUI shows "Writing code..."
+            11: Agent says "🎉 I've completed implementation. 3 files were changed, and 2 tests were added. I need to update the status for this ACID"
+            12: TUI shows command `acai status TERM.STORY.6`
+            13: Agent says "🎉 Done. TERM.STORY.6 has been flagged for review. There are no remaining tasks to complete."
+            14: User types "Nice job. I'm looking at it in my browser right now and it's flawless. Go ahead and mark all requirements as accepted."
+            15: Agent says "Thanks!"
+            16: TUI shows command `acai accept 'TERM.STORY.1..TERM.STORY.6'`
+            17: The animation stops after the final step and does not loop.
+
+constraints:
+    REACT:
+        requirements:
+            1: Must be a single, self-contained standalone react component, a single export, with no imports
