@@ -4,4 +4,67 @@ description: "The Acai CLI"
 sidebarTitle: "CLI"
 ---
 
-cli content goes here
+import AccessCard from "/snippets/access-card.mdx";
+
+<AccessCard />
+
+## What is the Acai CLI?
+
+The Acai Command Line Interface (CLI) is your local gateway to spec-driven development. It allows you to parse your local `FRD.yaml` specification files, sync them to the Acai platform, and interact with your requirements directly from your terminal.
+
+**Why use it?**
+- **Seamless Synchronization:** Easily sync your local plain-language requirements up to the Acai dashboard with a single command.
+- **Local Context & References:** Search your codebase for references to specific ACIDs (Acai IDs) locally.
+- **Agent Integration:** AI agents can run CLI commands (like `acai list` or `acai coverage`) within your repository to understand project requirements, check coverage, and determine their next tasks.
+
+## Quickstart
+
+<Steps>
+  <Step title="Installation">
+    Install the Acai CLI globally using npm.
+
+    ```bash
+    npm install -g @acai/cli
+    ```
+  </Step>
+  <Step title="Sync your Specs">
+    After writing or updating your feature requirements in an `FRD.yaml` file, push them to the Acai datastore and tracker.
+
+    ```bash
+    acai push
+    ```
+  </Step>
+  <Step title="List Requirements">
+    View the requirements for a specific feature right in your terminal, optionally filtering by their implementation status (like `TODO` or `IMPLEMENTED`).
+
+    ```bash
+    acai list requirements block-user --status TODO
+    ```
+  </Step>
+  <Step title="Check Coverage">
+    See exactly how much of a feature has been implemented, tested, and accepted.
+
+    ```bash
+    acai coverage block-user
+    ```
+  </Step>
+</Steps>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Writing Specs"
+    icon="pen-tool"
+    href="/writing-specs"
+  >
+    Learn the syntax and best practices for writing your `FRD.yaml` specs.
+  </Card>
+  <Card
+    title="Dashboard"
+    icon="layout-dashboard"
+    href="/dashboard"
+  >
+    View your project's realtime operations dashboard and track acceptance coverage.
+  </Card>
+</CardGroup>

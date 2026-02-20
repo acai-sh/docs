@@ -1,5 +1,5 @@
 export const AnimatedTerminal = () => {
-    // TERM.REACT.1: Single self-contained export, no imports
+    // TERM.DEV.1
     // Mintlify provides hooks in the global scope.
     const [messages, setMessages] = useState([]);
     const [inputText, setInputText] = useState("");
@@ -9,6 +9,7 @@ export const AnimatedTerminal = () => {
     const timeoutsRef = useRef([]);
 
     const STEPS = [
+        // TERM.STORY.1
         {
             type: "user-typing",
             content: "Continue working on the `animated-terminal` feature",
@@ -23,8 +24,8 @@ export const AnimatedTerminal = () => {
             content: "acai status animated-terminal",
             output: [
                 "Animated Terminal [TERM]",
-                "Status: 8/9 ACs ACCEPTED",
-                "TODO: TERM.STORY.6 (Animation loop completion)",
+                "0 TODO, 1 INCOMPLETE, 9 IMPLEMENTED, 0 ACCEPTED",
+                "/features/animated-terminal/TERM_FRD.yaml",
             ],
         },
         {
@@ -34,8 +35,8 @@ export const AnimatedTerminal = () => {
         },
         {
             type: "tool-command",
-            content: "acai assign TERM.STORY.6",
-            output: ["TERM.STORY.6 status updated: TODO -> ASSIGNED"],
+            content: "acai assign TERM.STORY.4",
+            output: ["TERM.STORY.4 status updated: INCOMPLETE -> ASSIGNED"],
         },
         {
             type: "agent-message",
@@ -44,7 +45,7 @@ export const AnimatedTerminal = () => {
         },
         {
             type: "tool-command",
-            content: "acai list references TERM.STORY.6",
+            content: "acai list references TERM.STORY.4",
             output: [
                 "- features/animated-terminal/TERM_FRD.yaml",
                 "- snippets/animated-terminal.jsx",
@@ -55,7 +56,7 @@ export const AnimatedTerminal = () => {
         {
             type: "agent-message",
             content:
-                "Great! It looks like work was already started on this requirement. I will pick up where they left off.",
+                "I see work was already started on this requirement. I will pick up where they left off 🔨",
         },
         { type: "system-status", content: "Writing code..." },
         {
@@ -65,9 +66,9 @@ export const AnimatedTerminal = () => {
         },
         {
             type: "tool-command",
-            content: "acai status TERM.STORY.6",
+            content: "acai status TERM.STORY.4",
             output: [
-                "TERM.STORY.6: IMPLEMENTED",
+                "TERM.STORY.4: IMPLEMENTED",
                 "Files: 3 changed",
                 "Tests: 2 passed (100% coverage)",
                 "Flagged for review",
@@ -76,9 +77,10 @@ export const AnimatedTerminal = () => {
         {
             type: "agent-message",
             content:
-                "🎉 Done. TERM.STORY.6 has been flagged for review. There are no remaining tasks to complete.",
+                "🎉 Done. TERM.STORY.4 has been flagged for review. There are no remaining tasks to complete.",
         },
         {
+            // TERM.STORY.3
             type: "user-typing",
             content:
                 "Nice job. I'm looking at it in my browser right now and it's flawless. Go ahead and mark all requirements as accepted.",
@@ -86,10 +88,10 @@ export const AnimatedTerminal = () => {
         { type: "agent-message", content: "🦾💪" },
         {
             type: "tool-command",
-            content: "acai accept 'TERM.STORY.1..TERM.STORY.6'",
+            content: "acai accept 'TERM.STORY.1..TERM.STORY.4'",
             output: [
-                "Accepted 6 requirements.",
-                "Status: TERM.STORY.1-6 -> ACCEPTED",
+                "Accepted 4 requirements.",
+                "Status: TERM.STORY.1-4 -> ACCEPTED",
                 "Checkpoint created: TERM_FINAL",
             ],
         },
@@ -111,6 +113,7 @@ export const AnimatedTerminal = () => {
     }, []);
 
     useEffect(() => {
+        // TERM.FRAME.1-1
         if (chatRef.current) {
             const { scrollTop, scrollHeight, clientHeight } = chatRef.current;
             // Use a threshold to detect if the user is "near" the bottom
@@ -123,6 +126,7 @@ export const AnimatedTerminal = () => {
     }, [messages]);
 
     useEffect(() => {
+        // TERM.STORY.4
         if (stepIndex >= STEPS.length) {
             setPhase("completed");
             return;
@@ -156,6 +160,7 @@ export const AnimatedTerminal = () => {
 
             addTimeout(typeChar, 250); // Slower start (200 -> 250ms)
         } else if (step.type === "agent-message") {
+            // TERM.STORY.2
             setPhase("agent-thinking");
             addTimeout(() => {
                 setMessages((prev) => [
@@ -310,7 +315,7 @@ export const AnimatedTerminal = () => {
         }
       `}</style>
 
-            {/* TERM.FRAME.2: Mac-style title bar */}
+            {/* Terminal frame - Mac-style title bar */}
             <div className="flex items-center px-4 py-3 bg-[#161b22] border-b border-[#30363d] select-none">
                 <div className="flex gap-2 mr-4">
                     <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
@@ -322,7 +327,7 @@ export const AnimatedTerminal = () => {
                 </div>
             </div>
 
-            {/* TERM.FRAME.3: Chat history area */}
+            {/* TERM.FRAME.1 */}
             <div
                 ref={chatRef}
                 className="chat-history flex-grow overflow-y-auto p-4 scroll-smooth"
@@ -341,12 +346,13 @@ export const AnimatedTerminal = () => {
                 </div>
             </div>
 
-            {/* Input Box */}
+            {/* TERM.FRAME.2 */}
             <div className="bg-[#0d1117] p-3 border-t border-[#30363d] border-l-[3px] border-l-[#58a6ff]">
                 <div className="flex items-center font-mono">
                     <span className="text-[#e6edf3] break-all">
                         {inputText}
                     </span>
+                    {/* TERM.FRAME.2-1 */}
                     <span className="w-2 h-4 bg-[#58a6ff] ml-1 animate-cursor" />
                 </div>
             </div>

@@ -3,18 +3,25 @@
     "theme": "linden",
     "name": "acai.sh",
     "colors": {
-        "primary": "#930d7a"
+        "primary": "#930d7a",
+        "dark": "#930d7a"
     },
     "navigation": {
         "groups": [
             {
                 "group": "Overview",
-                "pages": ["home"],
+                "pages": ["index", "mcp", "cli", "api", "dashboard", "agents"],
                 "icon": { "name": "grape" }
             },
             {
-                "group": "FRD.yaml",
-                "pages": ["frd-spec"]
+                "group": "Guides",
+                "pages": ["writing-specs", "sdd"],
+                "icon": { "name": "graduation-cap" }
+            },
+            {
+                "group": "Reference",
+                "pages": ["frd-yaml"],
+                "icon": { "name": "book" }
             }
         ]
     },

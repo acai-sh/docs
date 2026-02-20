@@ -1,0 +1,234 @@
+---
+title: "acai.sh"
+description: "The toolkit for spec-driven development. Stop writing prompts, start writing specs. Ship better quality software and minimize slop."
+sidebarTitle: "Introduction"
+mode: "default"
+---
+
+import { AnimatedTerminal } from "/snippets/animated-terminal.jsx"
+import AccessCard from "/snippets/access-card.mdx";
+
+<Callout icon="grape" iconType="regular" color="purple">
+    ACAI - **A**cceptance **C**riteria for **AI**  
+</Callout>
+
+<AnimatedTerminal />
+
+<AccessCard />
+
+## What is it?
+
+Acai.sh is a toolkit for **Feature Requirements** and **Acceptance Criteria** written in plain language. 
+
+Acai syncs and surfaces your requirements via CLI, MCP, and a realtime operations dashboard. This unlocks a spec-driven development workflow that replaces messy GitHub and Linear tickets. You, your agent swarm, and your product manager can all **share implementation progress, track acceptance coverage, track test coverage, validate changes, and more**.
+
+It is open source. It is incrementally adoptable into any existing product (frontend, backend, CLI, SDK, API, microservice, monolith, etc.).
+
+## Very Quick Start
+
+**Prerequisites:**  
+✅ You build and ship incrementally, feature-by-feature.  
+✅ You can write a good spec. You set a high bar for quality. User happiness is your primary focus.  
+
+**Simple Example**  
+
+<CodeGroup>
+
+```yaml features/block-user/FRD.yaml
+# This is an example spec, following our FRD.yaml conventions
+feature:
+    name: Animated Terminal
+    description: |
+        A mock terminal animation for our docks site.
+        It demonstrates how an AI agent uses the acai toolkit to work on a software project.
+        🥚 In the example, it is self-referentially building itself, from this very same spec.
+    slug: TERM
+
+components:
+    FRAME:
+        name: Terminal frame and container
+        description: UI container that looks like a terminal window on a Mac with a TUI instance running inside it
+        requirements:
+            1: Renders scrollable mock chat history
+            1-1: Does not auto-scroll unless user is already at the bottom of scroll container
+            2: Renders mock text input
+            2-1: Does not accept actual user inputs (no typing, no buttons)
+
+    STORY:
+        name: Rough storyboard for the animation
+        requirements:
+            1: Animation starts with user typing "Continue working on the `animated-terminal` feature"
+            2: Shows back-and-forth conversation with tool calls and status updates
+            3: Concludes with user typing "Go ahead and mark all requirements as accepted."
+            4: The animation stops after the final step and does not loop.
+
+constraints:
+    DEV:
+        requirements:
+            1: Must be a single, self-contained standalone react component (a single export, with no imports)
+```
+
+```tsx src/animated-terminal.jsx
+// TERM.DEV.1 - No imports
+export const AnimatedTerminal = () => {
+  const chatRef = useRef(null);
+
+  useEffect(() => {
+    // TERM.FRAME.1-1 - autoscroll
+    const el = chatRef.current;
+    if (el) {
+      // Use a threshold to detect if the user is "near" the bottom
+      const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+      if (isNearBottom) el.scrollTop = el.scrollHeight;
+    }
+  }, [messages]);
+
+  return (
+    {/* TERM.FRAME.1 */}
+    <div ref={chatRef} className="chat-history flex-grow overflow-y-auto p-4 scroll-smooth">
+      {messages.map((msg, i) => renderMessage(msg, i))}
+    </div>
+  );
+};
+```
+
+```ts test/profile.test.ts
+// TERM.DEV: Development Constraints
+describe('TERM.DEV', () => {
+  it('TERM.DEV.1: self-contained standalone component (no imports)', () => {})
+})
+
+// TERM.FRAME: UI Container & Scroll Logic
+describe('TERM.FRAME', () => {
+  it('TERM.FRAME.1: renders scrollable mock chat history', () => {})
+  it('TERM.FRAME.1-1: auto-scrolls ONLY if user is at bottom threshold', () => {})
+  it('TERM.FRAME.2: renders mock text input', () => {})
+  it('TERM.FRAME.2-1: ignores user typing and button interactions', () => {})
+})
+
+// TERM.STORY: Animation Sequence
+describe('TERM.STORY', () => {
+  it('TERM.STORY.1: starts with "Continue working on..." prompt', () => {})
+  it('TERM.STORY.2: sequences tool calls and status updates', () => {})
+  it('TERM.STORY.3: ends with "mark all requirements as accepted"', () => {})
+  it('TERM.STORY.4: halts after final step without looping', () => {})
+})
+```
+
+</CodeGroup>
+
+As shown above, acai gives each requirement an ID (ACID) that is unique, stable, and readable. ACIDs can be referenced anywhere, and are extracted from code by our CLI.  
+
+**Core Workflow:**
+
+<Steps>
+  <Step title="Specify">
+    Define your next feature by writing key requirements in `FRD.yaml`.
+  </Step>
+  <Step title="Sync">
+    `acai push` syncs your spec to the datastore and tracker.
+  </Step>
+  <Step title="Implement">
+    Your agents pull relevant ACIDs and reference them in code and in tests.
+  </Step>
+</Steps>
+
+
+## Key Features
+
+### Turn your spec into tickets
+
+Write simple, plain language, easy-to-read requirements. Run `acai push` and they are synced to your dashboard and exposed via API/CLI/MCP.
+
+### Turn your tickets into assignments
+
+Acai becomes your agent's source of truth. They pull requirements to plan and inform the next PR.
+
+```sh
+acai list requirements block-user --json --status TODO
+```
+
+### Monitor progress
+
+Track progress from spec, to implementation, to agent review, to human acceptance:  
+
+`TODO` -> `ASSIGNED` -> `IMPLEMENTED` -> `ACCEPTED`
+
+
+```md Agent Code Reviewer
+I've reviewed BLOCK.MENU.2.
+I see no issues with the implementation.
+Unit tests are satisfactory.
+I am marking the requirement as "IMPLEMENTED"...
+I am merging the changes to the feature branch...
+``` 
+
+### See coverage
+
+Have all requirements been implemented?  
+Do all implementations have tests?  
+Have humans accepted the implementation?  
+
+```sh
+acai coverage block-user
+```
+```
+100% implemented (100 of 100)
+100% tested (100 of 100)
+20% accepted (20 of 100) ⚠️
+```
+
+### Grab context
+See exactly where a requirement has been implemented or tested. The time savings & token savings add up quickly.
+
+```sh
+acai list references BLOCK.MENU.2 --json
+```
+```json
+[
+  "features/block-user/FRD.yaml:15",
+  "src/components/user_settings.tsx:107"
+  "test/components/user_settings.test.ts:42"
+]
+```
+
+## Why acai?
+
+<AccordionGroup>
+  <Accordion title="Greppable, traceable">
+    LLM agents love Acai IDs. They make it easy to pull in context, find references, and trace the *intent* of an implementation or test.
+  </Accordion>
+
+  <Accordion title="Stable, durable">
+    Stop losing progress when agents go off the rails. Your spec is the source of truth, even as complexity grows and requirements evolve.
+  </Accordion>
+
+  <Accordion title="Rapidly iterate">
+    Quickly prototype, try throwaway implementations, and solidify the spec before touching production code. The result is less time prompting, and a better end result.
+  </Accordion>
+
+  <Accordion title="No tedium">
+    In the past, this level of specification rigour was painful for human teams. Today, for an LLM with access to Acai, it's painless.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Agents"
+    icon="bot"
+    href="/agents"
+  >
+    Learn how to integrate Acai with your AI assistants.
+  </Card>
+  <Card
+    title="Writing Specs"
+    icon="pen-tool"
+    href="/writing-specs"
+  >
+    Learn the syntax and best practices for writing FRD files.
+  </Card>
+</CardGroup>

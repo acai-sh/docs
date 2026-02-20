@@ -1,0 +1,205 @@
+---
+title: "Feature Requirements Doc"
+description: "An introduction and guide to writing your first FRD.yaml"
+sidebarTitle: "Write an FRD"
+---
+
+Spec-driven development does not need to be tedious. Here are some important conventions to follow that will improve the quality of your specs and the code that is generated from them.
+
+## Project Structure
+
+By default, Acai looks for FRDs in the `features` folder at the root of your project.
+
+By convention, you should organize your project like this:
+
+<Tree>
+  <Tree.Folder name="my-project" defaultOpen>
+      <Tree.Folder name="features" defaultOpen>
+          <Tree.Folder name="animated-terminal" defaultOpen>
+              <Tree.Folder name="artifacts">
+                <Tree.File name="desktop_wireframe.jpg" />
+                <Tree.File name="mobile_wireframe.jpg" />
+                <Tree.File name="design_guidelines.md" />
+              </Tree.Folder>
+            <Tree.File name="FRD.yaml" />
+          </Tree.Folder>
+          <Tree.Folder name="my-feature-2" defaultOpen>
+              <Tree.Folder name="artifacts">
+                <Tree.File name="desktop_wireframe.jpg" />
+                <Tree.File name="mobile_wireframe.jpg" />
+                <Tree.File name="design_guidelines.md" />
+              </Tree.Folder>
+            <Tree.File name="FRD.yaml" />
+          </Tree.Folder>
+      </Tree.Folder>
+  </Tree.Folder>
+</Tree>
+
+## Key Principles
+
+<Card title="Keep spec and tracker separate" icon="list-todo" horizontal>
+  FRDs are for specifying requirements. Use external tooling like Acai to track implementation status, coverage, and progress.
+</Card>
+
+<Card title="Focus on intended behavior" icon="goal" horizontal>
+  Your FRD should describe what your software *should* do, not what it currently does. Think of it as a specification for the future state of your feature.
+</Card>
+
+<Card title="Function, not form" icon="palette" horizontal>
+  Requirements should describe what the software *does*, not how it *looks*.
+</Card>
+
+<Card title="Features are toggleable" icon="toggle-left" horizontal>
+  A good feature can be delivered on it's own, and can be toggled with a feature flag. If you can't flag it, it might be too small (a task) or too large (a product).
+</Card>
+
+
+
+<Card title="Link related components" icon="link" horizontal>
+  When one component depends on another, reference it using the full ACID e.g. `FEAT.COMPONENT.1-1`
+</Card>
+
+---
+
+## Key Definitions
+
+### Product
+
+A **Product** is any software that has many features. It can be a microservice, an API, an SDK, a robot, a data pipeline, a mobile app, a website.
+
+### Feature
+
+A **Feature** is a clearly delineated "slice" of your software that brings value to the user. One helpful way to draw a boundary is to ask: can I enable/disable this behind a feature flag?
+
+**Example**: If you're building a Zoom/Skype/Meet clone, some features might be:
+- `"screen-share"`
+- `"message-reactions"`
+- `"mute-speaker"`
+
+Features are totally separate from your system's components, modules, and views. They only care about your user and the user's end-goal.
+
+<Warning>
+  These are **not** features, and don't belong in your spec:
+  - Under-the-hood changes, performance and plumbing
+  - A style, layout, or color theme change (unless critical for UX acceptance)
+  - Changesets, bugfixes, status updates (or anything that quickly becomes obsolete)
+</Warning>
+
+### Requirement
+
+A **Requirement** is a behavior that must work for your feature to be accepted.
+
+Good requirements are:
+- **Functional** — they help your user *do* something
+- **Objective** — they can be verified (passed or failed)
+- **Specific** — they describe the expected behavior clearly
+
+---
+
+## Cross-Referencing
+
+When one requirement relates to another, reference it using the ACID:
+
+```yaml
+requirements:
+  1: Opens the [Property Details Panel](FEAT.PANEL)
+  1-1: Zooms to the property on the map, following FEAT.MAP.4
+```
+
+---
+
+## Sub-Requirements
+
+You can add detail to a requirement using sub-requirements (max 1 level of depth):
+
+```yaml
+components:
+  MAP:
+    name: Interactive Map
+    requirements:
+      1: Clicking a property opens the details panel
+      1-1: Highlights the selected property on the map
+      1-2: Sends an analytics event
+```
+
+The parent requirement (`1`) is implicitly enumerated as `-0`.
+
+---
+
+## Status Tracking
+
+Status lives outside the FRD, managed by external tooling. The recommended flow:
+
+| Status | Meaning |
+| :----- | :------ |
+| `TODO` | Not yet started |
+| `ASSIGNED` | Work in progress |
+| `IMPLEMENTED` | Code written and tested |
+| `ACCEPTED` | Verified by human QA |
+
+Happy path: `TODO` → `ASSIGNED` → `IMPLEMENTED` → `ACCEPTED`
+
+---
+
+## Handling Deprecated Requirements
+
+Instead of deleting requirements (which loses history), mark them with flags:
+
+```yaml
+requirements:
+  1: Renders properties as dots on the map
+  1-1:
+    deprecated: true
+    requirement: Shows a tutorial on first load
+    note: Removed due to negative user feedback
+  1-2:
+    skipped: true
+    requirement: Shows location search box
+    note: Blocked by geolocation service issue #1234
+  1-3:
+    replaced_by: ["PROPMAP.MAP.1-4", "PROPMAP.MAP.1-5"]
+    requirement: Fly to searched location
+    note: Replaced by better UX
+  1-4: Searching renders a results list
+  1-5: Selecting a result flies the map
+```
+
+---
+
+## Adding Notes
+
+Add context to any requirement:
+
+```yaml
+requirements:
+  # Concise syntax
+  1-1: Opens the details panel
+  1-1-note: Customer request, see #1234
+
+  # Verbose syntax
+  1-2:
+    requirement: Hides exact location for sensitive properties
+    note: Privacy requirement from security team
+```
+
+---
+
+## Constraints
+
+For requirements that span multiple components—like authorization, performance, or data privacy—use a `constraints` section:
+
+```yaml
+components:
+  TABLE:
+    requirements:
+      1: Renders all user records
+      2: Supports sorting
+
+constraints:
+  SORT:
+    requirements:
+      1: Uses keyset pagination, not offset
+      2-note: Avoids creating an index on creation_date
+      2: Creation date sort uses primary key (UUIDv7)
+      3: Updated date sort requires an index on `[:updated_at]`
+```

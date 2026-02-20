@@ -1,0 +1,35 @@
+---
+title: "Acai Agents & Skills"
+description: "Use our premade skills and agent roles, or install plugins for OpenCode, Amp, Claude Code and others."
+sidebarTitle: "Agents & Skills"
+mode: "wide"
+---
+import AccessCard from "/snippets/access-card.mdx";
+import SpecDrivenDevelopment from "/snippets/skills/spec-driven-development.mdx"
+import ReviewImplementation from "/snippets/skills/review-implementation.mdx"
+
+# Markdown Skills
+Add these SKILL.md files where your agent can find them, e.g. `.opencode/skills` or `.agents/skills`. Refer to your AI tooling docs for the correct way to expose these.
+
+<Accordion title="spec-driven-development/SKILL.md">
+  <SpecDrivenDevelopment/>
+</Accordion>
+<Accordion title="review-implementation/SKILL.md">
+  <ReviewImplementation />
+</Accordion>
+
+# Agent Roles
+The following agent roles are compatible with OpenCode's [custom agents](https://opencode.ai/docs/agents/).  
+For planning roles, we recommend using more expensive frontier models.  
+For implementation (of well-planned tasks), you can save significant token costs by using lighter-weight models (Gemini Flash / GLM etc.)
+
+<Accordion title="task-planner.md">
+  <SpecDrivenDevelopment/>
+</Accordion>
+<Accordion title="task-reviewer.md">
+  <ReviewImplementation />
+</Accordion>
+
+# Plugins
+
+<AccessCard />

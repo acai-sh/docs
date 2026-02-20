@@ -1,0 +1,65 @@
+---
+title: "Acai JSON API"
+description: "Overview of the Acai API. Create, Read, Update and Delete requirements directly."
+sidebarTitle: "API"
+---
+
+import AccessCard from "/snippets/access-card.mdx";
+
+<AccessCard />
+
+## What is the Acai API?
+
+The Acai JSON API provides direct, programmatic access to your product's specifications and implementation state. While the `acai` CLI handles local workflows and the MCP server integrates with AI assistants, the REST API enables you to build custom integrations, internal tools, or webhooks that interact seamlessly with your requirements data.
+
+**Why use it?**
+- **Custom Integrations:** Connect Acai with your existing issue trackers, CI/CD pipelines, or deployment workflows.
+- **Automated Reporting:** Programmatically query test coverage, acceptance metrics, and feature completion status to generate custom reports.
+- **Direct Manipulation:** Create, read, update, and delete feature requirements (ACIDs) on the fly from any application.
+
+## Quickstart
+
+<Steps>
+  <Step title="Get your API Key">
+    To authenticate with the API, you'll need an API key. You can generate one from your workspace settings in the Acai Dashboard.
+  </Step>
+  <Step title="Make a Request">
+    Use any standard HTTP client to interact with the API. The base URL is `https://api.acai.sh`.
+    
+    Here is an example using `curl` to fetch the status of a specific requirement:
+
+    ```bash
+    curl -X GET "https://api.acai.sh/v1/requirements/BLOCK.MENU.2" \
+      -H "Authorization: Bearer YOUR_API_KEY"
+    ```
+  </Step>
+  <Step title="Update Status Programmatically">
+    You can easily update requirement statuses from your CI/CD pipelines when tests pass or deployments succeed:
+
+    ```bash
+    curl -X PATCH "https://api.acai.sh/v1/requirements/BLOCK.MENU.2" \
+      -H "Authorization: Bearer YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{"status": "IMPLEMENTED"}'
+    ```
+  </Step>
+</Steps>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="CLI"
+    icon="terminal"
+    href="/cli"
+  >
+    Learn how to manage and sync requirements locally from your terminal.
+  </Card>
+  <Card
+    title="Dashboard"
+    icon="layout-dashboard"
+    href="/dashboard"
+  >
+    View your project's realtime operations dashboard and track acceptance coverage.
+  </Card>
+</CardGroup>

@@ -1,0 +1,74 @@
+---
+title: "Acai MCP"
+description: "The MCP server gives all your agents access to realtime implementation progress."
+sidebarTitle: "MCP"
+---
+import AccessCard from "/snippets/access-card.mdx";
+
+<AccessCard />
+
+## What is the Acai MCP Server?
+
+The Acai Model Context Protocol server bridges the gap between your AI agents and your product's specifications. While the `acai` CLI is great for scripts and manual interactions, the MCP server gives AI coding assistants (like Claude Code, Amp, OpenCode) direct, structured API access to your workspace's requirements and acceptance criteria.
+
+**Why use it?**
+- **Autonomous Context Gathering:** Agents can instantly query requirements (ACIDs) and find exactly where they are referenced in the codebase, saving tokens and time.
+- **Realtime Status Updates:** Allow your agent swarm to seamlessly update a requirement's status (e.g., from `TODO` to `IMPLEMENTED`) the moment they finish writing or reviewing code.
+- **Spec-Driven Workflows:** Agents can autonomously check project coverage and verify if all acceptance criteria for a feature are met before finalizing a pull request.
+
+## Quickstart
+
+<Steps>
+  <Step title="Install the Server">
+    Add the Acai remote MCP server URL to your AI assistant's configuration. Please refer to their docs for MCP integration.
+    
+    ```json
+    {
+      "mcpServers": {
+        "acai": {
+          "url": "https://api.acai.sh/mcp"
+        }
+      }
+    }
+    ```
+  </Step>
+  <Step title="Start Coding">
+    Once configured, your AI assistant will automatically have access to Acai tools. Try prompting your agent with:
+    - *"What requirements are left to implement for the `block-user` feature?"*
+    - *"Find all codebase references for ACID `BLOCK.MENU.2`."*
+    - *"Check the current test coverage for the feature we are working on."*
+  </Step>
+  <Step title="Automated Updates">
+    As your agent implements features and writes tests referencing your ACIDs, it can use the MCP tools to autonomously update your project's tracker, keeping humans and other agents in sync.
+  </Step>
+</Steps>
+
+## Available Agent Tools
+
+When connected, the MCP server exposes the core `acai` capabilities directly to your agents:
+
+- Fetch feature requirements, optionally filtered by status.
+- Check the implementation and test coverage percentages for specific features.
+- Locate all files and line numbers referencing a specific Requirement ID (ACID).
+- Modify the current state of a requirement as work progresses.
+
+## Next Steps
+
+To complement the MCP, which gives your agent the tools, we have also defined Roles and Skills, that teach your AI agents how to follow the Acai approach.
+
+<CardGroup cols={2}>
+  <Card
+    title="Agents & Skills"
+    icon="bot"
+    href="/agents"
+  >
+    Learn how to build and orchestrate agent swarms using Acai as the coordination layer.
+  </Card>
+  <Card
+    title="Write a Spec"
+    icon="pen-tool"
+    href="/writing-specs"
+  >
+    Learn how to write high-quality Feature Requirements Docs.
+  </Card>
+</CardGroup>
