@@ -50,7 +50,7 @@ By convention, you should organize your project like this:
 </Card>
 
 <Card title="Features are toggleable" icon="toggle-left" horizontal>
-  A good feature can be delivered on it's own, and can be toggled with a feature flag. If you can't flag it, it might be too small (a task) or too large (a product).
+  A good feature can be delivered on its own, and can be toggled with a feature flag. If you can't flag it, it might be too small (a task) or too large (a product).
 </Card>
 
 
@@ -134,8 +134,9 @@ Status lives outside the FRD, managed by external tooling. The recommended flow:
 | :----- | :------ |
 | `TODO` | Not yet started |
 | `ASSIGNED` | Work in progress |
-| `IMPLEMENTED` | Code written and tested |
+| `IMPLEMENTED` | Code written, tested, and reviewed |
 | `ACCEPTED` | Verified by human QA |
+| `INCOMPLETE` | Started and referenced in code but not passing review |
 
 Happy path: `TODO` → `ASSIGNED` → `IMPLEMENTED` → `ACCEPTED`
 

@@ -1,0 +1,61 @@
+feature:
+    name: Dashboard
+    description: |
+        A dashboard for visualizing and summarizing the status of all feature requirements in all features across your product.
+    slug: DASH
+
+components:
+    NAV:
+        name: Navigation
+        descripton: Navigation panel visible on desktop and expandable on mobile
+        requirements:
+            1: Renders a team switcher dropdown
+            2: Indicates the selected team
+            3: Renders nav items for team resources
+            3-1: Overview button
+            3-2: Products button
+            3-3: Features button
+            3-4: Requirements button
+    Overview:
+        name: Team overview
+        description: The top level resource is the team, which provides your team-at-a-glance
+        requirements:
+            1: Lists all products owned by my team
+            2: Lists all team members and their roles
+            3: Renders a team name
+            4: Renders a team settings button
+            4-1: Team settings button is disabled for now
+    PRODUCTS:
+        name: Products view
+        description: The products view is a list of all products owned by the currently selected team
+        requirements:
+            1: Renders a list of product cards, each product card renders...
+            1-1: Name of the product
+            1-2: Number of features in the product
+            1-3: On click, navigates to the features view, with the product selected
+    FEATURES:
+        name: Features view
+        description: The features view is a list of all features attached to the currently selected product
+        requirements:
+            1: Renders a product selector dropdown
+            1-1: Product selector always has a product selected
+            2: Renders a list of feature cards, each feature card renders...
+            2-1: The feature name `in-kebab-case`
+            2-2: The number of requirements attached to that feature
+    REQUIREMENTS:
+        name: Requirements view
+        description: The requirements view is a list of all requirements attached to the currently selected feature
+        requirements:
+            1: Renders a feature selector dropdown
+            2: Renders a tabular list of Requirements for the selected feature
+            2-1: An ID column `MY_FEAT.COMPONENT.1`, `MY_FEAT.COMPONENT.2-1`
+            2-2: A State column, rendering a state badge for `TODO` `ASSIGNED` `IMPLEMENTED` `ACCEPTED` `INCOMPLETE`
+            2-3: A Requirement column, rendering the requirement definition string (truncated if needed)
+            2-4: A References column, rendering an integer
+            2-5: A Tests column, rendering an integer
+            3: Clicking a requirement opens the Requirement Details drawer
+    DETAILS:
+        name: Requirement Details
+        description: Renders all details for a specific AC ID / requirement
+        requirements:
+            TODO: TODO

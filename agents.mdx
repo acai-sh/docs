@@ -19,14 +19,22 @@ Add these SKILL.md files where your agent can find them, e.g. `.opencode/skills`
 </Accordion>
 
 # Agent Roles
+Acai.sh is an important piece of the puzzle if you want to orchestrate long-running agentic tasks. The remaining  To help you, here are some role templates you can use.
+Typically, a Supervisor agent hands off
 The following agent roles are compatible with OpenCode's [custom agents](https://opencode.ai/docs/agents/).  
 For planning roles, we recommend using more expensive frontier models.  
 For implementation (of well-planned tasks), you can save significant token costs by using lighter-weight models (Gemini Flash / GLM etc.)
 
-<Accordion title="task-planner.md">
+<Accordion title="supervisor.md">
+  <ReviewImplementation />
+</Accordion>
+<Accordion title="planner.md">
   <SpecDrivenDevelopment/>
 </Accordion>
-<Accordion title="task-reviewer.md">
+<Accordion title="developer.md">
+  <ReviewImplementation />
+</Accordion>
+<Accordion title="reviewer.md">
   <ReviewImplementation />
 </Accordion>
 

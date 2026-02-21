@@ -25,7 +25,7 @@ export const AnimatedTerminal = () => {
             output: [
                 "Animated Terminal [TERM]",
                 "0 TODO, 1 INCOMPLETE, 9 IMPLEMENTED, 0 ACCEPTED",
-                "/features/animated-terminal/TERM_FRD.yaml",
+                "/features/animated-terminal/FRD.yaml",
             ],
         },
         {
@@ -47,7 +47,7 @@ export const AnimatedTerminal = () => {
             type: "tool-command",
             content: "acai list references TERM.STORY.4",
             output: [
-                "- features/animated-terminal/TERM_FRD.yaml",
+                "- features/animated-terminal/FRD.yaml",
                 "- snippets/animated-terminal.jsx",
                 "- tests/animated-terminal.test.jsx",
                 "- docs/components/terminal.md",
