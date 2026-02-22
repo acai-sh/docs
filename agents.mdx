@@ -18,13 +18,30 @@ import SupervisorAgent from "/snippets/agents/supervisor.mdx"
 
 Stop the endless prompting and hand-holding. Never lose progress or throwaway hours of work when your agent goes off the rails.
 
+Just hand off your spec and watch them work!
+
+```mermaid
+sequenceDiagram
+    participant U as You
+    participant P as Planner
+    participant A as acai.sh
+    participant D as Developer
+    participant R as Reviewer
+
+    U->>P: Here's the spec, ship it
+    P->>A: Read & assign requirements
+    P->>D: Implement requirements
+    D->>A: Mark requirements implemented
+    P->>R: Review implementation
+    R->>A: Mark requirements accepted
+    A-->>U: Feature complete
+```
+
 By creating agent roles, breaking work into chunks, and synchronizing work via acai.sh, you can;
 - Reduce inference costs (smaller context windows).
 - Choose the right model for the right work (big-brain planners, small-brain task rabbits).
 - Improve accurancy and quality of output (bite-sized tasks with clear acceptance criteria).
 - Support significantly longer-running tasks, getting more work done with less intervention.
-
-Just hand off your spec and watch them work!
 
 ## Agent Roles
 The following agent roles are compatible with OpenCode's [custom agents](https://opencode.ai/docs/agents/).  

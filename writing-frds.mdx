@@ -1,0 +1,107 @@
+---
+title: "Writing FRDs"
+description: "A quick, concise introduction to writing your first Feature Requirements Document (FRD)."
+sidebarTitle: "Writing FRDs"
+---
+
+Feature Requirements Documents (FRDs) are the foundation of spec-driven development. They allow you to specify exactly what your software should do in a standardized format.
+
+This guide provides a minimal introduction. For the complete, formal specification, please see the [FRD.yaml Specification](/frd-yaml) guide.
+
+## What is an FRD?
+
+An FRD is typically a YAML file named `FRD.yaml` that lives inside a feature folder in your repository. It defines what a specific feature does and what its acceptance criteria are.
+
+Here is a minimal example:
+
+```yaml
+feature:
+  name: user-authentication
+  slug: AUTH
+
+components:
+  LOGIN:
+    requirements:
+      1: Shows an email and password input
+      2: Includes a "Forgot Password" link
+      3: Submitting correct credentials logs the user in
+```
+
+## Basic Structure
+
+The basic FRD has two main sections:
+
+1. **`feature`**: Metadata about the feature, such as its name and unique slug.
+2. **`components`**: The different functional parts of your feature, which contain numbered requirements.
+
+### Sub-Requirements
+
+You can add detail to any requirement using sub-requirements (up to 1 level of depth):
+
+```yaml
+components:
+  MAP:
+    requirements:
+      1: Clicking a property opens the details panel
+      1-1: Highlights the selected property on the map
+      1-2: Sends an analytics event
+```
+
+### Constraints
+
+For cross-cutting concerns that apply to multiple components (like performance, authorization, or data privacy), you can use the `constraints` section instead of `components`:
+
+```yaml
+constraints:
+  SECURITY:
+    requirements:
+      1: Passwords must be hashed using bcrypt
+```
+
+### Cross-Referencing
+
+If one requirement relates to another, you can reference it using its complete ID (known as the ACID) like `FEAT.COMPONENT.1-1`:
+
+```yaml
+requirements:
+  1: Opens the [Property Details Panel](FEAT.PANEL)
+  1-1: Zooms to the property on the map, following FEAT.MAP.4
+```
+
+### Handling Deprecated Requirements
+
+Instead of deleting requirements (which loses history), you should mark them with flags so the context is preserved for the future:
+
+```yaml
+requirements:
+  1-1:
+    deprecated: true
+    requirement: Shows a tutorial on first load
+    note: Removed due to negative user feedback
+  1-2:
+    skipped: true
+    requirement: Shows location search box
+    note: Blocked by geolocation service issue #1234
+  1-3:
+    replaced_by: ["PROPMAP.MAP.1-4", "PROPMAP.MAP.1-5"]
+    requirement: Fly to searched location
+    note: Replaced by better UX
+```
+
+### Adding Notes
+
+You can also attach context notes directly to requirements:
+
+```yaml
+requirements:
+  # Concise syntax
+  1-1: Opens the details panel
+  1-1-note: Customer request, see #1234
+
+  # Verbose syntax
+  1-2:
+    requirement: Hides exact location for sensitive properties
+    note: Privacy requirement from security team
+```
+
+Ready to dive deeper? Check out the full [FRD.yaml](/frd-yaml) specification.

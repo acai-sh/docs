@@ -15,7 +15,7 @@
             },
             {
                 "group": "Guides",
-                "pages": ["writing-specs", "sdd"],
+                "pages": ["writing-frds", "spec-driven-development", "gitops"],
                 "icon": { "name": "graduation-cap" }
             },
             {

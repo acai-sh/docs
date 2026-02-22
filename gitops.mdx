@@ -1,13 +1,13 @@
 ---
-title: "Implementations & Gitops"
-description: "The toolkit for spec-driven development. Stop writing prompts, start writing specs. Ship better quality software and minimize slop."
-sidebarTitle: "Implementations & Git"
+title: "Gitops, Branches & Implementations"
+description: "Understand how spec-driven development and acai.sh help you step back from git diffs and PR reviews."
+sidebarTitle: "Gitops & Branches"
 mode: "default"
 ---
 
 Most engineering teams today orient their tools and project trackers around diffs and PRs; e.g. “*Are these changes acceptable to merge to staging*? *Did this commit address the bug ticket?*”
 
-With spec driven development, we shift the focus away from diffs and branches. Instead we shift our focus to *implementations and their acceptability*.
+With spec driven development, we shift the focus away from diffs and branches. Instead we care more about *implementations and their acceptability*.
 
 Why?
 
@@ -20,7 +20,23 @@ Why?
     B) Dev implementation
     
     C) Experimental / POC implementation
-    
+
+```mermaid
+graph LR
+    FRD["FRD.yaml (Spec)"]
+
+    FRD --> Dev["Implementation: Dev"]
+    FRD --> Prod["Implementation: Production"]
+    FRD --> POC["Implementation: POC"]
+
+    Dev --> B1["frontend/feat/screen-share"]
+    Dev --> B2["backend/feat/screen-share"]
+
+    Prod --> B3["frontend/main"]
+    Prod --> B4["backend/main"]
+
+    POC --> B5["experiment/screen-share-v2"]
+```
 
 [acai.sh](http://acai.sh) tracks gitops but is not tightly coupled to your git branching strategy. In most cases, features and implementations will very closely mirror your git branching strategy. Here are some example git workflows, from the simplest to the most complex.
 
