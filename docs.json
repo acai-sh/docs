@@ -10,7 +10,14 @@
         "groups": [
             {
                 "group": "Overview",
-                "pages": ["index", "mcp", "cli", "api", "dashboard", "agents"],
+                "pages": [
+                    "index",
+                    "acai-mcp",
+                    "cli",
+                    "api",
+                    "dashboard",
+                    "agents"
+                ],
                 "icon": { "name": "grape" }
             },
             {
