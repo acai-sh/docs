@@ -1,23 +1,8 @@
 ```md
 ---
-name: review-code
-description: Additional rules for performing code review before merging a task branch to a feature branch.
+name: plan-task
+description: Learn how to plan a task, making the most of acai.sh and spec-driven development
 ---
 
-Every feature has a spec file called `FRD.yaml`
-Specs can always be found in `features/<feature-name>`
-Each requirement (aka Acceptance Criteria) in the spec has an implicit, unique, predictable ID e.g. `SLUG.COMPONENT.1-1`. We call these ACIDs.
-
-# Requirements for Reviewers
-The runtime code should have comments that reference ACIDs.
-  - Just the ID alone, never the full feature requirement text.
-Every ACID should have at least 1 test case or describe block associated with it.
-Never alter the spec FRD.yaml without express permission.
-Never reference partial ACIDs, only the full ID e.g. `FEAT.COMPONENT.3`, so that it is always searchable.
-  
-When you are finished reviewing, output a summary, referencing relevant acceptance criteria by ACID.
-- Which requirements are now implemented?
-- Which requirements are incomplete or don't pass your review?
-
-Finally, conclude by asking the user if you can update the acai.sh status trackers to reflect your findings.
+SKILL.md UNDER CONSTRUCTION
 ```

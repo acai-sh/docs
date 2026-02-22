@@ -5,39 +5,62 @@ sidebarTitle: "Agents & Skills"
 mode: "wide"
 ---
 import AccessCard from "/snippets/access-card.mdx";
+
 import SpecDrivenDevelopment from "/snippets/skills/spec-driven-development.mdx"
-import ReviewImplementation from "/snippets/skills/review-implementation.mdx"
+import WriteCode from "/snippets/skills/write-code.mdx"
+import ReviewCode from "/snippets/skills/review-code.mdx"
+import PlanTask from "/snippets/skills/plan-task.mdx"
 
-# Markdown Skills
-Add these SKILL.md files where your agent can find them, e.g. `.opencode/skills` or `.agents/skills`. Refer to your AI tooling docs for the correct way to expose these.
+import PlannerAgent from "/snippets/agents/planner.mdx"
+import ReviewerAgent from "/snippets/agents/reviewer.mdx"
+import DeveloperAgent from "/snippets/agents/developer.mdx"
+import SupervisorAgent from "/snippets/agents/supervisor.mdx"
 
-<Accordion title="spec-driven-development/SKILL.md">
-  <SpecDrivenDevelopment/>
-</Accordion>
-<Accordion title="review-implementation/SKILL.md">
-  <ReviewImplementation />
-</Accordion>
+Stop the endless prompting and hand-holding. Never lose progress or throwaway hours of work when your agent goes off the rails.
 
-# Agent Roles
-Acai.sh is an important piece of the puzzle if you want to orchestrate long-running agentic tasks. The remaining  To help you, here are some role templates you can use.
-Typically, a Supervisor agent hands off
+By creating agent roles, breaking work into chunks, and synchronizing work via acai.sh, you can;
+- Reduce inference costs (smaller context windows).
+- Choose the right model for the right work (big-brain planners, small-brain task rabbits).
+- Improve accurancy and quality of output (bite-sized tasks with clear acceptance criteria).
+- Support significantly longer-running tasks, getting more work done with less intervention.
+
+Just hand off your spec and watch them work!
+
+## Agent Roles
 The following agent roles are compatible with OpenCode's [custom agents](https://opencode.ai/docs/agents/).  
 For planning roles, we recommend using more expensive frontier models.  
 For implementation (of well-planned tasks), you can save significant token costs by using lighter-weight models (Gemini Flash / GLM etc.)
 
 <Accordion title="supervisor.md">
-  <ReviewImplementation />
+  <SupervisorAgent />
 </Accordion>
 <Accordion title="planner.md">
-  <SpecDrivenDevelopment/>
+  <PlannerAgent/>
 </Accordion>
 <Accordion title="developer.md">
-  <ReviewImplementation />
+  <DeveloperAgent />
 </Accordion>
 <Accordion title="reviewer.md">
-  <ReviewImplementation />
+  <ReviewerAgent />
 </Accordion>
 
-# Plugins
+## Markdown Skills
+Add these SKILL.md files where your agent can find them, e.g. `.opencode/skills` or `.agents/skills`. Refer to your AI tooling docs for the correct way to expose these.
+
+<Accordion title="plan-task/SKILL.md">
+  <PlanTask />
+</Accordion>
+<Accordion title="write-code/SKILL.md">
+  <WriteCode />
+</Accordion>
+<Accordion title="review-code/SKILL.md">
+  <ReviewCode />
+</Accordion>
+<Accordion title="spec-driven-development/SKILL.md">
+  <SpecDrivenDevelopment/>
+</Accordion>
+
+
+## Plugins
 
 <AccessCard />
