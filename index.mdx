@@ -18,11 +18,9 @@ import AccessCard from "/snippets/access-card.mdx";
 
 ## What is it?
 
-Acai.sh is a set of tools to assist with software development. Acai helps humans write simple [Feature Requirement Docs](./writing-specs). Your feature requirements are automatically surfaced to agents and to your team via MCP, CLI, API and a dashboard.
+A set of open-source tools to assist with software development. Acai helps you (a human) write simple [Feature Requirement Docs](./writing-specs). Your requirements are automatically extracted and surfaced to agents via the MCP, or to your team via dashboard UI.
 
-This unlocks a spec-driven development workflow that replaces messy GitHub and Linear tickets. You, your agent swarm, and your product manager can all **share implementation progress, track acceptance coverage, track test coverage, validate changes, and more**.
-
-Acai.sh is open source.
+This unlocks a spec-driven development workflow that replaces GitHub and Linear tickets. You, your agent swarm, and your product manager can all **share implementation progress, track acceptance coverage, track test coverage, validate changes, and more**.
 
 ## Very Quick Start
 
@@ -34,11 +32,11 @@ Acai can be incrementally adopted into any existing project.
 > 🧓You:
 Time to start work on a new feature.
 Let's call it `my-new-feature`.
-Start with my notes, fill in the blanks yourself.
+Start with my notes. Fill in the blanks yourself.
   
 > 🤖Agent:
 Got it. I can see we are using `acai.sh`.
-I will draft a solid `feature.yaml` based on your notes.
+I will draft a standard `feature.yaml` based on your notes.
 
 >> `tool: acai init my-new-feature`
 ```
@@ -50,25 +48,26 @@ acai init my-new-feature
 
 </CodeGroup>
 
+Your new workflow for software development is this;
+
 <Steps>
-    <Step title="Init">
-        `acai init my-new-feature`
+    <Step title="Think & specify">
+        Define your feature by writing key requirements in `feature.yaml`
     </Step>
-    <Step title="Specify">
-        Define your next feature by writing key requirements in `feature.yaml`.
+    <Step title="Assign & implement">
+        Use our agent and subagent templates to turn your spec into code.
     </Step>
-    <Step title="Sync">
-        `acai push` syncs your spec to the datastore and tracker.
-    </Step>
-    <Step title="Implement">
-        Your agents pull relevant ACIDs and reference them in code and in tests.
+    <Step title="Validate & repeat">
+        Instead of reading massive git diffs, you focus on tracking & accepting the key requirements that matter.
     </Step>
 </Steps>
 
-<CodeGroup>
+## Simple example
 
-```yaml features/block-user/feature.yaml
-# This is an example spec, following our feature.yaml conventions
+At the top of the page you can see a fun terminal animation we created as a demo of Acai in action. Below you can see the spec, code, and tests for that animation.
+
+<CodeGroup>
+```yaml feature.yaml
 feature:
     name: Animated Terminal
     description: |
@@ -101,7 +100,7 @@ constraints:
             1: Must be a single, self-contained standalone react component (a single export, with no imports)
 ```
 
-```tsx src/animated-terminal.jsx
+```tsx animated-terminal.jsx
 // TERM.DEV.1 - No imports
 export const AnimatedTerminal = () => {
   const chatRef = useRef(null);
@@ -125,7 +124,7 @@ export const AnimatedTerminal = () => {
 };
 ```
 
-```ts test/profile.test.ts
+```ts animated-terminal.test.ts
 // TERM.DEV: Development Constraints
 describe("TERM.DEV", () => {
     it("TERM.DEV.1: self-contained standalone component (no imports)", () => {});
@@ -150,21 +149,7 @@ describe("TERM.STORY", () => {
 
 </CodeGroup>
 
-As shown above, acai gives each requirement an ID (ACID) that is unique, stable, and readable. ACIDs can be referenced anywhere, and are extracted from code by our CLI.
-
-**Core Workflow:**
-
-<Steps>
-    <Step title="Specify">
-        Define your next feature by writing key requirements in `feature.yaml`.
-    </Step>
-    <Step title="Sync">
-        `acai push` syncs your spec to the datastore and tracker.
-    </Step>
-    <Step title="Implement">
-        Your agents pull relevant ACIDs and reference them in code and in tests.
-    </Step>
-</Steps>
+As shown above, acai gives each requirement an ID that is unique, stable, and readable. These IDs can be referenced anywhere (in tests, comments, and other specs), and are extracted from code by acai.sh
 
 ## Key Features
 
