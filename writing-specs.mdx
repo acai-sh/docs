@@ -1,16 +1,14 @@
 ---
-title: "Writing FRDs"
-description: "A quick, concise introduction to writing your first Feature Requirements Document (FRD)."
-sidebarTitle: "Writing FRDs"
+title: "Feature.yaml - Feature Requirements Documents"
+description: "Write your first spec in natural language, following the simple and flexible feature.yaml standard."
+sidebarTitle: "Feature.yaml"
 ---
 
-Feature Requirements Documents (FRDs) are the foundation of spec-driven development. They allow you to specify exactly what your software should do in a standardized format.
+This guide provides a minimal introduction. For the complete, formal specification of `Feature.yaml` itself, please see the [feature.yaml Specification](/feature-yaml).
 
-This guide provides a minimal introduction. For the complete, formal specification, please see the [FRD.yaml Specification](/frd-yaml) guide.
+## What is a feature spec?
 
-## What is an FRD?
-
-An FRD is typically a YAML file named `FRD.yaml` that lives inside a feature folder in your repository. It defines what a specific feature does and what its acceptance criteria are.
+A feature spec is typically a YAML file named `feature.yaml` that lives inside a feature folder in your repository. It defines what a specific feature does and what its acceptance criteria are.
 
 Here is a minimal example:
 
@@ -29,7 +27,7 @@ components:
 
 ## Basic Structure
 
-The basic FRD has two main sections:
+The basic feature spec has two main sections:
 
 1. **`feature`**: Metadata about the feature, such as its name and unique slug.
 2. **`components`**: The different functional parts of your feature, which contain numbered requirements.
@@ -104,4 +102,4 @@ requirements:
     note: Privacy requirement from security team
 ```
 
-Ready to dive deeper? Check out the full [FRD.yaml](/frd-yaml) specification.
+Ready to dive deeper? Check out the full [feature.yaml](/frd-yaml) specification.

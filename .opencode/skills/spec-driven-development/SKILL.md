@@ -4,7 +4,7 @@ name: spec-driven-development
 description: Follow our conventions for spec-driven development with acai.sh
 ---
 
-Every feature has a spec file called `FRD.yaml`
+Every feature has a spec file called `feature.yaml`
 Specs can always be found in `features/<feature-name>`
 Each requirement in the spec has an implicit, unique, predictable ID e.g. `SLUG.COMPONENT.1-1`. We call these ACIDs.
 
@@ -14,5 +14,5 @@ You are heavily encouraged to:
 
 Important restrictions;
 * The ACID is enough, never put the full requirement text in code or comment
-* NEVER alter the spec FRD.yaml without express permission
+* NEVER alter the spec feature.yaml without express permission
 ```

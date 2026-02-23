@@ -22,12 +22,12 @@
             },
             {
                 "group": "Guides",
-                "pages": ["writing-frds", "spec-driven-development", "gitops"],
+                "pages": ["writing-specs", "spec-driven-development", "gitops"],
                 "icon": { "name": "graduation-cap" }
             },
             {
                 "group": "Reference",
-                "pages": ["frd-yaml"],
+                "pages": ["feature-yaml"],
                 "icon": { "name": "book" }
             }
         ]

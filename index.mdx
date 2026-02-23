@@ -5,11 +5,11 @@ sidebarTitle: "Introduction"
 mode: "default"
 ---
 
-import { AnimatedTerminal } from "/snippets/animated-terminal.jsx"
+import { AnimatedTerminal } from "/snippets/animated-terminal.jsx";
 import AccessCard from "/snippets/access-card.mdx";
 
 <Callout icon="grape" iconType="regular" color="purple">
-    ACAI - **A**cceptance **C**riteria for **AI**  
+    ACAI - **A**cceptance **C**riteria for **AI**
 </Callout>
 
 <AnimatedTerminal />
@@ -18,24 +18,57 @@ import AccessCard from "/snippets/access-card.mdx";
 
 ## What is it?
 
-Acai.sh is a toolkit for **Feature Requirements** and **Acceptance Criteria** written in plain language. 
+Acai.sh is a set of tools to assist with software development. Acai helps humans write simple [Feature Requirement Docs](./writing-specs). Your feature requirements are automatically surfaced to agents and to your team via MCP, CLI, API and a dashboard.
 
-Acai syncs and surfaces your requirements via CLI, MCP, and a realtime operations dashboard. This unlocks a spec-driven development workflow that replaces messy GitHub and Linear tickets. You, your agent swarm, and your product manager can all **share implementation progress, track acceptance coverage, track test coverage, validate changes, and more**.
+This unlocks a spec-driven development workflow that replaces messy GitHub and Linear tickets. You, your agent swarm, and your product manager can all **share implementation progress, track acceptance coverage, track test coverage, validate changes, and more**.
 
-It is open source. It is incrementally adoptable into any existing product (frontend, backend, CLI, SDK, API, microservice, monolith, etc.).
+Acai.sh is open source.
 
 ## Very Quick Start
 
-**Prerequisites:**  
-✅ You build and ship incrementally, feature-by-feature.  
-✅ You set a high bar for quality. You are focused on user happiness & outcomes.
-
-**Simple Example**  
+Acai can be incrementally adopted into any existing project.
 
 <CodeGroup>
 
-```yaml features/block-user/FRD.yaml
-# This is an example spec, following our FRD.yaml conventions
+```md A) Ask your agent
+> 🧓You:
+Time to start work on a new feature.
+Let's call it `my-new-feature`.
+Start with my notes, fill in the blanks yourself.
+  
+> 🤖Agent:
+Got it. I can see we are using `acai.sh`.
+I will draft a solid `feature.yaml` based on your notes.
+
+>> `tool: acai init my-new-feature`
+```
+
+```sh B) Do it yourself
+acai init my-new-feature
+# created features/my-new-feature/feature.yaml`
+```
+
+</CodeGroup>
+
+<Steps>
+    <Step title="Init">
+        `acai init my-new-feature`
+    </Step>
+    <Step title="Specify">
+        Define your next feature by writing key requirements in `feature.yaml`.
+    </Step>
+    <Step title="Sync">
+        `acai push` syncs your spec to the datastore and tracker.
+    </Step>
+    <Step title="Implement">
+        Your agents pull relevant ACIDs and reference them in code and in tests.
+    </Step>
+</Steps>
+
+<CodeGroup>
+
+```yaml features/block-user/feature.yaml
+# This is an example spec, following our feature.yaml conventions
 feature:
     name: Animated Terminal
     description: |
@@ -94,45 +127,44 @@ export const AnimatedTerminal = () => {
 
 ```ts test/profile.test.ts
 // TERM.DEV: Development Constraints
-describe('TERM.DEV', () => {
-  it('TERM.DEV.1: self-contained standalone component (no imports)', () => {})
-})
+describe("TERM.DEV", () => {
+    it("TERM.DEV.1: self-contained standalone component (no imports)", () => {});
+});
 
 // TERM.FRAME: UI Container & Scroll Logic
-describe('TERM.FRAME', () => {
-  it('TERM.FRAME.1: renders scrollable mock chat history', () => {})
-  it('TERM.FRAME.1-1: auto-scrolls ONLY if user is at bottom threshold', () => {})
-  it('TERM.FRAME.2: renders mock text input', () => {})
-  it('TERM.FRAME.2-1: ignores user typing and button interactions', () => {})
-})
+describe("TERM.FRAME", () => {
+    it("TERM.FRAME.1: renders scrollable mock chat history", () => {});
+    it("TERM.FRAME.1-1: auto-scrolls ONLY if user is at bottom threshold", () => {});
+    it("TERM.FRAME.2: renders mock text input", () => {});
+    it("TERM.FRAME.2-1: ignores user typing and button interactions", () => {});
+});
 
 // TERM.STORY: Animation Sequence
-describe('TERM.STORY', () => {
-  it('TERM.STORY.1: starts with "Continue working on..." prompt', () => {})
-  it('TERM.STORY.2: sequences tool calls and status updates', () => {})
-  it('TERM.STORY.3: ends with "mark all requirements as accepted"', () => {})
-  it('TERM.STORY.4: halts after final step without looping', () => {})
-})
+describe("TERM.STORY", () => {
+    it('TERM.STORY.1: starts with "Continue working on..." prompt', () => {});
+    it("TERM.STORY.2: sequences tool calls and status updates", () => {});
+    it('TERM.STORY.3: ends with "mark all requirements as accepted"', () => {});
+    it("TERM.STORY.4: halts after final step without looping", () => {});
+});
 ```
 
 </CodeGroup>
 
-As shown above, acai gives each requirement an ID (ACID) that is unique, stable, and readable. ACIDs can be referenced anywhere, and are extracted from code by our CLI.  
+As shown above, acai gives each requirement an ID (ACID) that is unique, stable, and readable. ACIDs can be referenced anywhere, and are extracted from code by our CLI.
 
 **Core Workflow:**
 
 <Steps>
-  <Step title="Specify">
-    Define your next feature by writing key requirements in `FRD.yaml`.
-  </Step>
-  <Step title="Sync">
-    `acai push` syncs your spec to the datastore and tracker.
-  </Step>
-  <Step title="Implement">
-    Your agents pull relevant ACIDs and reference them in code and in tests.
-  </Step>
+    <Step title="Specify">
+        Define your next feature by writing key requirements in `feature.yaml`.
+    </Step>
+    <Step title="Sync">
+        `acai push` syncs your spec to the datastore and tracker.
+    </Step>
+    <Step title="Implement">
+        Your agents pull relevant ACIDs and reference them in code and in tests.
+    </Step>
 </Steps>
-
 
 ## Key Features
 
@@ -150,10 +182,9 @@ acai list requirements block-user --json --status TODO
 
 ### Monitor progress
 
-Track progress from spec, to implementation, to agent review, to human acceptance:  
+Track progress from spec, to implementation, to agent review, to human acceptance:
 
 `TODO` -> `ASSIGNED` -> `IMPLEMENTED` -> `ACCEPTED`
-
 
 ```md Agent Code Reviewer
 I've reviewed BLOCK.MENU.2.
@@ -161,17 +192,18 @@ I see no issues with the implementation.
 Unit tests are satisfactory.
 I am marking the requirement as "IMPLEMENTED"...
 I am merging the changes to the feature branch...
-``` 
+```
 
 ### See coverage
 
 Have all requirements been implemented?  
 Do all implementations have tests?  
-Have humans accepted the implementation?  
+Have humans accepted the implementation?
 
 ```sh
 acai coverage block-user
 ```
+
 ```
 100% implemented (100 of 100)
 100% tested (100 of 100)
@@ -179,14 +211,16 @@ acai coverage block-user
 ```
 
 ### Grab context
+
 See exactly where a requirement has been implemented or tested. The time savings & token savings add up quickly.
 
 ```sh
 acai list references BLOCK.MENU.2 --json
 ```
+
 ```json
 [
-  "features/block-user/FRD.yaml:15",
+  "features/block-user/feature.yaml:15",
   "src/components/user_settings.tsx:107"
   "test/components/user_settings.test.ts:42"
 ]
@@ -199,13 +233,16 @@ acai list references BLOCK.MENU.2 --json
     LLM agents love Acai IDs. They make it easy to pull in context, find references, and trace the *intent* of an implementation or test.
   </Accordion>
 
-  <Accordion title="Stable, durable">
-    Stop losing progress when agents go off the rails. Your spec is the source of truth, even as complexity grows and requirements evolve.
-  </Accordion>
+<Accordion title="Stable, durable">
+    Stop losing progress when agents go off the rails. Your spec is the source
+    of truth, even as complexity grows and requirements evolve.
+</Accordion>
 
-  <Accordion title="Rapidly iterate">
-    Quickly prototype, try throwaway implementations, and solidify the spec before touching production code. The result is less time prompting, and a better end result.
-  </Accordion>
+<Accordion title="Rapidly iterate">
+    Quickly prototype, try throwaway implementations, and solidify the spec
+    before touching production code. The result is less time prompting, and a
+    better end result.
+</Accordion>
 
   <Accordion title="No tedium">
     In the past, this level of specification rigour was painful for human teams. Today, for an LLM with access to Acai, it's painless.
@@ -217,18 +254,10 @@ acai list references BLOCK.MENU.2 --json
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card
-    title="Agents"
-    icon="bot"
-    href="/agents"
-  >
-    Learn how to integrate Acai with your AI assistants.
-  </Card>
-  <Card
-    title="Writing Specs"
-    icon="pen-tool"
-    href="/writing-specs"
-  >
-    Learn the syntax and best practices for writing FRD files.
-  </Card>
+    <Card title="Agents" icon="bot" href="/agents">
+        Learn how to integrate Acai with your AI assistants.
+    </Card>
+    <Card title="Writing Specs" icon="pen-tool" href="/writing-specs">
+        Learn the syntax and best practices for writing feature spec files.
+    </Card>
 </CardGroup>

@@ -9,11 +9,11 @@ Spec-driven development shifts the focus from diffs and PRs to writing clear req
 ## Key Principles
 
 <Card title="Focus on intended behavior" icon="goal" horizontal>
-  Your FRD should describe what your software *should* do, not what it currently does. Think of it as a specification for the future state of your feature.
+  Your feature spec should describe what your software *should* do, not what it currently does. Think of it as a specification for the future state of your feature.
 </Card>
 
 <Card title="Keep spec and tracker separate" icon="list-todo" horizontal>
-  FRDs are for specifying requirements. Use external tooling like Acai to track implementation status, coverage, and progress.
+  Feature specs are for specifying requirements. Use external tooling like Acai to track implementation status, coverage, and progress.
 </Card>
 
 <Card title="Function, not form" icon="palette" horizontal>
@@ -28,7 +28,7 @@ Spec-driven development shifts the focus from diffs and PRs to writing clear req
 
 ## The Spec
 
-Every spec is an [FRD](/writing-frds) — a single `FRD.yaml` file that defines exactly one feature. There is a 1:1 relationship between a feature and its spec.
+Every spec is a feature spec — a single `feature.yaml` file that defines exactly one feature. There is a 1:1 relationship between a feature and its spec.
 
 Each implementation has one canonical spec at a time. When the spec changes, all implementations reference the updated version — there is no per-implementation copy of the spec.
 
@@ -48,7 +48,7 @@ Understanding these four fundamental concepts will help you structure your work 
 ```mermaid
 graph LR
     P[Product] --> F[Feature]
-    F --> S["FRD.yaml (Spec)"]
+    F --> S["feature.yaml (Spec)"]
     F --> I[Implementation]
     I -. tracks .-> B["feat/screen-share"]
 ```
@@ -91,7 +91,7 @@ To learn more about how implementations are tracked across branches and multiple
 
 ## Project Structure
 
-By default, Acai looks for FRDs in the `features` folder at the root of your project. By convention, you should organize your project like this:
+By default, Acai looks for feature specs in the `features` folder at the root of your project. By convention, you should organize your project like this:
 
 <Tree>
   <Tree.Folder name="my-project" defaultOpen>
@@ -101,7 +101,7 @@ By default, Acai looks for FRDs in the `features` folder at the root of your pro
                 <Tree.File name="desktop_wireframe.jpg" />
                 <Tree.File name="mobile_wireframe.jpg" />
               </Tree.Folder>
-            <Tree.File name="FRD.yaml" />
+              <Tree.File name="feature.yaml" />
           </Tree.Folder>
       </Tree.Folder>
   </Tree.Folder>
@@ -113,6 +113,6 @@ By default, Acai looks for FRDs in the `features` folder at the root of your pro
 
 ### Status Tracking
 
-Status and assignments live outside the FRD, and is managed by external tooling like `acai.sh`. 
+Status and assignments live outside the feature spec, and is managed by external tooling like `acai.sh`. 
 
 The happy path is typically: `TODO` → `ASSIGNED` → `IMPLEMENTED` → `ACCEPTED`.

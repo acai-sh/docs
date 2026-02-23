@@ -1,7 +1,7 @@
 feature:
-    name: frd-yaml
-    description: A formal specification for compliant FRD.yaml files. A self-referential spec-for-the-spec.
-    slug: FRD_YAML
+    name: feature-yaml
+    description: A formal specification for compliant feature.yaml files. A self-referential spec-for-the-spec.
+    slug: FEATURE_YAML
     version: 1.0.0-beta.0
 
 components:
@@ -9,9 +9,9 @@ components:
         1: The file must begin with the `feature` top-level property, containing feature metadata
         2: The file may contain a `components` top-level property, with unique component keys
         3: The file may contain a `constraints` top-level property, with unique constraint keys
-        4: A feature may not have multiple FRD files
-        5: The filename may include the feature slug e.g. `MYSLUG_FRD.yaml`
-        6: The file must be located as the direct child of a directory that matches the feature name e.g. `features/my-feature-name/FRD.yaml`
+        4: A feature may not have multiple feature files
+        5: The filename may include the feature slug e.g. `MYSLUG_feature.yaml`
+        6: The file must be located as the direct child of a directory that matches the feature name e.g. `features/my-feature-name/feature.yaml`
 
     FEATURE:
         name: Feature metadata
