@@ -1,10 +1,10 @@
 ---
 title: "Spec-driven Development"
-description: "Best practices and organizational concepts for building spec-driven software."
+description: "Best practices and key concepts for the spec-driven approach to software development."
 sidebarTitle: "Spec-driven Development"
 ---
 
-Spec-driven development shifts the focus from diffs and PRs to writing clear requirements and tracking their implementations. This document outlines best practices and how `acai.sh` organizes projects to help you ship higher-quality software.
+Spec-driven development shifts the focus from diffs and PRs. Instead, you write clear requirements and accept their implementation(s). The result is higher-quality output at a faster pace. It is essential for makign the most of agentic software development.
 
 ## Key Principles
 
@@ -28,30 +28,34 @@ Spec-driven development shifts the focus from diffs and PRs to writing clear req
 
 ## The Spec
 
-Every spec is a feature spec — a single `feature.yaml` file that defines exactly one feature. There is a 1:1 relationship between a feature and its spec.
-
-Each implementation has one canonical spec at a time. When the spec changes, all implementations reference the updated version — there is no per-implementation copy of the spec.
+In acai.sh, every spec is a feature spec — a single `feature.yaml` file that defines exactly one feature. There is a 1:1 relationship between a feature and its spec.
 
 Specs are most commonly colocated with your code in a `features/` folder, but they don't have to be. A spec can live in:
 - A separate documentation or spec repository
 - A shared monorepo that multiple teams reference
 - The cloud, managed entirely through acai.sh
 
-This flexibility matters for larger organizations where a single feature may span multiple codebases — the spec stays singular and authoritative, no matter where it lives.
+By default, Acai looks for feature specs in the `features` folder at the root of your project.
+
+<Tree>
+  <Tree.Folder name="my-project" defaultOpen>
+      <Tree.Folder name="features" defaultOpen>
+          <Tree.Folder name="animated-terminal" defaultOpen>
+              <Tree.Folder name="artifacts">
+                <Tree.File name="desktop_wireframe.jpg" />
+                <Tree.File name="mobile_wireframe.jpg" />
+              </Tree.Folder>
+              <Tree.File name="feature.yaml" />
+          </Tree.Folder>
+      </Tree.Folder>
+  </Tree.Folder>
+</Tree>
 
 ---
 
-## How acai.sh Organizes Things
+## Feature & Implementation Boundaries
 
-Understanding these four fundamental concepts will help you structure your work effectively:
-
-```mermaid
-graph LR
-    P[Product] --> F[Feature]
-    F --> S["feature.yaml (Spec)"]
-    F --> I[Implementation]
-    I -. tracks .-> B["feat/screen-share"]
-```
+Think of your product as a heirarchy. A product has many features, and a feature can have many parallel implementations.
 
 ### 1. Product
 
@@ -86,26 +90,6 @@ Good requirements are:
 An **Implementation** is a specific attempt at fulfilling a feature's requirements in a codebase. A single feature might have multiple implementations (e.g., a "Dev" implementation on a feature branch, and a "Production" implementation on the main branch).
 
 To learn more about how implementations are tracked across branches and multiple repositories, see our [GitOps Guide](/gitops).
-
----
-
-## Project Structure
-
-By default, Acai looks for feature specs in the `features` folder at the root of your project. By convention, you should organize your project like this:
-
-<Tree>
-  <Tree.Folder name="my-project" defaultOpen>
-      <Tree.Folder name="features" defaultOpen>
-          <Tree.Folder name="animated-terminal" defaultOpen>
-              <Tree.Folder name="artifacts">
-                <Tree.File name="desktop_wireframe.jpg" />
-                <Tree.File name="mobile_wireframe.jpg" />
-              </Tree.Folder>
-              <Tree.File name="feature.yaml" />
-          </Tree.Folder>
-      </Tree.Folder>
-  </Tree.Folder>
-</Tree>
 
 ---
 

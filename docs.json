@@ -22,7 +22,7 @@
             },
             {
                 "group": "Guides",
-                "pages": ["writing-specs", "spec-driven-development", "gitops"],
+                "pages": ["spec-driven-development", "writing-specs", "gitops"],
                 "icon": { "name": "graduation-cap" }
             },
             {

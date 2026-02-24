@@ -4,11 +4,15 @@ description: "Write your first spec in natural language, following the simple an
 sidebarTitle: "Feature.yaml"
 ---
 
-This guide provides a minimal introduction. For the complete, formal specification of `Feature.yaml` itself, please see the [feature.yaml Specification](/feature-yaml).
+This page is a quick intro and cheatsheet for writing spec docs following the `feature.yaml` standard.
+
+Be sure to read our [spec-driven development guide](./spec-driven-development) as well.
+
+*For the complete, formal specification of `Feature.yaml` itself, please see the [feature.yaml Spec](/feature-yaml).*
 
 ## What is a feature spec?
 
-A feature spec is typically a YAML file named `feature.yaml` that lives inside a feature folder in your repository. It defines what a specific feature does and what its acceptance criteria are.
+A feature spec defines what your feature should do and what the acceptance criteria are. It easy to read and write, but is written in YAML format so that it is also machine-readable.
 
 Here is a minimal example:
 
@@ -88,7 +92,7 @@ requirements:
 
 ### Adding Notes
 
-You can also attach context notes directly to requirements:
+You can also attach context notes directly to requirements. There are two ways to add notes.
 
 ```yaml
 requirements:
