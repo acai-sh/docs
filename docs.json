@@ -32,8 +32,44 @@
             }
         ]
     },
+    "favicon": "/favicon.svg",
     "description": "A toolkit for spec-driven development.",
     "icons": {
         "library": "lucide"
+    },
+    "seo": {
+        "metatags": {
+            "robots": "index, follow",
+            "googlebot": "index, follow",
+            "charset": "UTF-8",
+            "viewport": "width=device-width, initial-scale=1.0",
+            "description": "The toolkit for spec-driven development. Write feature specs, not prompts. Ship better software with AI agents that understand your requirements.",
+            "keywords": "spec-driven development, AI agents, MCP server, acceptance criteria, feature requirements, software development, LLM agents, agent workflow",
+            "author": "acai.sh",
+            "theme-color": "#930d7a",
+            "color-scheme": "light dark",
+            "format-detection": "telephone=no",
+            "referrer": "origin",
+            "rating": "general",
+            "language": "en",
+            "copyright": "Copyright 2025 Canvis Software LLC",
+            "distribution": "global",
+            "category": "Technology",
+            "HandheldFriendly": "True",
+            "MobileOptimized": "320",
+            "apple-mobile-web-app-capable": "yes",
+            "apple-mobile-web-app-status-bar-style": "black",
+            "apple-mobile-web-app-title": "acai.sh",
+            "application-name": "acai.sh",
+            "og:title": "acai.sh",
+            "og:type": "website",
+            "og:url": "https://acai.sh",
+            "og:description": "The toolkit for spec-driven development. Write feature specs, not prompts. Ship better software with AI agents that understand your requirements.",
+            "og:site_name": "acai.sh",
+            "og:locale": "en_US",
+            "twitter:card": "summary_large_image",
+            "twitter:title": "acai.sh — Spec-Driven Development Toolkit",
+            "twitter:description": "The toolkit for spec-driven development. Write feature specs, not prompts. Ship better software with AI agents that understand your requirements."
+        }
     }
 }
