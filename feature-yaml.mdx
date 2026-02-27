@@ -11,6 +11,7 @@ feature:
     description: A formal specification for compliant feature.yaml files. A self-referential spec-for-the-spec.
     slug: FEATURE_YAML
     version: 1.0.0-beta.0
+    product: my-product.example.com
 
 components:
     FILE:
@@ -38,6 +39,10 @@ components:
             # feature.version
             5: Feature metadata may have an optional `version` string
             5-1: If present, version must follow SemVer
+            # feature.product
+            6: Feature metadata may have an optional `product` string
+            6-1: The `product` must only contain upper- and lower-case chars, numbers, underscores, dashes, and periods e.g. `my-product.example.com`
+            6-2: The `product` may only be omitted when it is already defined in a higher-order config, e.g. in `acai.json`
 
     COMPONENT:
         name: Feature component
