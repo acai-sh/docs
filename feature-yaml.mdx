@@ -9,11 +9,10 @@ mode: "wide"
 feature:
     name: feature-yaml
     description: A formal specification for compliant feature.yaml files. A self-referential spec-for-the-spec.
-    key: FEATURE_YAML
-    version: 1.0.0-beta.1
+    version: 1.0.0-beta.2
     product: my-product.example.com
     prerequisites:
-      - Before creating a feature.yaml, create an `acai.json` which indicates to the cli where the product's root directory is.
+      - Before creating a feature.yaml, create an `acai.json` to indicate where the product root is.
 
 components:
     FILE:
@@ -32,21 +31,17 @@ components:
             # feature.name
             1: Feature metadata must have a `name` field
             1-1: The `name` must be unique within the product
-            1-2: The `name` must only contain lower-case chars, numbers, and dashes e.g. `my-feature-name`
-            # feature.key
-            2: Feature metadata must have a `key` field
-            2-1: The `key` must be unique within the product
-            2-2: The `key` must only contain UPPERCASE chars, numbers, or underscores e.g. `MY_KEY`
+            1-2: The `name` must only contain lowercase chars, numbers, dashes, and underscores e.g. `my-feature_123`
             # feature.description
-            3: Feature metadata may have an optional `description` string
+            2: Feature metadata may have an optional `description` string
             # feature.version
-            4: Feature metadata may have an optional `version` string
-            4-1: If present, version must follow SemVer
+            3: Feature metadata may have an optional `version` string
+            3-1: If present, version must follow SemVer
             # feature.product
-            5: Feature metadata may have an optional `product` string
-            6-1: The `product` must only contain upper- and lower-case chars, numbers, underscores, dashes, and periods e.g. `my-product.example.com`
-            6-2: The `product` may only be omitted when it is already defined in a higher-order config, e.g. in `acai.json`
-            7: Feature metadata may have an optional `prerequisites` list of strings, which help identify external dependencies that live outside the scope of the spec.
+            4: Feature metadata may have an optional `product` string
+            5-1: The `product` must only contain upper- and lower-case chars, numbers, underscores, dashes, and periods e.g. `my-product.example.com`
+            5-2: The `product` may only be omitted when it is already defined in a higher-order config, e.g. in `acai.json`
+            6: Feature metadata may have an optional `prerequisites` list of strings, which help identify external dependencies that live outside the scope of the spec.
 
     COMPONENT:
         name: Component groupings, defined under the top level `components` property as unique keys.
@@ -91,6 +86,5 @@ components:
         name: Requirement ID references / Acceptance Criteria IDs (ACIDs)
         requirements:
             1: A requirement can be referenced anywhere in the product via its unique ACID
-            2: ACIDs follow the format `<FEATURE_KEY>.<GROUP_KEY>.<ID>` for example `FEAT.MY_COMPONENT.1-1` or `FEAT.MY_CONSTRAINT.2`
-            2-1: FEATURE_KEY and GROUP_KEY must be uppercase alphanumeric and underscores, to match their definition in the feature.yaml file.
+            2: ACIDs follow the format `<feature-name>.<GROUP_KEY>.<ID>` for example `my-feature.MY_COMPONENT.1-1` or `my-feature.MY_CONSTRAINT.2`
 ```

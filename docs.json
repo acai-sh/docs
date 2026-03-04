@@ -1,10 +1,17 @@
 {
     "$schema": "https://mintlify.com/docs.json",
     "theme": "linden",
-    "name": "acai.sh",
+    "name": "Acai.sh",
     "colors": {
         "primary": "#930d7a",
-        "dark": "#930d7a"
+        "light": "#f765f7",
+        "dark": "#1a0416"
+    },
+    "background": {
+        "color": {
+            "dark": "#140411",
+            "light": "#fcf8fb"
+        }
     },
     "navigation": {
         "groups": [

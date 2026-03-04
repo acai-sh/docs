@@ -1,10 +1,9 @@
 feature:
-    name: Animated Terminal
+    name: animated-terminal
     description: |
         A mock terminal animation for our docs site.
         It demonstrates how an AI agent uses the acai toolkit to work on a software project.
         🥚 In the example, it is self-referentially building itself, from this very same spec.
-    slug: TERM
 
 components:
     FRAME:

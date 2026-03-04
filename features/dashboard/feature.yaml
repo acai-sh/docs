@@ -2,7 +2,6 @@ feature:
     name: Dashboard
     description: |
         A dashboard for visualizing and summarizing the status of all feature requirements in all features across your product.
-    slug: DASH
 
 components:
     NAV:
@@ -48,7 +47,7 @@ components:
         requirements:
             1: Renders a feature selector dropdown
             2: Renders a tabular list of Requirements for the selected feature
-            2-1: An ID column `MY_FEAT.COMPONENT.1`, `MY_FEAT.COMPONENT.2-1`
+            2-1: An ID column `my-feature.COMPONENT.1`, `my-feature.COMPONENT.2-1`
             2-2: A State column, rendering a state badge for `TODO` `ASSIGNED` `IMPLEMENTED` `ACCEPTED` `INCOMPLETE`
             2-3: A Requirement column, rendering the requirement definition string (truncated if needed)
             2-4: A References column, rendering an integer

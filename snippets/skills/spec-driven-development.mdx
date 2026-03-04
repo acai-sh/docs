@@ -6,7 +6,7 @@ description: Follow our conventions for spec-driven development using acai.sh an
 
 Every feature has a spec file called `feature.yaml`
 feature.yaml files can be found in `features/<feature-name>`
-Each requirement in the spec has an implicit, unique, predictable ID e.g. `SLUG.COMPONENT.1-1`. We call these ACIDs.
+Each requirement in the spec has an implicit, unique, predictable ID e.g. `my-feature.COMPONENT.1-1` or `my-feature.CONSTRAINT.2`. We call these ACIDs.
 The spec is synced to a remote server, where it is broken into individual requirements by ACID, and enriched with metadata (for progress tracking, coordination, assignment, etc.).
 
 A feature can have many implementations e.g. `Production` or `Dev`.

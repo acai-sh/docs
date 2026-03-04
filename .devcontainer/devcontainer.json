@@ -1,0 +1,7 @@
+{
+  "name": "Mintlify Dev",
+  "build": {
+    "dockerfile": "Dockerfile",
+  },
+  "remoteUser": "node",
+}

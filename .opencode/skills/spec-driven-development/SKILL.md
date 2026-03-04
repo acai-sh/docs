@@ -6,7 +6,7 @@ description: Follow our conventions for spec-driven development with acai.sh
 
 Every feature has a spec file called `feature.yaml`
 Specs can always be found in `features/<feature-name>`
-Each requirement in the spec has an implicit, unique, predictable ID e.g. `SLUG.COMPONENT.1-1`. We call these ACIDs.
+Each requirement in the spec has an implicit, unique, predictable ID e.g. `my-feature.COMPONENT.1-1`. We call these ACIDs.
 
 You are heavily encouraged to:
 * Include the ACID tag in code comments next to the relevant implementation.

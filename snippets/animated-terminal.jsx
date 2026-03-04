@@ -1,5 +1,5 @@
 export const AnimatedTerminal = () => {
-    // TERM.DEV.1
+    // animated-terminal.DEV.1
     // Mintlify provides hooks in the global scope.
     const [messages, setMessages] = useState([]);
     const [inputText, setInputText] = useState("");
@@ -9,7 +9,7 @@ export const AnimatedTerminal = () => {
     const timeoutsRef = useRef([]);
 
     const STEPS = [
-        // TERM.STORY.1
+        // animated-terminal.STORY.1
         {
             type: "user-typing",
             content: "Continue working on the `animated-terminal` feature",
@@ -35,8 +35,10 @@ export const AnimatedTerminal = () => {
         },
         {
             type: "tool-command",
-            content: "acai assign TERM.STORY.4",
-            output: ["TERM.STORY.4 status updated: INCOMPLETE -> ASSIGNED"],
+            content: "acai assign animated-terminal.STORY.4",
+            output: [
+                "animated-terminal.STORY.4 status updated: INCOMPLETE -> ASSIGNED",
+            ],
         },
         {
             type: "agent-message",
@@ -45,7 +47,7 @@ export const AnimatedTerminal = () => {
         },
         {
             type: "tool-command",
-            content: "acai list references TERM.STORY.4",
+            content: "acai list references animated-terminal.STORY.4",
             output: [
                 "- features/animated-terminal/feature.yaml",
                 "- snippets/animated-terminal.jsx",
@@ -66,9 +68,9 @@ export const AnimatedTerminal = () => {
         },
         {
             type: "tool-command",
-            content: "acai status TERM.STORY.4",
+            content: "acai status animated-terminal.STORY.4",
             output: [
-                "TERM.STORY.4: IMPLEMENTED",
+                "animated-terminal.STORY.4: IMPLEMENTED",
                 "Files: 3 changed",
                 "Tests: 2 passed (100% coverage)",
                 "Flagged for review",
@@ -77,10 +79,10 @@ export const AnimatedTerminal = () => {
         {
             type: "agent-message",
             content:
-                "🎉 Done. TERM.STORY.4 has been flagged for review. There are no remaining tasks to complete.",
+                "🎉 Done. animated-terminal.STORY.4 has been flagged for review. There are no remaining tasks to complete.",
         },
         {
-            // TERM.STORY.3
+            // animated-terminal.STORY.3
             type: "user-typing",
             content:
                 "Nice job. I'm looking at it in my browser right now and it's flawless. Go ahead and mark all requirements as accepted.",
@@ -88,10 +90,11 @@ export const AnimatedTerminal = () => {
         { type: "agent-message", content: "🦾💪" },
         {
             type: "tool-command",
-            content: "acai accept 'TERM.STORY.1..TERM.STORY.4'",
+            content:
+                "acai accept 'animated-terminal.STORY.1..animated-terminal.STORY.4'",
             output: [
                 "Accepted 4 requirements.",
-                "Status: TERM.STORY.1-4 -> ACCEPTED",
+                "Status: animated-terminal.STORY.1-4 -> ACCEPTED",
                 "Checkpoint created: TERM_FINAL",
             ],
         },
@@ -113,7 +116,7 @@ export const AnimatedTerminal = () => {
     }, []);
 
     useEffect(() => {
-        // TERM.FRAME.1-1
+        // animated-terminal.FRAME.1-1
         if (chatRef.current) {
             const { scrollTop, scrollHeight, clientHeight } = chatRef.current;
             // Use a threshold to detect if the user is "near" the bottom
@@ -126,7 +129,7 @@ export const AnimatedTerminal = () => {
     }, [messages]);
 
     useEffect(() => {
-        // TERM.STORY.4
+        // animated-terminal.STORY.4
         if (stepIndex >= STEPS.length) {
             setPhase("completed");
             return;
@@ -160,7 +163,7 @@ export const AnimatedTerminal = () => {
 
             addTimeout(typeChar, 250); // Slower start (200 -> 250ms)
         } else if (step.type === "agent-message") {
-            // TERM.STORY.2
+            // animated-terminal.STORY.2
             setPhase("agent-thinking");
             addTimeout(() => {
                 setMessages((prev) => [
@@ -327,7 +330,7 @@ export const AnimatedTerminal = () => {
                 </div>
             </div>
 
-            {/* TERM.FRAME.1 */}
+            {/* animated-terminal.FRAME.1 */}
             <div
                 ref={chatRef}
                 className="chat-history flex-grow overflow-y-auto p-4 scroll-smooth"
@@ -346,13 +349,13 @@ export const AnimatedTerminal = () => {
                 </div>
             </div>
 
-            {/* TERM.FRAME.2 */}
+            {/* animated-terminal.FRAME.2 */}
             <div className="bg-[#0d1117] p-3 border-t border-[#30363d] border-l-[3px] border-l-[#58a6ff]">
                 <div className="flex items-center font-mono">
                     <span className="text-[#e6edf3] break-all">
                         {inputText}
                     </span>
-                    {/* TERM.FRAME.2-1 */}
+                    {/* animated-terminal.FRAME.2-1 */}
                     <span className="w-2 h-4 bg-[#58a6ff] ml-1 animate-cursor" />
                 </div>
             </div>
