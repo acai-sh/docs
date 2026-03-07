@@ -1,8 +1,8 @@
 feature:
-    name: push-api
+    name: push
     description: REST API endpoint for pushing parsed specs, requirements, and/or code references to the acai server.
     version: 1.0.0
-    product: acai.sh
+    product: api
 
 components:
     REQUEST:
@@ -61,7 +61,7 @@ components:
             4: Response includes summary object with counts of created, updated, and deprecated requirements
             5: Response includes summary.refs_added and summary.refs_skipped counts
             6: Response includes summary.skipped_acids array listing ACIDs that were not found in any tracked spec
-            7: "Response format is {\"spec_id\": \"uuid|null\", \"implementation_id\": \"uuid|null\", \"summary\": {...}}"
+            7: 'Response format is {"spec_id": "uuid|null", "implementation_id": "uuid|null", "summary": {...}}'
             8: Returns 400 Bad Request for malformed JSON, missing required fields, or when spec/requirements/refs are all absent
             9: Returns 401 Unauthorized for missing or invalid token
             10: Returns 403 Forbidden if token lacks required scopes
