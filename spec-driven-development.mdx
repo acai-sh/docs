@@ -1,55 +1,66 @@
 ---
 title: "Spec-driven Development"
-description: "Best practices and key concepts for the spec-driven approach to software development."
+description: "Learn the core workflow and key principals behind spec-driven development."
 sidebarTitle: "Spec-driven Development"
 ---
 
-Spec-driven development shifts the focus from diffs and PRs. Instead, you write clear requirements and accept their implementation(s). The result is higher-quality output at a faster pace. It is essential for makign the most of agentic software development.
+**Spec-driven development balances the speed of "vibe coding" with the professional rigor required to ship high-quality, bug-free software.**
 
-## Key Principles
+In short, you should be maintaining clear, concise, and thoughtful Feature Requirements Docs, and you should iterate on them as your product grows and adapts to feedback.
 
-<Card title="Focus on intended behavior" icon="goal" horizontal>
-  Your feature spec should describe what your software *should* do, not what it currently does. Think of it as a specification for the future state of your feature.
-</Card>
+In a world where everyone is already writing lengthy prompts, SKILL.md files, AGENTS.md and more, **maintaing a structured spec requires almost zero additional effort**, and acai.sh aims to make that even easier.
 
-<Card title="Keep spec and tracker separate" icon="list-todo" horizontal>
-  Feature specs are for specifying requirements. Use external tooling like Acai to track implementation status, coverage, and progress.
-</Card>
-
-<Card title="Function, not form" icon="palette" horizontal>
-  Requirements should describe what the software *does*, not how it *looks*.
-</Card>
-
-<Card title="Features are toggleable" icon="toggle-left" horizontal>
-  A good feature can be delivered on its own, and can be toggled with a feature flag. If you can't flag it, it might be too small (a task) or too large (a product).
-</Card>
-
----
+The result is a workflow that allows you to more confidently 1-shot, re-shot, refactor and rapidy iterate without worrying about your agents losing the plot and going off the rails.
 
 ## The Spec
 
-In acai.sh, every spec is a feature spec — a single `feature.yaml` file that defines exactly one feature. There is a 1:1 relationship between a feature and its spec.
+In Acai.sh, every spec is a feature spec — a single `feature.yaml` file that defines a slice of your product.
 
-Specs are most commonly colocated with your code in a `features/` folder, but they don't have to be. A spec can live in:
-- A separate documentation or spec repository
-- A shared monorepo that multiple teams reference
-- The cloud, managed entirely through acai.sh
+This guide doesn't get into the details of how to *write* the spec itself, for that see our [feature.yaml guide](./writing-specs).
 
-By default, Acai looks for feature specs in the `features` folder at the root of your project.
+Specs are most commonly colocated with your code in a `features/` folder, but they don't have to be. Your specs can live anywhere (as long as it's a git repo).
 
 <Tree>
-  <Tree.Folder name="my-project" defaultOpen>
+  <Tree.Folder name="mapperoni.com" defaultOpen>
       <Tree.Folder name="features" defaultOpen>
-          <Tree.Folder name="animated-terminal" defaultOpen>
+          <Tree.Folder name="map-editor" defaultOpen>
               <Tree.Folder name="artifacts">
                 <Tree.File name="desktop_wireframe.jpg" />
                 <Tree.File name="mobile_wireframe.jpg" />
               </Tree.Folder>
               <Tree.File name="feature.yaml" />
           </Tree.Folder>
+          <Tree.Folder name="map-viewer">
+              <Tree.Folder name="artifacts">
+                <Tree.File name="desktop_wireframe.jpg" />
+                <Tree.File name="mobile_wireframe.jpg" />
+              </Tree.Folder>
+              <Tree.File name="feature.yaml" />
+          </Tree.Folder>
+          <Tree.Folder name="data-export">
+              <Tree.File name="feature.yaml" />
+          </Tree.Folder>
+          <Tree.Folder name="map-data-explorer">
+              <Tree.File name="feature.yaml" />
+          </Tree.Folder>
       </Tree.Folder>
   </Tree.Folder>
 </Tree>
+
+
+## Key Principles
+
+<Card title="Function, not form" icon="palette" horizontal>
+  Specs should describe what the software *does for the user*, and how it *behaves*, not how it looks.
+</Card>
+
+<Card title="Not a status tracker" icon="list-todo" horizontal>
+  Specs describe what your feature *should do*. It is not a todo list nor a notepad. To track progress and delegate work, use an acai.sh server instead.
+</Card>
+
+<Card title="Requirements vs constraints" icon="goal" horizontal>
+    A good spec focuses on the surface requirements and ignores the plumbing. Only the most important constraints are included in the spec; like authn, security or engineering must-haves.
+</Card>
 
 ---
 
@@ -63,40 +74,28 @@ A **Product** is any software system that has many features. It can be a microse
 
 ### 2. Feature
 
-A **Feature** is a clearly delineated "slice" of your software that brings value to the user. One helpful way to draw a boundary is to ask: can I enable/disable this behind a feature flag?
+A **Feature** is a clearly delineated "slice" of your software that brings value to the user. Example features might be `personal-access-tokens`, `account-settings-page`, `role-based-access` or `webhook-service`.
 
-**Example**: If you're building a video conferencing app, some features might be `"screen-share"`, `"message-reactions"`, or `"mute-speaker"`.
+Features are strongly user-oriented. They are not tightly coupled to a single UI component or code module, and can often span multiple git repositories.
 
-Features are totally separate from your system's components, modules, and views. They only care about your user and the user's end-goal.
+### 3. Implementation
 
-<Warning>
-  These are **not** features, and don't belong in your spec:
-  - Under-the-hood changes, performance and plumbing
-  - A style, layout, or color theme change (unless critical for UX acceptance)
-  - Changesets, bugfixes, status updates (or anything that quickly becomes obsolete)
-</Warning>
+As you create branches and forks of your code, you will end up with many **implementations** of the same spec.
 
-### 3. Requirement
+Within each implementation, you may regress on some requirements while progressing others. This is where the acai.sh toolkit is specially helpful for QA and acceptance testing.
 
-A **Requirement** is a specific behavior that must work for your feature to be accepted.
+In acai.sh, a single feature can have multiple implementations. For example, a "Dev" implementation on a feature branch, and a "Production" implementation on the main branch. The system gracefully handles changes to your specs or code, even across multiple git repos.
 
-Good requirements are:
-- **Functional** — they help your user *do* something
-- **Objective** — they can be verified (passed or failed)
-- **Specific** — they describe the expected behavior clearly
+To learn more about how acai and git work together, see our [GitOps Guide](/gitops).
 
-### 4. Implementation
+### 4. Status
 
-An **Implementation** is a specific attempt at fulfilling a feature's requirements in a codebase. A single feature might have multiple implementations (e.g., a "Dev" implementation on a feature branch, and a "Production" implementation on the main branch).
+As stated above, your spec is not a todo list, so status and assignments should live outside of your spec. This is where the Acai CLI & server come in. You (or your agents) can attach status updates and notes to each individual requirement in your spec. This is extremely useful for coordinating work and tracking progress.
 
-To learn more about how implementations are tracked across branches and multiple repositories, see our [GitOps Guide](/gitops).
+Instead of creating github issue tickets to flag bugs and assign work, you create annotations that are tied to the specific requirements you wrote in your spec. At a glance you can see: which requirements are not met? Which have not passed QA? What's left for feature-completion?
 
----
+## Completion vs Acceptance
 
-## Tracking and Maintenance
+Just because your AI agent says they completed the work, does not mean the work is actually in compliance with your spec.
 
-### Status Tracking
-
-Status and assignments live outside the feature spec, and is managed by external tooling like `acai.sh`. 
-
-The happy path is typically: `TODO` → `ASSIGNED` → `IMPLEMENTED` → `ACCEPTED`.
+By convention, acai treats "acceptance" as the final status. This means it has passed your human QA and review process, whatever that may be.

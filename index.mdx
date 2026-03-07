@@ -18,16 +18,24 @@ import AccessCard from "/snippets/access-card.mdx";
 
 ## What is it?
 
-A set of open-source tools to assist with software development. Acai helps you (a human) write simple [Feature Requirement Docs](./writing-specs). Your requirements are automatically extracted and surfaced to agents via the MCP, or to your team via dashboard UI.
+Open-source tools to assist with spec-driven software development.
 
-This unlocks a spec-driven development workflow that replaces GitHub and Linear tickets. You, your agent swarm, and your product manager can all **share implementation progress, track acceptance coverage, track test coverage, validate changes, and more**.
+<Steps>
+    <Step title="Specify">
+        Write requirements and acceptance criteria in `feature.yaml` spec files.
+    </Step>
+    <Step title="Push">
+        Run `acai push` to extract the specs and push them to an Acai Server.
+    </Step>
+    <Step title="Delegate">
+        Give your agents access to the server so they can implement, review, delegate, and share status updates.
+    </Step>
+</Steps>
+
+This unlocks a spec-driven development workflow that **replaces GitHub and Linear tickets**. You, your agent swarm, and your product manager can stay in-sync while rapidly iterating on specs and their implementations.
 
 <Frame caption="See implementation status at a glance">
   <img src="/images/implementation.png" alt="Example dashboard showing status updates for implementation of a feature" />
-</Frame>
-
-<Frame caption="Drill down on specific requirements, quickly find relevant tests and code.">
-  <img src="/images/requirement-details.png" alt="Example dashboard showing details about a specific feature requirement." />
 </Frame>
 
 ## Very Quick Start
@@ -36,39 +44,87 @@ Acai can be incrementally adopted into any existing project.
 
 <CodeGroup>
 
-```md A) Ask your agent
-> 🧓You:
-Time to start work on a new feature.
-Let's call it `my-new-feature`.
-Start with my notes. Fill in the blanks yourself.
+```md Ask your agent
+> You:
+We should write a spec for `my-new-feature`.
   
 > 🤖Agent:
-Got it. I can see we are using `acai.sh`.
-I will draft a standard `feature.yaml` based on your notes.
+You're absolutely right!  
+I will draft a `feature.yaml` based on your notes.
 
->> `tool: acai init my-new-feature`
+>* acai init my-new-feature
 ```
 
-```sh B) Do it yourself
+```sh Do it yourself
 acai init my-new-feature
 # created features/my-new-feature/feature.yaml`
 ```
 
 </CodeGroup>
 
-Your new workflow for software development is this;
+## Key Features
 
-<Steps>
-    <Step title="Think & specify">
-        Define your feature by writing key requirements in `feature.yaml`
-    </Step>
-    <Step title="Assign & implement">
-        Use our agent and subagent templates to turn your spec into code.
-    </Step>
-    <Step title="Validate & repeat">
-        Instead of reading massive git diffs, you focus on tracking & accepting the key requirements that matter.
-    </Step>
-</Steps>
+### Turn your spec into tickets
+
+Write simple, plain language, easy-to-read requirements. Run `acai push` and they are synced to your dashboard and surfaced to agents via API/CLI/MCP.
+
+### Empower agents
+
+Acai becomes your agent's source of truth. It empowers them to confidently self-assign, implement, review and fix work with minimal intervention.
+
+### Monitor progress
+
+Track progress from spec, to implementation, to agent review, to human acceptance:
+
+`TODO` -> `ASSIGNED` -> `IMPLEMENTED` -> `ACCEPTED`
+
+```md Agent Code Reviewer
+I've reviewed BLOCK.MENU.2.
+I see no issues with the implementation.
+Unit tests are satisfactory.
+I am marking the requirement as "IMPLEMENTED"...
+I am merging the changes to the feature branch...
+```
+
+### See coverage
+
+Have all requirements been implemented?  
+Do all implementations have tests?  
+Have humans accepted the implementation?
+
+```sh
+acai coverage block-user
+```
+
+```
+100% implemented (100 of 100)
+100% tested (100 of 100)
+20% accepted (20 of 100) ⚠️
+```
+
+### Grab context
+
+See exactly where a requirement has been implemented or tested. The time savings & token savings add up quickly.
+
+```sh
+acai list references BLOCK.MENU.2 --json
+```
+
+```json
+[
+  "features/block-user/feature.yaml:15",
+  "src/components/user_settings.tsx:107"
+  "test/components/user_settings.test.ts:42"
+]
+```
+
+### Review code more effectively
+
+Stop reading massive git diffs. Instead, use the acai dashboard and jump straight to the functions, tests or comments that reference each requirement in your spec. Start by reviewing the requirements that matter most; auth, security, performance, and user happyiness.
+
+<Frame caption="Drill down on specific requirements, quickly find relevant tests and code.">
+  <img src="/images/requirement-details.png" alt="Example dashboard showing details about a specific feature requirement." />
+</Frame>
 
 ## Simple example
 
@@ -151,63 +207,7 @@ describe("UI rendering", () => {
 
 </CodeGroup>
 
-As shown above, acai gives each requirement an ID that is unique, stable, and readable. These IDs can be referenced anywhere (in tests, comments, and other specs), and are extracted from code by Acai.
-
-## Key Features
-
-### Turn your spec into tickets
-
-Write simple, plain language, easy-to-read requirements. Run `acai push` and they are synced to your dashboard and surfaced to agents via API/CLI/MCP.
-
-### Empower agents
-
-Acai becomes your agent's source of truth. It empowers them to confidently self-assign, implement, review and fix work with minimal intervention.
-
-### Monitor progress
-
-Track progress from spec, to implementation, to agent review, to human acceptance:
-
-`TODO` -> `ASSIGNED` -> `IMPLEMENTED` -> `ACCEPTED`
-
-```md Agent Code Reviewer
-I've reviewed BLOCK.MENU.2.
-I see no issues with the implementation.
-Unit tests are satisfactory.
-I am marking the requirement as "IMPLEMENTED"...
-I am merging the changes to the feature branch...
-```
-
-### See coverage
-
-Have all requirements been implemented?  
-Do all implementations have tests?  
-Have humans accepted the implementation?
-
-```sh
-acai coverage block-user
-```
-
-```
-100% implemented (100 of 100)
-100% tested (100 of 100)
-20% accepted (20 of 100) ⚠️
-```
-
-### Grab context
-
-See exactly where a requirement has been implemented or tested. The time savings & token savings add up quickly.
-
-```sh
-acai list references BLOCK.MENU.2 --json
-```
-
-```json
-[
-  "features/block-user/feature.yaml:15",
-  "src/components/user_settings.tsx:107"
-  "test/components/user_settings.test.ts:42"
-]
-```
+As shown above, acai gives each requirement an ID that is unique, stable, and readable. These IDs can be referenced anywhere (in tests, comments, and other specs), and are extracted from code with a single command.
 
 ## Why acai?
 

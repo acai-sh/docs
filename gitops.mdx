@@ -1,25 +1,11 @@
 ---
 title: "Gitops, Branches & Implementations"
-description: "Understand how spec-driven development and acai.sh help you step back from git diffs and PR reviews."
+description: "Learn how acai.sh tracks git branches and while handling multiple repos and implementations."
 sidebarTitle: "Gitops & Branches"
 mode: "default"
 ---
 
-Most engineering teams today orient their tools and project trackers around diffs and PRs; e.g. “*Are these changes acceptable to merge to staging*? *Did this commit address the bug ticket?*”
-
-With spec driven development, we shift the focus away from diffs and branches. Instead we care more about *implementations and their acceptability*.
-
-Why?
-
-- Because a complex feature can touch many codebases and branches.
-    - `backend/feat/my-feature` + `frontend/feat/my-feature` + `db_service/123_migrate_my_tables`
-- Because the same feature can have many implementations, for example:
-    
-    A) Production implementation
-    
-    B) Dev implementation
-    
-    C) Experimental / POC implementation
+In acai.sh, we track specs (feature.yaml) and their implementations. So what happens when an feature spans many branches (frontend + backend + services), and has many implementations (production + dev + prototype)?
 
 ```mermaid
 graph LR
@@ -38,35 +24,95 @@ graph LR
     POC --> B5["experiment/screen-share-v2"]
 ```
 
-[acai.sh](http://acai.sh) tracks gitops but is not tightly coupled to your git branching strategy. In most cases, features and implementations will very closely mirror your git branching strategy. Here are some example git workflows, from the simplest to the most complex.
+And what happens if the spec itself evolves between implementations? Or if I integrate work from one branch into another?
 
-**Example 1: single-repo app (e.g. a stateless next.js app, an elixir phoenix monolith, etc.)**
+Acai.sh handles all of these situations gracefully. To learn more, pick from one of the example projects below and we will explain how acai.sh manages your specs and implementations.
 
-- Your Dev implementation tracks a feature branch: `feat/my-feature-1`
-- You and your agents review the Dev implementation and you mark all requirements as `ACCEPTED` in acai.sh
-- You merge `feat/my-feature-1` into `main`
-- [Acai.sh](http://Acai.sh) automatically promotes your Dev implementation to Production. The Dev implementation is marked as stale or deleted.
-- Your Production implementation tracks the default branch: `main` or `master`
+## Project Examples
 
-**Example 2: frontend/backend split (e.g. a frontend consuming an API, in separate repos)**
+### Simple monolith app
 
-- Your Dev implementation tracks two feature branches: `frontend/feat/my-feature-1` and `backend/feat/my-feature-1`
-- Process is similar to example 1. [Acai.sh](http://Acai.sh) detects when both branches have been merged to the default branches `frontend/main` and `backend/main`  - then auto-promotes the feature from Dev to Production in acai.sh.
+In this common setup, you have a single repo with many branches.
 
-**Example 3: multi-platform mobile apps with microservices (e.g. multiple teams operating at scale)**
+<Tree>
+  <Tree.Folder name="my-elixir-phoenix-app" defaultOpen>
+      <Tree.File name="acai.json" />
+      <Tree.Folder name="features">
+          <Tree.Folder name="map-editor">
+              <Tree.Folder name="artifacts">
+                <Tree.File name="desktop_wireframe.jpg" />
+                <Tree.File name="mobile_wireframe.jpg" />
+              </Tree.Folder>
+              <Tree.File name="feature.yaml" />
+          </Tree.Folder>
+          <Tree.Folder name="map-viewer">
+              <Tree.Folder name="artifacts">
+                <Tree.File name="desktop_wireframe.jpg" />
+                <Tree.File name="mobile_wireframe.jpg" />
+              </Tree.Folder>
+              <Tree.File name="feature.yaml" />
+          </Tree.Folder>
+          <Tree.Folder name="data-export">
+              <Tree.File name="feature.yaml" />
+          </Tree.Folder>
+          <Tree.Folder name="map-data-explorer">
+              <Tree.File name="feature.yaml" />
+          </Tree.Folder>
+      </Tree.Folder>
+      <Tree.Folder name="..." />
+  </Tree.Folder>
+</Tree>
 
-When the number of requirements grows too large or complex to track in a single spec, you can easily divide a product in two.
+Whenever you run `acai push`, the system will either create a new `Implementation`, or update an existing `Implementation`, depending on which branch you pushed from.
 
-- The microservice team creates a new [acai.sh](http://acai.sh) teamspace, creates a new product in it, and writes a standalone feature specs. The advantage is that a microservice spec only need to focus on serving the needs of it’s users (e.g. serving data to the iOS and Android teams)
-- The separate teams coordinate by sharing access to eachothers workspaces and by flagging dependencies across them.
-- Agents can ship across all repos and products while sharing [acai.sh](http://acai.sh) as a central source of truth.
+Each implementation tracks 1 branch. For example, `Production` implementation tracks `main` branch, and your `Staging` implementation tracks `dev` branch.
 
-## Understanding acceptance, status, and assignments
+When you merge work from `dev` to `main`, you can run `acai inherit` to automatically promote all your progress updates and QA notes from `Staging` to `Production`, or set up a github action to do that automatically.
 
-When a user marks a requirement as “Accepted”, they are really saying *this specific implementation passes the acceptance criteria*
+### Multi-repo projects
 
-When a requirement is marked as “Assigned”, we are really saying *someone is responsible for this requirement on this specific implementation.* If you want to have two different assignees working on the same requirement, you need to create a separate Implementation for each of them.
+In this more complex setup, you may have isolated services in their own git repos with their own git history.
 
-When an AI agent marks a requirement as “implemented”, they are really saying, *I have attempted to implement the requirement on all of the relevant branches.*
+<Tree>
+  <Tree.Folder name="nextjs-frontend-repo" defaultOpen>
+      <Tree.File name="acai.json" />
+      <Tree.Folder name="features">
+          <Tree.Folder name="map-editor">
+              <Tree.Folder name="artifacts">
+                <Tree.File name="desktop_wireframe.jpg" />
+                <Tree.File name="mobile_wireframe.jpg" />
+              </Tree.Folder>
+              <Tree.File name="feature.yaml" />
+          </Tree.Folder>
+          <Tree.Folder name="map-viewer">
+              <Tree.Folder name="artifacts">
+                <Tree.File name="desktop_wireframe.jpg" />
+                <Tree.File name="mobile_wireframe.jpg" />
+              </Tree.Folder>
+              <Tree.File name="feature.yaml" />
+          </Tree.Folder>
+          <Tree.Folder name="data-export">
+              <Tree.File name="feature.yaml" />
+          </Tree.Folder>
+          <Tree.Folder name="map-data-explorer">
+              <Tree.File name="feature.yaml" />
+          </Tree.Folder>
+      </Tree.Folder>
+      <Tree.Folder name="..." />
+  </Tree.Folder>
+  <Tree.Folder name="fastapi-backend-repo" defaultOpen>
+      <Tree.File name="acai.json" />
+      <Tree.Folder name="..." />
+  </Tree.Folder>
+  <Tree.Folder name="payments-microservice-repo" defaultOpen>
+      <Tree.File name="acai.json" />
+      <Tree.Folder name="..." />
+  </Tree.Folder>
+</Tree>
 
-When an AI agent marks a requirement as “incomplete”, they are really saying, *I made code changes related to this implementation but was not able to complete it.* More changes are needed on one or more branches before it can be marked complete.
+To handle the example setup above:
+
+1. You start by `push`ing the `feature.yaml` files, which in this case were in the `frontend` repo. Let's call this implementation "Production".
+2. You tell acai to track 2 additional branches; `backend/main` and `microservice/main`.
+3. You make changes on any of the branches, and running `push`. Any changes you made to the spec, to the requirements, or to code & test references will appear in that implementation.
+4. If you merge a downstream PR into one of those branches, you can use `acai inherit` to bring in the QA notes and statuses too!
