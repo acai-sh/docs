@@ -1,0 +1,92 @@
+feature:
+    name: tracked-branches-api
+    description: REST API endpoints for managing tracked branches - linking git branches to implementations for multi-repo setups.
+    version: 1.0.0
+    product: acai.sh
+
+components:
+    TRACK_REQUEST:
+        name: Track branch request
+        description: Link a git branch to an implementation
+        requirements:
+            1: Accepts POST to /api/v1/implementations/:implementation_id/tracks with Content-Type application/json
+            2: Requires Bearer token authentication via Authorization header
+            3: Requires impls:write scope
+            4: Request body must contain repo_uri and branch_name as non-nullable strings
+            5: Returns 404 Not Found if implementation does not exist
+            6: implementation_id in path is the UUID from implementations.id table
+
+    TRACK_BEHAVIOR:
+        name: Track branch behavior
+        description: How tracking a branch works, including override semantics
+        requirements:
+            1: Creates new tracked_branch record linking (implementation_id, repo_uri, branch_name)
+            2: If tracked_branch already exists for this (implementation_id, repo_uri, branch_name), returns 200 OK (idempotent)
+            3: If a different branch from the same repo is already tracked, deletes old tracked_branch and creates new one
+            3-1: Old tracked_branch deletion triggers stale code_references detection (last_seen_at stops updating)
+            3-note: This override behavior supports feature branch workflows where you switch from dev to feat-x
+            4: Returns tracked_branch_id in response
+            5: Emits activity_event with event_type="branch_tracked" and payload including repo_uri, branch_name, overridden_branch (if applicable)
+            6: Does not copy or modify code_references from overridden branch - they become stale via last_seen_at
+
+    LIST_TRACKED:
+        name: List tracked branches
+        description: Retrieve all branches tracked by an implementation
+        requirements:
+            1: Accepts GET to /api/v1/implementations/:implementation_id/tracks
+            2: Requires impls:read scope
+            3: Returns 404 Not Found if implementation does not exist
+            4: Returns array of tracked_branch objects with id, repo_uri, branch_name, created_at, updated_at
+            5: "Response format is {\"implementation_id\": \"uuid\", \"tracks\": [{\"id\": \"uuid\", \"repo_uri\": \"...\", \"branch_name\": \"...\", ...}]}"
+            6: implementation_id in path is the UUID from implementations.id table
+
+    UNTRACK_REQUEST:
+        name: Untrack branch request
+        description: Remove a tracked branch from an implementation
+        requirements:
+            1: Accepts DELETE to /api/v1/implementations/:implementation_id/tracks/:repo_uri
+            2: Requires impls:write scope
+            3: repo_uri in path should be URL-encoded if it contains slashes (e.g., github.com%2Facme%2Fbackend)
+            4: Returns 404 Not Found if implementation does not exist
+            5: Returns 404 Not Found if repo_uri is not tracked by this implementation
+            6: Returns 204 No Content on successful deletion
+            7: Emits activity_event with event_type="branch_untracked"
+            8: Does not delete code_references - they become stale via last_seen_at timestamp
+            9: implementation_id in path is the UUID from implementations.id table
+
+    AUTH:
+        name: Authentication and authorization
+        description: Token-based access control for tracked branches endpoints
+        requirements:
+            1: All endpoints require valid access token
+            2: Read operations require impls:read scope
+            3: Write operations require impls:write scope
+            4: Token's team_id must match implementation.team_id - returns 404 if mismatch (not 403, to avoid leaking existence)
+            5: Rejects tokens with revoked_at set or expires_at in the past
+
+    RESPONSE_FORMAT:
+        name: Response format
+        description: Standard response formats for tracked branches API
+        requirements:
+            1: "Successful POST returns 200 OK with {\"tracked_branch_id\": \"uuid\", \"overridden\": true|false, \"overridden_branch\": \"branch_name|null\"}"
+            2: "Successful GET returns 200 OK with {\"implementation_id\": \"uuid\", \"tracks\": [...]}"
+            3: Successful DELETE returns 204 No Content with empty body
+            4: Error responses include error_code string and message field
+            5: Returns 401 Unauthorized for missing or invalid token
+            6: Returns 403 Forbidden if token lacks required scopes
+
+constraints:
+    VALIDATION:
+        name: Input validation
+        requirements:
+            1: repo_uri must be a non-empty string
+            2: branch_name must be a non-empty string
+            3: Returns 400 Bad Request for malformed or missing fields
+            4: Returns 422 Unprocessable Entity for invalid characters in repo_uri or branch_name
+
+    COMPAT:
+        name: API compatibility
+        requirements:
+            1: All JSON field names use snake_case
+            2: API version is included in path (/api/v1/...)
+            3: repo_uri in URL paths must be URL-encoded

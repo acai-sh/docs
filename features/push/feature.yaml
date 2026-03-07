@@ -1,0 +1,178 @@
+feature:
+    name: push-api
+    description: REST API endpoint for pushing parsed specs, requirements, and/or code references to the acai server.
+    version: 1.0.0
+    product: acai.sh
+
+components:
+    REQUEST:
+        name: Push request payload
+        description: JSON payload accepted by POST /api/v1/push
+        requirements:
+            1: Accepts POST to /api/v1/push with Content-Type application/json
+            2: Requires Bearer token authentication via Authorization header
+            3: Request body must contain repo_uri, branch_name, and commit_hash as non-nullable strings
+            4: Request body may contain spec object with parsed feature.yaml metadata
+            5: If spec is provided, spec.parsed_feature.name is required; description, version, product are optional
+            5-1: If spec.parsed_feature.product is null or omitted, stored as null in specs table
+            6: spec.path is required when spec is provided (file path from repo root, no leading slash)
+            7: Request body may contain implementation object with optional name field
+            7-1: If implementation.name is omitted when creating a new implementation, defaults to branch_name
+            8: Request body may contain requirements array
+            8-1: Each requirement must have group_key, group_type (COMPONENT|CONSTRAINT), local_id, and definition
+            8-2: "Optional requirement fields: parent_local_id, note, is_deprecated (boolean), replaced_by (array of ACID strings)"
+            8-3: Requirements array is required when spec object is present
+            8-4: Requirements array must not be empty when spec object is present
+            8-5: Requirements array is not allowed when spec object is absent - returns 400
+            8-6: Returns 422 with error_code="duplicate_requirement" if request contains duplicate (group_key, local_id) pairs
+            9: Request body may contain code_references array
+            9-1: Each reference must have acid, path (file:line format), and is_test (boolean)
+            9-2: Path format is "relative/path/from/repo/root:line_number" e.g. "src/auth.ts:42"
+            10: At least one of (spec with requirements) or code_references must be present
+            11: Request body may contain inherit_from field with implementation name to inherit from (optional string)
+            11-1: inherit_from is only used when no tracked_branches exist for the (repo_uri, branch_name) combination
+            11-2: If branch is already tracked, inherit_from is ignored (no error)
+            11-3: inherit_from is mutually exclusive with spec object - returns 400 if both are present
+            12: Supports dry_run query parameter (?dry_run=true) to validate without persisting
+
+    INHERITANCE:
+        name: Implementation inheritance
+        description: Creating a new implementation by inheriting from an existing one (for feature branch workflows)
+        requirements:
+            1: Triggered when inherit_from is provided and no tracked_branches exist for (repo_uri, branch_name)
+            2: Looks up source implementation by name within the same team
+            3: Returns 404 Not Found if source implementation does not exist
+            4: Creates new implementation with name from request.implementation.name or defaults to branch_name
+            5: New implementation targets the same spec_id as source implementation
+            6: Creates tracked_branch linking (repo_uri, branch_name) to the new implementation
+            7: Does not copy requirement_statuses from source implementation (new impl starts fresh with null statuses)
+            7-note: Fresh statuses prevent confusion - feature branches often regress on some requirements while progressing on others
+            8: Does not copy code_references from source implementation (refs tracked independently per branch)
+            9: Emits activity_event with event_type="implementation_created" and payload.inherited_from in payload
+            10: Returns new implementation_id in response
+
+    RESPONSE:
+        name: Push response payload
+        description: JSON response returned after successful push
+        requirements:
+            1: Returns 200 OK on successful push with JSON body
+            2: Returns 200 OK with summary.dry_run=true when validation succeeds without persistence
+            3: Response includes spec_id (null for ref-only pushes) and implementation_id (null if no implementations tracking this branch and no inherit_from)
+            4: Response includes summary object with counts of created, updated, and deprecated requirements
+            5: Response includes summary.refs_added and summary.refs_skipped counts
+            6: Response includes summary.skipped_acids array listing ACIDs that were not found in any tracked spec
+            7: "Response format is {\"spec_id\": \"uuid|null\", \"implementation_id\": \"uuid|null\", \"summary\": {...}}"
+            8: Returns 400 Bad Request for malformed JSON, missing required fields, or when spec/requirements/refs are all absent
+            9: Returns 401 Unauthorized for missing or invalid token
+            10: Returns 403 Forbidden if token lacks required scopes
+            11: Error responses include error_code string and message field
+            12: Returns 404 Not Found if inherit_from references a non-existent implementation
+            13: Returns 422 Unprocessable Entity for semantic validation errors (e.g., invalid group_type, malformed ACID in replaced_by)
+
+    REF_ONLY:
+        name: Reference-only push behavior
+        description: Pushing code references without spec or requirements (common for multi-repo setups)
+        requirements:
+            1: Accepts request with repo_uri, branch_name, commit_hash, and code_references (no spec/requirements)
+            2: Discovers all tracked_branches matching (repo_uri, branch_name)
+            2-1: A single branch may be tracked by multiple implementations (e.g., Production and Dev both tracking backend/main)
+            3: For each linked implementation, resolves the associated spec and its requirements via implementations.spec_id -> requirements.spec_id join
+            4: Matches each code reference ACID to an existing requirement in the resolved specs using requirements.acid index
+            4-note: ACIDs in code are trusted as-is; typos result in skipped refs rather than errors
+            5: Skips references where ACID does not match any known requirement (dangling refs)
+            6: Updates existing code_references with last_seen_at and last_seen_commit
+            7: Creates new code_references for ACIDs that exist but have no prior reference record
+            8: Returns summary with refs_added, refs_skipped, and skipped_acids list
+            9: If no tracked branches found and inherit_from is not provided, returns implementation_id as null
+            9-1: If no tracked branches found and inherit_from is provided, creates new implementation via INHERITANCE behavior and returns its implementation_id
+
+    SPEC_PUSH:
+        name: Spec and requirement push behavior
+        description: Pushing a feature.yaml spec with requirements
+        requirements:
+            1: Creates or updates spec record using composite key (team_id, repo_uri, branch_name, path)
+            2: Creates implementation if (spec_id, name) combination does not exist
+            2-1: Implementation name is determined by request.implementation.name or defaults to branch_name
+            2-note: Multiple implementations can exist for the same spec (e.g., Production, Dev) distinguished by name
+            3: Creates or links tracked_branch record for the implementation
+            4: Upserts all requirements using composite key (spec_id, group_key, local_id)
+            4-1: Sets requirements.feature_name to spec.parsed_feature.name for all requirements in the push
+            4-2: Generates requirements.acid by concatenating feature_name, group_key, and local_id
+            5: Updates spec.last_seen_commit and spec.parsed_at timestamps
+            6: Validates that all ACIDs in replaced_by arrays exist in the spec (cross-reference integrity check)
+            6-1: Returns 422 with error_code="invalid_replaced_by" if any ACID in replaced_by does not exist in the current spec
+            6-note: This validation prevents typos and broken cross-references
+            7: Emits activity_events with batch_id grouping all events from this push
+            8: Operation is idempotent - identical payloads produce the same result
+
+    REQUIREMENT_STATUS:
+        name: Requirement status management
+        description: Per-implementation status tracking for requirements
+        requirements:
+            1: Creates or updates requirement_status for each requirement, scoped to the implementation
+            2: Sets requirement_status.last_seen_commit to the request commit_hash
+            3: Soft-deletes requirements no longer present in the push by setting is_active=false on their statuses
+            3-1: Determines "no longer present" by comparing (group_key, local_id) pairs in request.requirements against existing requirements for this spec
+            4: Does not delete requirement definitions - only marks status as inactive for this implementation
+            5: Re-activates previously soft-deleted statuses if requirement reappears in subsequent push
+
+    CODE_REFS:
+        name: Code reference tracking
+        description: Managing code references across branches and implementations
+        requirements:
+            1: Resolves branch_id by looking up tracked_branches where (implementation_id, repo_uri, branch_name) match
+            2: Updates code_references.last_seen_at and last_seen_commit for matching (requirement_id, branch_id, path)
+            3: Creates new code_references for previously unseen (requirement_id, branch_id, path) combinations
+            4: Preserves stale references for detection - does not delete refs that stopped appearing
+            5: Stale ref detection is handled by checking last_seen_at timestamp in separate queries
+
+    AUTH:
+        name: Authentication and authorization
+        description: Token-based access control for push endpoint
+        requirements:
+            1: Requires valid access token with appropriate scopes
+            2: Spec/requirements push requires specs:write scope
+            3: Code references push requires refs:write scope
+            3-1: When both spec and code_references are present, requires both specs:write AND refs:write scopes
+            4: Token's team_id determines team ownership for all created/updated resources
+            5: Rejects tokens with revoked_at set or expires_at in the past
+
+    TX:
+        name: Transaction guarantees
+        description: Database consistency and atomicity
+        requirements:
+            1: All database operations within a single push are atomic (single transaction)
+            2: On failure, entire push is rolled back - no partial state
+            3: Concurrent pushes to the same spec use last-write-wins semantics
+            4: No optimistic locking or conflict errors - commit_hash overwrites are permitted
+
+    EXECUTION_ORDER:
+        name: Execution order
+        description: Order of operations within a single push transaction
+        requirements:
+            1: "For spec push: validate request -> upsert spec -> upsert requirements -> upsert implementation -> upsert tracked_branch -> upsert requirement_statuses -> upsert code_refs -> emit events"
+            2: "For ref-only push: validate request -> discover tracked branches -> resolve requirements -> upsert code_refs -> emit events"
+            3: "For inheritance: validate request -> lookup source impl -> create impl -> create tracked_branch -> resolve requirements -> upsert code_refs -> emit events"
+
+constraints:
+    PERFORMANCE:
+        name: Performance requirements
+        requirements:
+            1: Responds within 5 seconds for payloads up to 500 requirements and 1000 code references
+            2: "Batch loads requirements and refs to minimize query count (target: under 10 queries per push)"
+
+    COMPAT:
+        name: API compatibility
+        requirements:
+            1: All JSON field names use snake_case
+            2: ACIDs must match format <feature-name>.<GROUP_KEY>.<local_id>
+            3: API version is included in path (/api/v1/push)
+            4: Backward compatibility maintained - new optional fields can be added without breaking existing clients
+
+    ERRORS:
+        name: Error handling
+        requirements:
+            1: All errors return JSON with error_code and message fields
+            2: Validation errors return 422 with specific field-level error details
+            3: Internal server errors return 500 with generic message (no stack traces or internals exposed)
+            4: Rate limiting errors return 429 with retry-after header
