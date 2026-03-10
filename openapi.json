@@ -1,0 +1,477 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Acai API",
+        "version": "1.0.0",
+        "description": "Feature specification tracking API. All endpoints require Bearer token authentication unless otherwise noted."
+    },
+    "servers": [
+        {
+            "url": "/api/v1",
+            "description": "API v1"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Push",
+            "description": "Idempotent write API for specs, refs, and states."
+        },
+        {
+            "name": "Meta",
+            "description": "API metadata."
+        }
+    ],
+    "paths": {
+        "/push": {
+            "post": {
+                "summary": "Push spec, refs, and/or states",
+                "description": "Idempotent endpoint for ingesting feature specs, code references, and implementation states. May create or update an implementation for the pushing branch. The request body must be one of: a spec push, a refs push, or a states push.",
+                "operationId": "push",
+                "tags": ["Push"],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PushRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Push accepted and processed.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PushResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error — malformed request body or invalid field values."
+                    },
+                    "401": {
+                        "description": "Missing or invalid API token."
+                    },
+                    "403": {
+                        "description": "Token lacks required scope (specs:write, refs:write, or impls:write)."
+                    },
+                    "422": {
+                        "description": "Unprocessable entity — e.g. duplicate (feature_name, feature_version) across branches, or feature name contains invalid characters."
+                    },
+                    "500": {
+                        "description": "Internal server error."
+                    }
+                }
+            }
+        },
+        "/openapi.json": {
+            "get": {
+                "summary": "OpenAPI specification",
+                "description": "Returns the OpenAPI 3.0 spec for this version of the API.",
+                "operationId": "getOpenApiSpec",
+                "security": [],
+                "tags": ["Meta"],
+                "responses": {
+                    "200": {
+                        "description": "OpenAPI specification document.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "description": "Valid, non-expired, non-revoked API token. Required scopes vary by operation: specs:write (spec push), refs:write (ref push), impls:write (implementation creation)."
+            }
+        },
+        "schemas": {
+            "PushRequest": {
+                "oneOf": [
+                    { "$ref": "#/components/schemas/SpecPushRequest" },
+                    { "$ref": "#/components/schemas/RefsPushRequest" },
+                    { "$ref": "#/components/schemas/StatesPushRequest" }
+                ]
+            },
+
+            "BasePushRequest": {
+                "type": "object",
+                "description": "Fields common to all push variants.",
+                "properties": {
+                    "repo_uri": {
+                        "type": "string",
+                        "description": "URI of the repository being pushed from.",
+                        "example": "github.com/acme/backend"
+                    },
+                    "branch_name": {
+                        "type": "string",
+                        "description": "The branch this push originates from.",
+                        "example": "feature/auth-refactor"
+                    },
+                    "commit_hash": {
+                        "type": "string",
+                        "description": "Current commit hash for traceability.",
+                        "example": "a3f1c9d"
+                    },
+                    "implementation_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "UUID of an existing implementation to associate this push with. Mutually exclusive with `implementation_name`.",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "implementation_name": {
+                        "type": "string",
+                        "description": "Name for the implementation. Used to look up an existing implementation or name a newly created one. Mutually exclusive with `implementation_id`. Defaults to the branch name when creating.",
+                        "pattern": "^[a-zA-Z0-9_-]+$",
+                        "example": "feature-auth-refactor"
+                    },
+                    "parent": {
+                        "type": "string",
+                        "format": "uuid",
+                        "nullable": true,
+                        "description": "Controls inheritance for the implementation.\n- **Omitted**: For new impls, triggers git upstream auto-detection. For existing impls, leaves parent unchanged.\n- **null**: For new impls, creates with no parent. For existing impls, removes the current parent (uninherit).\n- **UUID**: For new impls, sets that implementation as parent. For existing impls, reparents to it.",
+                        "example": "550e8400-e29b-41d4-a716-446655440001"
+                    }
+                }
+            },
+
+            "SpecPushRequest": {
+                "allOf": [
+                    { "$ref": "#/components/schemas/BasePushRequest" },
+                    {
+                        "type": "object",
+                        "required": ["spec"],
+                        "properties": {
+                            "spec": {
+                                "$ref": "#/components/schemas/SpecPayload"
+                            }
+                        }
+                    }
+                ]
+            },
+
+            "RefsPushRequest": {
+                "allOf": [
+                    { "$ref": "#/components/schemas/BasePushRequest" },
+                    {
+                        "type": "object",
+                        "required": ["refs"],
+                        "properties": {
+                            "refs": {
+                                "$ref": "#/components/schemas/AcidRefsMap"
+                            }
+                        }
+                    }
+                ]
+            },
+
+            "StatesPushRequest": {
+                "allOf": [
+                    { "$ref": "#/components/schemas/BasePushRequest" },
+                    {
+                        "type": "object",
+                        "required": ["states"],
+                        "properties": {
+                            "states": {
+                                "$ref": "#/components/schemas/AcidStatesMap"
+                            }
+                        }
+                    }
+                ]
+            },
+
+            "SpecPayload": {
+                "type": "object",
+                "description": "A parsed feature.yaml to push as a spec. Requires specs:write scope.",
+                "required": ["name", "raw_content"],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Feature name. Renaming creates a new spec; the old spec and its states are preserved.",
+                        "pattern": "^[a-zA-Z0-9_-]+$",
+                        "example": "push"
+                    },
+                    "version": {
+                        "type": "string",
+                        "description": "SemVer version from feature.yaml. The combination (feature_name, feature_version) must be unique across branches within the team.",
+                        "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$",
+                        "default": "1.0.0",
+                        "example": "1.0.0"
+                    },
+                    "raw_content": {
+                        "type": "string",
+                        "description": "Raw YAML content of the feature.yaml, stored verbatim for traceability.",
+                        "example": "feature:\n  name: push\n  version: 1.0.0\n"
+                    },
+                    "requirements": {
+                        "$ref": "#/components/schemas/RequirementsMap"
+                    }
+                }
+            },
+
+            "RequirementsMap": {
+                "type": "object",
+                "description": "Parsed requirements keyed by ACID string.",
+                "additionalProperties": {
+                    "$ref": "#/components/schemas/Requirement"
+                },
+                "example": {
+                    "PUSH.SPEC_PUSH.1": {
+                        "definition": "Push creates a new spec if no matching (repo_uri, branch_name, feature_name) exists.",
+                        "is_deprecated": false,
+                        "replaced_by": []
+                    }
+                }
+            },
+
+            "Requirement": {
+                "type": "object",
+                "description": "A single requirement definition within a spec.",
+                "required": ["definition"],
+                "properties": {
+                    "definition": {
+                        "type": "string",
+                        "description": "Human-readable requirement text.",
+                        "example": "Push creates a new spec if no matching (repo_uri, branch_name, feature_name) exists."
+                    },
+                    "note": {
+                        "type": "string",
+                        "description": "Optional supplemental note.",
+                        "example": "Applies to all push types."
+                    },
+                    "is_deprecated": {
+                        "type": "boolean",
+                        "description": "Whether this requirement has been deprecated.",
+                        "default": false
+                    },
+                    "replaced_by": {
+                        "type": "array",
+                        "description": "ACIDs that supersede this requirement.",
+                        "items": {
+                            "type": "string"
+                        },
+                        "default": []
+                    }
+                }
+            },
+
+            "AcidRefsMap": {
+                "type": "object",
+                "description": "Map of ACID strings to arrays of code reference locations. Overwrites all existing refs for the spec+implementation on push. Requires refs:write scope.",
+                "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/components/schemas/CodeRef"
+                    }
+                },
+                "example": {
+                    "PUSH.SPEC_PUSH.1": [
+                        {
+                            "repo": "github.com/acme/backend",
+                            "path": "lib/acai/push.ex",
+                            "loc": "42:5",
+                            "is_test": false
+                        }
+                    ]
+                }
+            },
+
+            "AcidStatesMap": {
+                "type": "object",
+                "description": "Map of ACID strings to state objects. Merged into existing states; existing values are overwritten on key collision.",
+                "additionalProperties": {
+                    "$ref": "#/components/schemas/AcidState"
+                },
+                "example": {
+                    "PUSH.SPEC_PUSH.1": {
+                        "status": "completed",
+                        "comment": "Implemented in PR #42"
+                    }
+                }
+            },
+
+            "CodeRef": {
+                "type": "object",
+                "description": "A single code location implementing an ACID.",
+                "required": ["repo", "path", "loc"],
+                "properties": {
+                    "repo": {
+                        "type": "string",
+                        "description": "Repository URI.",
+                        "example": "github.com/acme/backend"
+                    },
+                    "path": {
+                        "type": "string",
+                        "description": "File path relative to the repo root.",
+                        "example": "lib/acai/push.ex"
+                    },
+                    "loc": {
+                        "type": "string",
+                        "description": "Line and optional column in `line:col` format.",
+                        "pattern": "^\\d+(:\\d+)?$",
+                        "example": "42:5"
+                    },
+                    "is_test": {
+                        "type": "boolean",
+                        "description": "Whether this reference is in a test file.",
+                        "default": false
+                    }
+                }
+            },
+
+            "AcidState": {
+                "type": "object",
+                "description": "State for a single ACID requirement.",
+                "required": ["status"],
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "in_progress",
+                            "blocked",
+                            "completed",
+                            "rejected"
+                        ],
+                        "description": "Implementation status of the requirement.",
+                        "example": "completed"
+                    },
+                    "comment": {
+                        "type": "string",
+                        "description": "Optional human-readable comment.",
+                        "example": "Implemented in PR #42"
+                    },
+                    "metadata": {
+                        "type": "object",
+                        "description": "Optional arbitrary metadata.",
+                        "additionalProperties": true,
+                        "example": {
+                            "pr_url": "https://github.com/acme/backend/pull/42"
+                        }
+                    }
+                }
+            },
+
+            "PushResponse": {
+                "type": "object",
+                "required": ["data"],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/PushResult"
+                    }
+                }
+            },
+
+            "PushResult": {
+                "type": "object",
+                "description": "Result of a successful push operation.",
+                "properties": {
+                    "spec": {
+                        "$ref": "#/components/schemas/SpecPushResult"
+                    },
+                    "implementation": {
+                        "$ref": "#/components/schemas/ImplPushResult"
+                    },
+                    "refs": {
+                        "$ref": "#/components/schemas/RefsPushResult"
+                    },
+                    "states": {
+                        "$ref": "#/components/schemas/StatesPushResult"
+                    }
+                }
+            },
+
+            "SpecPushResult": {
+                "type": "object",
+                "description": "Spec upsert result. Present only if a spec was pushed.",
+                "required": ["id", "created"],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Spec ID."
+                    },
+                    "created": {
+                        "type": "boolean",
+                        "description": "True if a new spec was created; false if an existing spec was updated."
+                    }
+                }
+            },
+
+            "ImplPushResult": {
+                "type": "object",
+                "description": "Implementation result. Present only if an implementation was created or resolved.",
+                "required": ["id", "created", "inherited"],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Implementation ID."
+                    },
+                    "created": {
+                        "type": "boolean",
+                        "description": "True if a new implementation was created."
+                    },
+                    "parent_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "nullable": true,
+                        "description": "Parent implementation ID, if any."
+                    },
+                    "inherited": {
+                        "type": "boolean",
+                        "description": "True if states and refs were snapshotted from the parent during this push."
+                    }
+                }
+            },
+
+            "RefsPushResult": {
+                "type": "object",
+                "description": "Ref push result. Present only if refs were pushed.",
+                "required": ["written", "skipped_acids"],
+                "properties": {
+                    "written": {
+                        "type": "integer",
+                        "description": "Number of ACID ref entries written."
+                    },
+                    "skipped_acids": {
+                        "type": "array",
+                        "description": "ACIDs skipped due to being invalid or unknown.",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+
+            "StatesPushResult": {
+                "type": "object",
+                "description": "States push result. Present only if states were pushed.",
+                "required": ["written"],
+                "properties": {
+                    "written": {
+                        "type": "integer",
+                        "description": "Number of ACID state entries written."
+                    }
+                }
+            }
+        }
+    }
+}

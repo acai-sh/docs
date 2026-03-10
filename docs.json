@@ -14,28 +14,43 @@
         }
     },
     "navigation": {
-        "groups": [
+        "tabs": [
             {
-                "group": "Overview",
-                "pages": [
-                    "index",
-                    "acai-mcp",
-                    "cli",
-                    "api",
-                    "dashboard",
-                    "agents"
-                ],
-                "icon": { "name": "grape" }
+                "tab": "Docs",
+                "icon": { "name": "house" },
+                "groups": [
+                    {
+                        "group": "Overview",
+                        "pages": [
+                            "index",
+                            "acai-mcp",
+                            "cli",
+                            "api",
+                            "dashboard",
+                            "agents"
+                        ],
+                        "icon": { "name": "grape" }
+                    },
+                    {
+                        "group": "Guides",
+                        "pages": [
+                            "spec-driven-development",
+                            "writing-specs",
+                            "gitops"
+                        ],
+                        "icon": { "name": "graduation-cap" }
+                    },
+                    {
+                        "group": "Reference",
+                        "pages": ["feature-yaml"],
+                        "icon": { "name": "book" }
+                    }
+                ]
             },
             {
-                "group": "Guides",
-                "pages": ["spec-driven-development", "writing-specs", "gitops"],
-                "icon": { "name": "graduation-cap" }
-            },
-            {
-                "group": "Reference",
-                "pages": ["feature-yaml"],
-                "icon": { "name": "book" }
+                "tab": "API Reference",
+                "openapi": "openapi.json",
+                "icon": { "name": "file-code" }
             }
         ]
     },
