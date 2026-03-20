@@ -51,6 +51,17 @@
                 "tab": "API Reference",
                 "openapi": "openapi.json",
                 "icon": { "name": "file-code" }
+            },
+            {
+                "tab": "Blog",
+                "icon": "rss",
+                "groups": [
+                    {
+                        "group": "Blog",
+                        "icon": "rss",
+                        "pages": ["blog/index"]
+                    }
+                ]
             }
         ]
     },

@@ -1,477 +1,984 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-        "title": "Acai API",
-        "version": "1.0.0",
-        "description": "Feature specification tracking API. All endpoints require Bearer token authentication unless otherwise noted."
-    },
-    "servers": [
-        {
-            "url": "/api/v1",
-            "description": "API v1"
-        }
-    ],
-    "tags": [
-        {
-            "name": "Push",
-            "description": "Idempotent write API for specs, refs, and states."
+    "components": {
+        "responses": {},
+        "schemas": {
+            "ErrorResponse": {
+                "description": "Error response",
+                "example": {
+                    "errors": {
+                        "detail": "Validation failed: feature_name is required",
+                        "status": "UNPROCESSABLE_ENTITY"
+                    }
+                },
+                "properties": {
+                    "errors": {
+                        "properties": {
+                            "detail": {
+                                "description": "Error detail message",
+                                "type": "string"
+                            },
+                            "status": {
+                                "description": "HTTP status code as string",
+                                "type": "string"
+                            }
+                        },
+                        "required": ["detail"],
+                        "type": "object"
+                    }
+                },
+                "required": ["errors"],
+                "title": "ErrorResponse",
+                "type": "object"
+            },
+            "Feature": {
+                "description": "Feature metadata",
+                "example": {
+                    "description": "Authentication feature",
+                    "name": "auth-feature",
+                    "prerequisites": [],
+                    "product": "my-app",
+                    "version": "1.0.0"
+                },
+                "properties": {
+                    "description": {
+                        "description": "Optional feature description",
+                        "type": "string"
+                    },
+                    "name": {
+                        "description": "Feature name (alphanumeric, hyphens, underscores only)",
+                        "type": "string"
+                    },
+                    "prerequisites": {
+                        "description": "Optional list of prerequisite feature names",
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "product": {
+                        "description": "Product name",
+                        "type": "string"
+                    },
+                    "version": {
+                        "default": "1.0.0",
+                        "description": "Optional version string (SemVer)",
+                        "type": "string"
+                    }
+                },
+                "required": ["name", "product"],
+                "title": "Feature",
+                "type": "object"
+            },
+            "FeatureMeta": {
+                "description": "Metadata about the feature file location",
+                "example": {
+                    "last_seen_commit": "abc123def456",
+                    "path": "features/auth.feature.yaml"
+                },
+                "properties": {
+                    "last_seen_commit": {
+                        "description": "Commit hash when this feature was last seen",
+                        "type": "string"
+                    },
+                    "path": {
+                        "description": "Path from repo root (e.g., features/auth.feature.yaml)",
+                        "type": "string"
+                    },
+                    "raw_content": {
+                        "description": "Optional raw content of the feature file",
+                        "type": "string"
+                    }
+                },
+                "required": ["path", "last_seen_commit"],
+                "title": "FeatureMeta",
+                "type": "object"
+            },
+            "PushRequest": {
+                "description": "Request body for pushing specs, refs, and states",
+                "example": {
+                    "branch_name": "main",
+                    "commit_hash": "abc123def456",
+                    "repo_uri": "github.com/my-org/my-repo",
+                    "specs": [
+                        {
+                            "feature": {
+                                "name": "auth-feature",
+                                "product": "my-app"
+                            },
+                            "meta": {
+                                "last_seen_commit": "abc123def456",
+                                "path": "features/auth.feature.yaml"
+                            },
+                            "requirements": {
+                                "auth-feature.AUTH.1": {
+                                    "requirement": "Must validate credentials"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "properties": {
+                    "branch_name": {
+                        "description": "Git branch name being pushed (e.g., 'main', 'feature/auth-123')",
+                        "type": "string"
+                    },
+                    "commit_hash": {
+                        "description": "Full 40-character Git commit SHA that this push represents (e.g., 'abc123def456...')",
+                        "type": "string"
+                    },
+                    "parent_impl_name": {
+                        "description": "Name of a parent implementation for inheritance. When creating a new implementation, it will inherit feature states and refs from the parent (e.g., create 'feature-branch-impl' with parent 'main' to start with main's baseline). Useful for short-lived branches that extend an existing implementation",
+                        "type": "string"
+                    },
+                    "references": {
+                        "allOf": [
+                            {
+                                "description": "Code references grouped by requirement ID",
+                                "example": {
+                                    "data": {
+                                        "auth-feature.AUTH.1": [
+                                            {
+                                                "is_test": false,
+                                                "path": "lib/my_app/auth.ex:42"
+                                            }
+                                        ]
+                                    },
+                                    "override": false
+                                },
+                                "properties": {
+                                    "data": {
+                                        "additionalProperties": {
+                                            "items": {
+                                                "allOf": [
+                                                    {
+                                                        "description": "A code reference",
+                                                        "example": {
+                                                            "is_test": false,
+                                                            "path": "lib/my_app/auth.ex:42"
+                                                        },
+                                                        "properties": {
+                                                            "is_test": {
+                                                                "default": false,
+                                                                "description": "Whether this reference is a test",
+                                                                "type": "boolean"
+                                                            },
+                                                            "path": {
+                                                                "description": "Path to the code reference (e.g., lib/foo.ex:42)",
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": ["path"],
+                                                        "title": "RefObject",
+                                                        "type": "object"
+                                                    }
+                                                ]
+                                            },
+                                            "type": "array"
+                                        },
+                                        "description": "Map of requirement IDs to arrays of ref objects",
+                                        "type": "object"
+                                    },
+                                    "override": {
+                                        "default": false,
+                                        "description": "If true, replaces all existing refs instead of merging",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "required": ["data"],
+                                "title": "References",
+                                "type": "object"
+                            }
+                        ],
+                        "description": "Optional code references"
+                    },
+                    "repo_uri": {
+                        "description": "`repo_uri` should be in the format `host/owner/repo` (e.g. `github.com/my-org/my-repo`). Supported hosts for deep linking are `github.com`, `gitlab.com`, and `bitbucket.org`. Self-hosted instances may work for tracking but deep links are not guaranteed yet.",
+                        "type": "string"
+                    },
+                    "specs": {
+                        "description": "Optional list of specs to push",
+                        "items": {
+                            "allOf": [
+                                {
+                                    "description": "A single spec to push",
+                                    "example": {
+                                        "feature": {
+                                            "name": "auth-feature",
+                                            "product": "my-app",
+                                            "version": "1.0.0"
+                                        },
+                                        "meta": {
+                                            "last_seen_commit": "abc123",
+                                            "path": "features/auth.feature.yaml"
+                                        },
+                                        "requirements": {
+                                            "auth-feature.AUTH.1": {
+                                                "requirement": "Must validate credentials"
+                                            }
+                                        }
+                                    },
+                                    "properties": {
+                                        "feature": {
+                                            "allOf": [
+                                                {
+                                                    "description": "Feature metadata",
+                                                    "example": {
+                                                        "description": "Authentication feature",
+                                                        "name": "auth-feature",
+                                                        "prerequisites": [],
+                                                        "product": "my-app",
+                                                        "version": "1.0.0"
+                                                    },
+                                                    "properties": {
+                                                        "description": {
+                                                            "description": "Optional feature description",
+                                                            "type": "string"
+                                                        },
+                                                        "name": {
+                                                            "description": "Feature name (alphanumeric, hyphens, underscores only)",
+                                                            "type": "string"
+                                                        },
+                                                        "prerequisites": {
+                                                            "description": "Optional list of prerequisite feature names",
+                                                            "items": {
+                                                                "type": "string"
+                                                            },
+                                                            "type": "array"
+                                                        },
+                                                        "product": {
+                                                            "description": "Product name",
+                                                            "type": "string"
+                                                        },
+                                                        "version": {
+                                                            "default": "1.0.0",
+                                                            "description": "Optional version string (SemVer)",
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "name",
+                                                        "product"
+                                                    ],
+                                                    "title": "Feature",
+                                                    "type": "object"
+                                                }
+                                            ],
+                                            "description": "Feature metadata"
+                                        },
+                                        "meta": {
+                                            "allOf": [
+                                                {
+                                                    "description": "Metadata about the feature file location",
+                                                    "example": {
+                                                        "last_seen_commit": "abc123def456",
+                                                        "path": "features/auth.feature.yaml"
+                                                    },
+                                                    "properties": {
+                                                        "last_seen_commit": {
+                                                            "description": "Commit hash when this feature was last seen",
+                                                            "type": "string"
+                                                        },
+                                                        "path": {
+                                                            "description": "Path from repo root (e.g., features/auth.feature.yaml)",
+                                                            "type": "string"
+                                                        },
+                                                        "raw_content": {
+                                                            "description": "Optional raw content of the feature file",
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "path",
+                                                        "last_seen_commit"
+                                                    ],
+                                                    "title": "FeatureMeta",
+                                                    "type": "object"
+                                                }
+                                            ],
+                                            "description": "Feature file metadata"
+                                        },
+                                        "requirements": {
+                                            "additionalProperties": {
+                                                "allOf": [
+                                                    {
+                                                        "description": "Definition of a single requirement (acceptance criteria)",
+                                                        "example": {
+                                                            "deprecated": false,
+                                                            "requirement": "System must validate email format"
+                                                        },
+                                                        "properties": {
+                                                            "deprecated": {
+                                                                "default": false,
+                                                                "description": "Whether this requirement is deprecated",
+                                                                "type": "boolean"
+                                                            },
+                                                            "note": {
+                                                                "description": "Optional note about this requirement",
+                                                                "type": "string"
+                                                            },
+                                                            "replaced_by": {
+                                                                "description": "Optional list of requirement IDs that replace this one",
+                                                                "items": {
+                                                                    "type": "string"
+                                                                },
+                                                                "type": "array"
+                                                            },
+                                                            "requirement": {
+                                                                "description": "The requirement text describing the acceptance criteria",
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "requirement"
+                                                        ],
+                                                        "title": "RequirementDefinition",
+                                                        "type": "object"
+                                                    }
+                                                ]
+                                            },
+                                            "description": "Map of requirement IDs to requirement definitions",
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "feature",
+                                        "requirements",
+                                        "meta"
+                                    ],
+                                    "title": "SpecObject",
+                                    "type": "object"
+                                }
+                            ]
+                        },
+                        "type": "array"
+                    },
+                    "states": {
+                        "allOf": [
+                            {
+                                "description": "Implementation states grouped by requirement ID",
+                                "example": {
+                                    "data": {
+                                        "auth-feature.AUTH.1": {
+                                            "comment": "Done",
+                                            "status": "completed"
+                                        }
+                                    },
+                                    "override": false
+                                },
+                                "properties": {
+                                    "data": {
+                                        "additionalProperties": {
+                                            "allOf": [
+                                                {
+                                                    "description": "State for a single requirement",
+                                                    "example": {
+                                                        "comment": "Implemented in PR #123",
+                                                        "status": "completed"
+                                                    },
+                                                    "properties": {
+                                                        "comment": {
+                                                            "description": "Optional comment about this state",
+                                                            "type": "string"
+                                                        },
+                                                        "status": {
+                                                            "description": "Status value (nullable). Valid values: not_started, in_progress, completed, blocked, skipped",
+                                                            "enum": [
+                                                                "not_started",
+                                                                "in_progress",
+                                                                "completed",
+                                                                "blocked",
+                                                                "skipped"
+                                                            ],
+                                                            "nullable": true,
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "title": "StateObject",
+                                                    "type": "object"
+                                                }
+                                            ]
+                                        },
+                                        "description": "Map of requirement IDs to state objects",
+                                        "type": "object"
+                                    },
+                                    "override": {
+                                        "default": false,
+                                        "description": "If true, replaces all existing states instead of merging",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "required": ["data"],
+                                "title": "States",
+                                "type": "object"
+                            }
+                        ],
+                        "description": "Optional implementation states"
+                    },
+                    "target_impl_name": {
+                        "description": "Name of the implementation (deployment environment) to associate this branch with. An implementation represents a deployable instance of your product (e.g., 'production', 'staging', 'mobile-app-v2'). When provided, the branch will be linked to this implementation for tracking. If the implementation doesn't exist, it will be auto-created within the product",
+                        "type": "string"
+                    }
+                },
+                "required": ["repo_uri", "branch_name", "commit_hash"],
+                "title": "PushRequest",
+                "type": "object"
+            },
+            "PushResponse": {
+                "description": "Successful push response",
+                "example": {
+                    "data": {
+                        "branch_id": "123e4567-e89b-12d3-a456-426614174001",
+                        "implementation_id": "123e4567-e89b-12d3-a456-426614174000",
+                        "implementation_name": "production",
+                        "product_name": "my-app",
+                        "specs_created": 1,
+                        "specs_updated": 0,
+                        "warnings": []
+                    }
+                },
+                "properties": {
+                    "data": {
+                        "allOf": [
+                            {
+                                "description": "Response data for a successful push",
+                                "example": {
+                                    "branch_id": "123e4567-e89b-12d3-a456-426614174001",
+                                    "implementation_id": "123e4567-e89b-12d3-a456-426614174000",
+                                    "implementation_name": "production",
+                                    "product_name": "my-app",
+                                    "specs_created": 1,
+                                    "specs_updated": 0,
+                                    "warnings": []
+                                },
+                                "properties": {
+                                    "branch_id": {
+                                        "description": "ID of the branch",
+                                        "type": "string"
+                                    },
+                                    "implementation_id": {
+                                        "description": "Unique ID of the implementation. Null if the branch is not tracked by any implementation",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "implementation_name": {
+                                        "description": "Name of the implementation (deployment environment) this branch is linked to, such as 'production' or 'staging'. Null if the branch is not tracked by any implementation",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "product_name": {
+                                        "description": "Name of the product (null if untracked)",
+                                        "nullable": true,
+                                        "type": "string"
+                                    },
+                                    "specs_created": {
+                                        "description": "Number of specs created",
+                                        "type": "integer"
+                                    },
+                                    "specs_updated": {
+                                        "description": "Number of specs updated",
+                                        "type": "integer"
+                                    },
+                                    "warnings": {
+                                        "description": "List of non-fatal warnings",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    }
+                                },
+                                "title": "PushResponseData",
+                                "type": "object"
+                            }
+                        ],
+                        "description": "Push response data"
+                    }
+                },
+                "required": ["data"],
+                "title": "PushResponse",
+                "type": "object"
+            },
+            "PushResponseData": {
+                "description": "Response data for a successful push",
+                "example": {
+                    "branch_id": "123e4567-e89b-12d3-a456-426614174001",
+                    "implementation_id": "123e4567-e89b-12d3-a456-426614174000",
+                    "implementation_name": "production",
+                    "product_name": "my-app",
+                    "specs_created": 1,
+                    "specs_updated": 0,
+                    "warnings": []
+                },
+                "properties": {
+                    "branch_id": {
+                        "description": "ID of the branch",
+                        "type": "string"
+                    },
+                    "implementation_id": {
+                        "description": "Unique ID of the implementation. Null if the branch is not tracked by any implementation",
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "implementation_name": {
+                        "description": "Name of the implementation (deployment environment) this branch is linked to, such as 'production' or 'staging'. Null if the branch is not tracked by any implementation",
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "product_name": {
+                        "description": "Name of the product (null if untracked)",
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "specs_created": {
+                        "description": "Number of specs created",
+                        "type": "integer"
+                    },
+                    "specs_updated": {
+                        "description": "Number of specs updated",
+                        "type": "integer"
+                    },
+                    "warnings": {
+                        "description": "List of non-fatal warnings",
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    }
+                },
+                "title": "PushResponseData",
+                "type": "object"
+            },
+            "RefObject": {
+                "description": "A code reference",
+                "example": {
+                    "is_test": false,
+                    "path": "lib/my_app/auth.ex:42"
+                },
+                "properties": {
+                    "is_test": {
+                        "default": false,
+                        "description": "Whether this reference is a test",
+                        "type": "boolean"
+                    },
+                    "path": {
+                        "description": "Path to the code reference (e.g., lib/foo.ex:42)",
+                        "type": "string"
+                    }
+                },
+                "required": ["path"],
+                "title": "RefObject",
+                "type": "object"
+            },
+            "References": {
+                "description": "Code references grouped by requirement ID",
+                "example": {
+                    "data": {
+                        "auth-feature.AUTH.1": [
+                            {
+                                "is_test": false,
+                                "path": "lib/my_app/auth.ex:42"
+                            }
+                        ]
+                    },
+                    "override": false
+                },
+                "properties": {
+                    "data": {
+                        "additionalProperties": {
+                            "items": {
+                                "allOf": [
+                                    {
+                                        "description": "A code reference",
+                                        "example": {
+                                            "is_test": false,
+                                            "path": "lib/my_app/auth.ex:42"
+                                        },
+                                        "properties": {
+                                            "is_test": {
+                                                "default": false,
+                                                "description": "Whether this reference is a test",
+                                                "type": "boolean"
+                                            },
+                                            "path": {
+                                                "description": "Path to the code reference (e.g., lib/foo.ex:42)",
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": ["path"],
+                                        "title": "RefObject",
+                                        "type": "object"
+                                    }
+                                ]
+                            },
+                            "type": "array"
+                        },
+                        "description": "Map of requirement IDs to arrays of ref objects",
+                        "type": "object"
+                    },
+                    "override": {
+                        "default": false,
+                        "description": "If true, replaces all existing refs instead of merging",
+                        "type": "boolean"
+                    }
+                },
+                "required": ["data"],
+                "title": "References",
+                "type": "object"
+            },
+            "RequirementDefinition": {
+                "description": "Definition of a single requirement (acceptance criteria)",
+                "example": {
+                    "deprecated": false,
+                    "requirement": "System must validate email format"
+                },
+                "properties": {
+                    "deprecated": {
+                        "default": false,
+                        "description": "Whether this requirement is deprecated",
+                        "type": "boolean"
+                    },
+                    "note": {
+                        "description": "Optional note about this requirement",
+                        "type": "string"
+                    },
+                    "replaced_by": {
+                        "description": "Optional list of requirement IDs that replace this one",
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "requirement": {
+                        "description": "The requirement text describing the acceptance criteria",
+                        "type": "string"
+                    }
+                },
+                "required": ["requirement"],
+                "title": "RequirementDefinition",
+                "type": "object"
+            },
+            "SpecObject": {
+                "description": "A single spec to push",
+                "example": {
+                    "feature": {
+                        "name": "auth-feature",
+                        "product": "my-app",
+                        "version": "1.0.0"
+                    },
+                    "meta": {
+                        "last_seen_commit": "abc123",
+                        "path": "features/auth.feature.yaml"
+                    },
+                    "requirements": {
+                        "auth-feature.AUTH.1": {
+                            "requirement": "Must validate credentials"
+                        }
+                    }
+                },
+                "properties": {
+                    "feature": {
+                        "allOf": [
+                            {
+                                "description": "Feature metadata",
+                                "example": {
+                                    "description": "Authentication feature",
+                                    "name": "auth-feature",
+                                    "prerequisites": [],
+                                    "product": "my-app",
+                                    "version": "1.0.0"
+                                },
+                                "properties": {
+                                    "description": {
+                                        "description": "Optional feature description",
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "description": "Feature name (alphanumeric, hyphens, underscores only)",
+                                        "type": "string"
+                                    },
+                                    "prerequisites": {
+                                        "description": "Optional list of prerequisite feature names",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    },
+                                    "product": {
+                                        "description": "Product name",
+                                        "type": "string"
+                                    },
+                                    "version": {
+                                        "default": "1.0.0",
+                                        "description": "Optional version string (SemVer)",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["name", "product"],
+                                "title": "Feature",
+                                "type": "object"
+                            }
+                        ],
+                        "description": "Feature metadata"
+                    },
+                    "meta": {
+                        "allOf": [
+                            {
+                                "description": "Metadata about the feature file location",
+                                "example": {
+                                    "last_seen_commit": "abc123def456",
+                                    "path": "features/auth.feature.yaml"
+                                },
+                                "properties": {
+                                    "last_seen_commit": {
+                                        "description": "Commit hash when this feature was last seen",
+                                        "type": "string"
+                                    },
+                                    "path": {
+                                        "description": "Path from repo root (e.g., features/auth.feature.yaml)",
+                                        "type": "string"
+                                    },
+                                    "raw_content": {
+                                        "description": "Optional raw content of the feature file",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["path", "last_seen_commit"],
+                                "title": "FeatureMeta",
+                                "type": "object"
+                            }
+                        ],
+                        "description": "Feature file metadata"
+                    },
+                    "requirements": {
+                        "additionalProperties": {
+                            "allOf": [
+                                {
+                                    "description": "Definition of a single requirement (acceptance criteria)",
+                                    "example": {
+                                        "deprecated": false,
+                                        "requirement": "System must validate email format"
+                                    },
+                                    "properties": {
+                                        "deprecated": {
+                                            "default": false,
+                                            "description": "Whether this requirement is deprecated",
+                                            "type": "boolean"
+                                        },
+                                        "note": {
+                                            "description": "Optional note about this requirement",
+                                            "type": "string"
+                                        },
+                                        "replaced_by": {
+                                            "description": "Optional list of requirement IDs that replace this one",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": "array"
+                                        },
+                                        "requirement": {
+                                            "description": "The requirement text describing the acceptance criteria",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": ["requirement"],
+                                    "title": "RequirementDefinition",
+                                    "type": "object"
+                                }
+                            ]
+                        },
+                        "description": "Map of requirement IDs to requirement definitions",
+                        "type": "object"
+                    }
+                },
+                "required": ["feature", "requirements", "meta"],
+                "title": "SpecObject",
+                "type": "object"
+            },
+            "StateObject": {
+                "description": "State for a single requirement",
+                "example": {
+                    "comment": "Implemented in PR #123",
+                    "status": "completed"
+                },
+                "properties": {
+                    "comment": {
+                        "description": "Optional comment about this state",
+                        "type": "string"
+                    },
+                    "status": {
+                        "description": "Status value (nullable). Valid values: not_started, in_progress, completed, blocked, skipped",
+                        "enum": [
+                            "not_started",
+                            "in_progress",
+                            "completed",
+                            "blocked",
+                            "skipped"
+                        ],
+                        "nullable": true,
+                        "type": "string"
+                    }
+                },
+                "title": "StateObject",
+                "type": "object"
+            },
+            "States": {
+                "description": "Implementation states grouped by requirement ID",
+                "example": {
+                    "data": {
+                        "auth-feature.AUTH.1": {
+                            "comment": "Done",
+                            "status": "completed"
+                        }
+                    },
+                    "override": false
+                },
+                "properties": {
+                    "data": {
+                        "additionalProperties": {
+                            "allOf": [
+                                {
+                                    "description": "State for a single requirement",
+                                    "example": {
+                                        "comment": "Implemented in PR #123",
+                                        "status": "completed"
+                                    },
+                                    "properties": {
+                                        "comment": {
+                                            "description": "Optional comment about this state",
+                                            "type": "string"
+                                        },
+                                        "status": {
+                                            "description": "Status value (nullable). Valid values: not_started, in_progress, completed, blocked, skipped",
+                                            "enum": [
+                                                "not_started",
+                                                "in_progress",
+                                                "completed",
+                                                "blocked",
+                                                "skipped"
+                                            ],
+                                            "nullable": true,
+                                            "type": "string"
+                                        }
+                                    },
+                                    "title": "StateObject",
+                                    "type": "object"
+                                }
+                            ]
+                        },
+                        "description": "Map of requirement IDs to state objects",
+                        "type": "object"
+                    },
+                    "override": {
+                        "default": false,
+                        "description": "If true, replaces all existing states instead of merging",
+                        "type": "boolean"
+                    }
+                },
+                "required": ["data"],
+                "title": "States",
+                "type": "object"
+            }
         },
-        {
-            "name": "Meta",
-            "description": "API metadata."
+        "securitySchemes": {
+            "bearerAuth": {
+                "bearerFormat": "API token",
+                "scheme": "bearer",
+                "type": "http"
+            }
         }
-    ],
+    },
+    "info": {
+        "description": "API for managing feature specs, implementations, and states",
+        "title": "Acai API",
+        "version": "1.0.0"
+    },
+    "openapi": "3.0.0",
     "paths": {
         "/push": {
             "post": {
-                "summary": "Push spec, refs, and/or states",
-                "description": "Idempotent endpoint for ingesting feature specs, code references, and implementation states. May create or update an implementation for the pushing branch. The request body must be one of: a spec push, a refs push, or a states push.",
-                "operationId": "push",
-                "tags": ["Push"],
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
+                "callbacks": {},
+                "deprecated": false,
+                "description": "Push specs, code references, and implementation states to the server.\n\nThis endpoint handles:\n- Creating/updating specs on a branch\n- Creating code references for ACIDs\n- Setting implementation states\n- Auto-creating implementations for new branches\n- Linking branches to existing implementations\n",
+                "operationId": "PushController.create",
+                "parameters": [],
                 "requestBody": {
-                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/PushRequest"
                             }
                         }
-                    }
+                    },
+                    "description": "Push request body",
+                    "required": true
                 },
                 "responses": {
                     "200": {
-                        "description": "Push accepted and processed.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/PushResponse"
                                 }
                             }
-                        }
-                    },
-                    "400": {
-                        "description": "Validation error — malformed request body or invalid field values."
+                        },
+                        "description": "Push successful"
                     },
                     "401": {
-                        "description": "Missing or invalid API token."
-                    },
-                    "403": {
-                        "description": "Token lacks required scope (specs:write, refs:write, or impls:write)."
-                    },
-                    "422": {
-                        "description": "Unprocessable entity — e.g. duplicate (feature_name, feature_version) across branches, or feature name contains invalid characters."
-                    },
-                    "500": {
-                        "description": "Internal server error."
-                    }
-                }
-            }
-        },
-        "/openapi.json": {
-            "get": {
-                "summary": "OpenAPI specification",
-                "description": "Returns the OpenAPI 3.0 spec for this version of the API.",
-                "operationId": "getOpenApiSpec",
-                "security": [],
-                "tags": ["Meta"],
-                "responses": {
-                    "200": {
-                        "description": "OpenAPI specification document.",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
-                        }
+                        },
+                        "description": "Unauthorized - invalid or missing token"
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Forbidden - token missing required scopes"
+                    },
+                    "422": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Validation error - invalid request body"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Push from branch",
+                "tags": ["Actions"]
             }
         }
     },
-    "components": {
-        "securitySchemes": {
-            "bearerAuth": {
-                "type": "http",
-                "scheme": "bearer",
-                "description": "Valid, non-expired, non-revoked API token. Required scopes vary by operation: specs:write (spec push), refs:write (ref push), impls:write (implementation creation)."
-            }
-        },
-        "schemas": {
-            "PushRequest": {
-                "oneOf": [
-                    { "$ref": "#/components/schemas/SpecPushRequest" },
-                    { "$ref": "#/components/schemas/RefsPushRequest" },
-                    { "$ref": "#/components/schemas/StatesPushRequest" }
-                ]
-            },
-
-            "BasePushRequest": {
-                "type": "object",
-                "description": "Fields common to all push variants.",
-                "properties": {
-                    "repo_uri": {
-                        "type": "string",
-                        "description": "URI of the repository being pushed from.",
-                        "example": "github.com/acme/backend"
-                    },
-                    "branch_name": {
-                        "type": "string",
-                        "description": "The branch this push originates from.",
-                        "example": "feature/auth-refactor"
-                    },
-                    "commit_hash": {
-                        "type": "string",
-                        "description": "Current commit hash for traceability.",
-                        "example": "a3f1c9d"
-                    },
-                    "implementation_id": {
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "UUID of an existing implementation to associate this push with. Mutually exclusive with `implementation_name`.",
-                        "example": "550e8400-e29b-41d4-a716-446655440000"
-                    },
-                    "implementation_name": {
-                        "type": "string",
-                        "description": "Name for the implementation. Used to look up an existing implementation or name a newly created one. Mutually exclusive with `implementation_id`. Defaults to the branch name when creating.",
-                        "pattern": "^[a-zA-Z0-9_-]+$",
-                        "example": "feature-auth-refactor"
-                    },
-                    "parent": {
-                        "type": "string",
-                        "format": "uuid",
-                        "nullable": true,
-                        "description": "Controls inheritance for the implementation.\n- **Omitted**: For new impls, triggers git upstream auto-detection. For existing impls, leaves parent unchanged.\n- **null**: For new impls, creates with no parent. For existing impls, removes the current parent (uninherit).\n- **UUID**: For new impls, sets that implementation as parent. For existing impls, reparents to it.",
-                        "example": "550e8400-e29b-41d4-a716-446655440001"
-                    }
-                }
-            },
-
-            "SpecPushRequest": {
-                "allOf": [
-                    { "$ref": "#/components/schemas/BasePushRequest" },
-                    {
-                        "type": "object",
-                        "required": ["spec"],
-                        "properties": {
-                            "spec": {
-                                "$ref": "#/components/schemas/SpecPayload"
-                            }
-                        }
-                    }
-                ]
-            },
-
-            "RefsPushRequest": {
-                "allOf": [
-                    { "$ref": "#/components/schemas/BasePushRequest" },
-                    {
-                        "type": "object",
-                        "required": ["refs"],
-                        "properties": {
-                            "refs": {
-                                "$ref": "#/components/schemas/AcidRefsMap"
-                            }
-                        }
-                    }
-                ]
-            },
-
-            "StatesPushRequest": {
-                "allOf": [
-                    { "$ref": "#/components/schemas/BasePushRequest" },
-                    {
-                        "type": "object",
-                        "required": ["states"],
-                        "properties": {
-                            "states": {
-                                "$ref": "#/components/schemas/AcidStatesMap"
-                            }
-                        }
-                    }
-                ]
-            },
-
-            "SpecPayload": {
-                "type": "object",
-                "description": "A parsed feature.yaml to push as a spec. Requires specs:write scope.",
-                "required": ["name", "raw_content"],
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "description": "Feature name. Renaming creates a new spec; the old spec and its states are preserved.",
-                        "pattern": "^[a-zA-Z0-9_-]+$",
-                        "example": "push"
-                    },
-                    "version": {
-                        "type": "string",
-                        "description": "SemVer version from feature.yaml. The combination (feature_name, feature_version) must be unique across branches within the team.",
-                        "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$",
-                        "default": "1.0.0",
-                        "example": "1.0.0"
-                    },
-                    "raw_content": {
-                        "type": "string",
-                        "description": "Raw YAML content of the feature.yaml, stored verbatim for traceability.",
-                        "example": "feature:\n  name: push\n  version: 1.0.0\n"
-                    },
-                    "requirements": {
-                        "$ref": "#/components/schemas/RequirementsMap"
-                    }
-                }
-            },
-
-            "RequirementsMap": {
-                "type": "object",
-                "description": "Parsed requirements keyed by ACID string.",
-                "additionalProperties": {
-                    "$ref": "#/components/schemas/Requirement"
-                },
-                "example": {
-                    "PUSH.SPEC_PUSH.1": {
-                        "definition": "Push creates a new spec if no matching (repo_uri, branch_name, feature_name) exists.",
-                        "is_deprecated": false,
-                        "replaced_by": []
-                    }
-                }
-            },
-
-            "Requirement": {
-                "type": "object",
-                "description": "A single requirement definition within a spec.",
-                "required": ["definition"],
-                "properties": {
-                    "definition": {
-                        "type": "string",
-                        "description": "Human-readable requirement text.",
-                        "example": "Push creates a new spec if no matching (repo_uri, branch_name, feature_name) exists."
-                    },
-                    "note": {
-                        "type": "string",
-                        "description": "Optional supplemental note.",
-                        "example": "Applies to all push types."
-                    },
-                    "is_deprecated": {
-                        "type": "boolean",
-                        "description": "Whether this requirement has been deprecated.",
-                        "default": false
-                    },
-                    "replaced_by": {
-                        "type": "array",
-                        "description": "ACIDs that supersede this requirement.",
-                        "items": {
-                            "type": "string"
-                        },
-                        "default": []
-                    }
-                }
-            },
-
-            "AcidRefsMap": {
-                "type": "object",
-                "description": "Map of ACID strings to arrays of code reference locations. Overwrites all existing refs for the spec+implementation on push. Requires refs:write scope.",
-                "additionalProperties": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/components/schemas/CodeRef"
-                    }
-                },
-                "example": {
-                    "PUSH.SPEC_PUSH.1": [
-                        {
-                            "repo": "github.com/acme/backend",
-                            "path": "lib/acai/push.ex",
-                            "loc": "42:5",
-                            "is_test": false
-                        }
-                    ]
-                }
-            },
-
-            "AcidStatesMap": {
-                "type": "object",
-                "description": "Map of ACID strings to state objects. Merged into existing states; existing values are overwritten on key collision.",
-                "additionalProperties": {
-                    "$ref": "#/components/schemas/AcidState"
-                },
-                "example": {
-                    "PUSH.SPEC_PUSH.1": {
-                        "status": "completed",
-                        "comment": "Implemented in PR #42"
-                    }
-                }
-            },
-
-            "CodeRef": {
-                "type": "object",
-                "description": "A single code location implementing an ACID.",
-                "required": ["repo", "path", "loc"],
-                "properties": {
-                    "repo": {
-                        "type": "string",
-                        "description": "Repository URI.",
-                        "example": "github.com/acme/backend"
-                    },
-                    "path": {
-                        "type": "string",
-                        "description": "File path relative to the repo root.",
-                        "example": "lib/acai/push.ex"
-                    },
-                    "loc": {
-                        "type": "string",
-                        "description": "Line and optional column in `line:col` format.",
-                        "pattern": "^\\d+(:\\d+)?$",
-                        "example": "42:5"
-                    },
-                    "is_test": {
-                        "type": "boolean",
-                        "description": "Whether this reference is in a test file.",
-                        "default": false
-                    }
-                }
-            },
-
-            "AcidState": {
-                "type": "object",
-                "description": "State for a single ACID requirement.",
-                "required": ["status"],
-                "properties": {
-                    "status": {
-                        "type": "string",
-                        "enum": [
-                            "pending",
-                            "in_progress",
-                            "blocked",
-                            "completed",
-                            "rejected"
-                        ],
-                        "description": "Implementation status of the requirement.",
-                        "example": "completed"
-                    },
-                    "comment": {
-                        "type": "string",
-                        "description": "Optional human-readable comment.",
-                        "example": "Implemented in PR #42"
-                    },
-                    "metadata": {
-                        "type": "object",
-                        "description": "Optional arbitrary metadata.",
-                        "additionalProperties": true,
-                        "example": {
-                            "pr_url": "https://github.com/acme/backend/pull/42"
-                        }
-                    }
-                }
-            },
-
-            "PushResponse": {
-                "type": "object",
-                "required": ["data"],
-                "properties": {
-                    "data": {
-                        "$ref": "#/components/schemas/PushResult"
-                    }
-                }
-            },
-
-            "PushResult": {
-                "type": "object",
-                "description": "Result of a successful push operation.",
-                "properties": {
-                    "spec": {
-                        "$ref": "#/components/schemas/SpecPushResult"
-                    },
-                    "implementation": {
-                        "$ref": "#/components/schemas/ImplPushResult"
-                    },
-                    "refs": {
-                        "$ref": "#/components/schemas/RefsPushResult"
-                    },
-                    "states": {
-                        "$ref": "#/components/schemas/StatesPushResult"
-                    }
-                }
-            },
-
-            "SpecPushResult": {
-                "type": "object",
-                "description": "Spec upsert result. Present only if a spec was pushed.",
-                "required": ["id", "created"],
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "Spec ID."
-                    },
-                    "created": {
-                        "type": "boolean",
-                        "description": "True if a new spec was created; false if an existing spec was updated."
-                    }
-                }
-            },
-
-            "ImplPushResult": {
-                "type": "object",
-                "description": "Implementation result. Present only if an implementation was created or resolved.",
-                "required": ["id", "created", "inherited"],
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "Implementation ID."
-                    },
-                    "created": {
-                        "type": "boolean",
-                        "description": "True if a new implementation was created."
-                    },
-                    "parent_id": {
-                        "type": "string",
-                        "format": "uuid",
-                        "nullable": true,
-                        "description": "Parent implementation ID, if any."
-                    },
-                    "inherited": {
-                        "type": "boolean",
-                        "description": "True if states and refs were snapshotted from the parent during this push."
-                    }
-                }
-            },
-
-            "RefsPushResult": {
-                "type": "object",
-                "description": "Ref push result. Present only if refs were pushed.",
-                "required": ["written", "skipped_acids"],
-                "properties": {
-                    "written": {
-                        "type": "integer",
-                        "description": "Number of ACID ref entries written."
-                    },
-                    "skipped_acids": {
-                        "type": "array",
-                        "description": "ACIDs skipped due to being invalid or unknown.",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-
-            "StatesPushResult": {
-                "type": "object",
-                "description": "States push result. Present only if states were pushed.",
-                "required": ["written"],
-                "properties": {
-                    "written": {
-                        "type": "integer",
-                        "description": "Number of ACID state entries written."
-                    }
-                }
-            }
+    "security": [
+        {
+            "bearerAuth": []
         }
-    }
+    ],
+    "servers": [
+        {
+            "description": "API v1",
+            "url": "http://localhost:4000/api/v1",
+            "variables": {}
+        }
+    ],
+    "tags": [
+        {
+            "description": "Push specs, refs, and states from your repo to update feature definitions and implementation tracking",
+            "name": "Actions"
+        }
+    ]
 }
