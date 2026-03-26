@@ -1238,7 +1238,8 @@
                 "type": "object"
             },
             "PushRequest": {
-                "description": "Request body for pushing specs, refs, and deprecated states",
+                "additionalProperties": false,
+                "description": "Request body for pushing specs and refs",
                 "example": {
                     "branch_name": "main",
                     "commit_hash": "abc123def456",
@@ -1271,7 +1272,7 @@
                         "type": "string"
                     },
                     "parent_impl_name": {
-                        "description": "Name of a parent implementation for inheritance. When creating a new implementation, it will inherit feature states and refs from the parent (e.g., create 'feature-branch-impl' with parent 'main' to start with main's baseline). Useful for short-lived branches that extend an existing implementation",
+                        "description": "Name of a parent implementation for inheritance. When creating a new implementation, it will inherit the parent's baseline and refs (e.g., create 'feature-branch-impl' with parent 'main' to start with main's baseline). Useful for short-lived branches that extend an existing implementation",
                         "type": "string"
                     },
                     "product_name": {
@@ -1507,70 +1508,6 @@
                         },
                         "maxItems": 100,
                         "type": "array"
-                    },
-                    "states": {
-                        "allOf": [
-                            {
-                                "description": "Deprecated implementation states grouped by requirement ID",
-                                "example": {
-                                    "data": {
-                                        "auth-feature.AUTH.1": {
-                                            "comment": "Done",
-                                            "status": "completed"
-                                        }
-                                    },
-                                    "override": false
-                                },
-                                "properties": {
-                                    "data": {
-                                        "additionalProperties": {
-                                            "allOf": [
-                                                {
-                                                    "description": "State for a single requirement",
-                                                    "example": {
-                                                        "comment": "Implemented in PR #123",
-                                                        "status": "completed"
-                                                    },
-                                                    "properties": {
-                                                        "comment": {
-                                                            "description": "Optional comment about this state",
-                                                            "type": "string"
-                                                        },
-                                                        "status": {
-                                                            "description": "Status value (nullable). Valid values: not_started, in_progress, completed, blocked, skipped",
-                                                            "enum": [
-                                                                "not_started",
-                                                                "in_progress",
-                                                                "completed",
-                                                                "blocked",
-                                                                "skipped"
-                                                            ],
-                                                            "nullable": true,
-                                                            "type": "string"
-                                                        }
-                                                    },
-                                                    "title": "StateObject",
-                                                    "type": "object"
-                                                }
-                                            ]
-                                        },
-                                        "description": "Map of requirement IDs to state objects",
-                                        "maxProperties": 10000,
-                                        "type": "object"
-                                    },
-                                    "override": {
-                                        "default": false,
-                                        "description": "If true, replaces all existing states instead of merging",
-                                        "type": "boolean"
-                                    }
-                                },
-                                "required": ["data"],
-                                "title": "States",
-                                "type": "object"
-                            }
-                        ],
-                        "deprecated": true,
-                        "description": "Deprecated compatibility field for implementation states"
                     },
                     "target_impl_name": {
                         "description": "Name of the implementation (deployment environment) to associate this branch with. An implementation represents a deployable instance of your product (e.g., 'production', 'staging', 'mobile-app-v2'). For spec-push creation flows, a missing implementation may be auto-created within the product. For refs-only pushes, `product_name` + `target_impl_name` must resolve to an existing implementation unless `parent_impl_name` is also provided to create a new child implementation.",
@@ -1979,88 +1916,19 @@
                 "type": "object"
             },
             "StateObject": {
-                "description": "State for a single requirement",
-                "example": {
-                    "comment": "Implemented in PR #123",
-                    "status": "completed"
-                },
                 "properties": {
                     "comment": {
-                        "description": "Optional comment about this state",
                         "type": "string"
                     },
                     "status": {
-                        "description": "Status value (nullable). Valid values: not_started, in_progress, completed, blocked, skipped",
-                        "enum": [
-                            "not_started",
-                            "in_progress",
-                            "completed",
-                            "blocked",
-                            "skipped"
-                        ],
                         "nullable": true,
+                        "type": "string"
+                    },
+                    "updated_at": {
                         "type": "string"
                     }
                 },
                 "title": "StateObject",
-                "type": "object"
-            },
-            "States": {
-                "description": "Deprecated implementation states grouped by requirement ID",
-                "example": {
-                    "data": {
-                        "auth-feature.AUTH.1": {
-                            "comment": "Done",
-                            "status": "completed"
-                        }
-                    },
-                    "override": false
-                },
-                "properties": {
-                    "data": {
-                        "additionalProperties": {
-                            "allOf": [
-                                {
-                                    "description": "State for a single requirement",
-                                    "example": {
-                                        "comment": "Implemented in PR #123",
-                                        "status": "completed"
-                                    },
-                                    "properties": {
-                                        "comment": {
-                                            "description": "Optional comment about this state",
-                                            "type": "string"
-                                        },
-                                        "status": {
-                                            "description": "Status value (nullable). Valid values: not_started, in_progress, completed, blocked, skipped",
-                                            "enum": [
-                                                "not_started",
-                                                "in_progress",
-                                                "completed",
-                                                "blocked",
-                                                "skipped"
-                                            ],
-                                            "nullable": true,
-                                            "type": "string"
-                                        }
-                                    },
-                                    "title": "StateObject",
-                                    "type": "object"
-                                }
-                            ]
-                        },
-                        "description": "Map of requirement IDs to state objects",
-                        "maxProperties": 10000,
-                        "type": "object"
-                    },
-                    "override": {
-                        "default": false,
-                        "description": "If true, replaces all existing states instead of merging",
-                        "type": "boolean"
-                    }
-                },
-                "required": ["data"],
-                "title": "States",
                 "type": "object"
             },
             "Summary": {
@@ -2528,7 +2396,7 @@
         "/push": {
             "post": {
                 "callbacks": {},
-                "description": "Sync data from your current git branch to the server.\n- Upload specs (feature.yaml files) and the requirements and metadata defined in them.\n- Upload code references (ACID tags) found in source code, and their file paths.\n\nThis endpoint automatically creates new Product Implementations when pushing from a new branch.\nIt can not be used to configure existing Implementation settings or inheritance.\n\nUse this when contents (source code or specs) have change on a branch.\nThis endpoint is primarily intended to serve the `acai push` CLI command.\n",
+                "description": "Sync data from your current git branch to the server.\n- Upload specs (feature.yaml files) and the requirements and metadata defined in them.\n- Upload code references (ACID tags) found in source code, and their file paths.\n\nThis endpoint can create or link implementations while syncing specs and refs, but it does not\naccept feature-state writes or configure implementation settings directly.\n\nUse this when source code or specs have changed on a branch.\nThis endpoint is primarily intended to serve the `acai push` CLI command.\n",
                 "operationId": "AcaiWeb.Api.PushController.create",
                 "parameters": [],
                 "requestBody": {
