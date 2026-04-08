@@ -1,0 +1,260 @@
+---
+title: "Specsmaxxing"
+description: "Pushing specification to the limit for fun, stumbling on a workflow I actually love (and open-sourcing it for you to try)."
+---
+
+---
+
+## Does this look familiar?
+
+Wow. Claude. Mind-blowing. The whole feature works great. I forgot to mention though... there is this **very** important edge case.
+
+> <Icon icon="/images/claudeai.png" size={18} className="inline-claude-icon" /> *You’re absolutely right! Let me fix that.*
+
+Ah, and I just noticed. You used *offset pagination* for the table UI. Obviously *cursor pagination* is a better fit here?
+
+> <Icon icon="/images/claudeai.png" size={18} className="inline-claude-icon" /> *You’re absolutely right! Let me fix that.*
+
+Also, is that an N+1 query? Fetching for every row in the table? Why not do a single round-trip?
+
+> <Icon icon="/images/claudeai.png" size={18} className="inline-claude-icon" /> *You’re absolutely right! Let me fix that.*
+
+This is why I still have a job, right?
+
+> <Icon icon="/images/claudeai.png" size={18} className="inline-claude-icon" /> *...*
+
+---
+
+### Building the plane while you fly it
+
+If agents ship "slop", then I don't wan't to hear what you call the code I was writing two years ago. Today, my software is more robust, **better tested**, more observable, more automated than ever before. And the velocity keeps increasing! It truly feels like the sky is the limit.
+
+Until I am reminded, **the sky is not the limit. The context window is the limit.** And what happens when you fill the context window? Or kill a session? Switch machines? Hand off the project to someone else? 
+
+What happens is the agent goes off the rails, or requirements get lost, or important detail gets squashed. This is a mistake we all make once, and we all adapt. **So we start putting requirements in docs.** Look! A spec! Now we are doing **_Spec-driven development!_**
+
+Millions of us are all coming to the same stupid realization; We need to put requirements in writing. We need to update those requirements when they change. Just like our project managers and product owners taught us, like, decades ago. Better late than never.
+
+Perhaps you are writing `AGENTS.md`, a `testing-guide.md`, an `architecture.md`, a `README.md`, and a `PRD.md`, and maybe even a `md.md` (to teach your agents how to write `.md`). The more `.md` the better, right? Unironically yes, docs and unstructured specs can get us very, very far. If you aren’t writing *any* docs yet, you should just stop reading this and start writing.
+
+## Dreaming in markdown
+
+I will keep the story short. I fell into an AI psychosis, I became a “spec maxi”, and I spent hours and hours writing the most beautiful PRDs and TRDs you’ve ever seen.
+
+I hand crafted templates and skills and roles, thinking that maybe my agents can write specs too! I assembled an army, working together like a mini *dark factory,* to turn my specs into reality. My tasks grew more ambitious, and  at one point I broke the vibe-coding sound barrier: *an agent that ran for 1.5 hours unsupervised!*
+
+Exciting. But what did that agent army ship for me? Well, it wasn't slop, in fact it worked better than some of the garbage software I'm still forced to use every day. 
+
+But it was still a bit sloppy. This wasn't good enough for me.
+
+The hallmark symptom of AI psychosis is that the patient would rather work on the AI harness for the product than the product itself. I embraced my illness, threw out the branch, and rewrote my markdown, and started all over again.
+
+## Acceptance Criteria for AI (ACAI)
+
+Then, one day, I noticed an ambitious little sub-agent doing something unexpected.
+
+```markdown
+AUTH-1: Accepts `Authorization: Bearer <token>` header
+AUTH-2: Tokens are user-scoped, providing access to any of the user's resources
+AUTH-3: Rejects with 401 Unauthorized
+```
+
+```jsx
+// AUTH-1
+const authHeader = req.headers["authorization"];
+// AUTH-2
+const isAuthorized = verifyBearerToken(authHeader);
+// AUTH-3
+if (!isValid) return res.status(401).json({ error: "Unauthorized" });
+```
+
+**The little guy just went and numbered my requirements and then referenced them all over my codebase.**
+
+Why? I did not ask for this! I was disgusted. This is a tight coupling of code to spec, and spec to code, which is bad right?
+
+*You really expect me to refactor all my code every time I change my spec?*
+
+…oh. I suppose that's a good thing. Maybe I can leverage these tags somehow?
+
+- Perhaps they can help me navigate these massive PRs!
+- Perhaps they can point me to **where, exactly, a requirement is satisfied or tested!**
+- Perhaps I can annotate them with **notes and states (todo, assigned, completed)!**
+- Perhaps I can start tracking **acceptance coverage** as well as test coverage!
+
+I leaned in. I named these tags **ACIDs (Acceptance Criteria IDs).**
+
+But a few questions remained.
+
+- *Can my ACIDs number and label themselves?*
+- *How do I extract them from code?*
+- *How do I ensure alignment, without sacrificing my ability to iterate, spec- and re-spec rapidly?*
+- *How do I share state across agent environments?*
+- *How do I build across multiple products, with multiple repos, with many features, and many implementations?*
+
+## [Acai.sh](http://Acai.sh) - an open-source toolkit
+
+I built [Acai.sh](http://Acai.sh) to solve some of these problems.
+
+- A simple and flexible new standard for feature specs, called `feature.yaml`.
+- Tiny CLI to power your CI and your agent (available on npm or via github release).
+- Webapp that serves a dashboard, and a JSON REST API (Elixir, Phoenix, Postgres).
+
+I will keep the hosted version **free for a while, or maybe forever** depending on how popular or expensive this gets.
+
+<Frame caption="See implementation status at a glance">
+  <img src="/images/desktop-feature-impl-view.png" alt="Dashboard showing status updates for the Staging implementation of the form-editor feature." />
+</Frame>
+
+<Frame caption="In the real world, a feature can have many implementations and versions, with varying states of progress.">
+  <img src="/images/desktop-feature-view.png" alt="Example dashboard showing a list of implementations of the map-settings feature." />
+</Frame>
+
+<Frame caption="Your team can have many products. Your product can have many implementations, and many features.">
+  <img src="/images/desktop-product-view.png" alt="Example dashboard showing a matrix of features and implementations and the completion percentage for each combination." />
+</Frame>
+
+These tools, and this approach, should work for any software project. It should encourage collaboration (between humans), and be incrementally adoptable. Acai already supports multi-repo and multi-branch projects.
+
+It can (and should) be tied into a larger agentic pipeline, for example one that takes a spec and kicks off an automated `plan → implement → review` loop. That part is not included (yet). I plan to share some powerful examples of that soon.
+
+## Try it yourself
+
+**Step 1 - Specify**
+
+Start by writing a spec for a feature.
+
+Be ambitious-- something that adds real value. Don't put nitpicky UI and nailpolish stuff in your specs. Keep the requirements simple, testable, and focused on what really matters (behavior surface + critical constraints).
+
+Rather than markdown, use acai's `feature.yaml` format instead.
+
+```yaml feature.yaml
+feature:
+    name: imaginary-api-endpoint
+    product: api
+    description: This is an example feature spec for an imaginary REST API endpoint, using the feature.yaml format
+
+components:
+    AUTH:
+      name: Authn and Authz
+      requirements: 
+        1: Accepts Authorization header with `Bearer <token>`
+        1-1: Token must be non-expired, non-revoked
+        2: Respects the scopes configured for the owner
+        2-note: See `access-tokens.SCOPES.1` for complete list of supported scopes
+
+constraints:
+    ENG:
+      description: Constraints are for cross-cutting or under-the-hood requirements. Here are some example engineering constraints;
+      requirements:
+        1: All actions are idempotent
+        2: All HTTP 2xx JSON responses wrap their payload in a root `data` key
+```
+
+Of course you could also have LLMs assist you with spec writing, but I enjoy the process of writing them myself, because I like to maintain some illusion of self-worth as a software developer.
+
+**Step 2 - Ship**
+
+```md
+Dear Claude,
+
+I hope this email finds you well. I am writing to ask if you could please do another task for me.
+
+Start by running `npx acai skill`. This will teach you everything you need to know about our process for spec-driven development.
+
+Then, proceed with planning and implementation of the feature specified in `<my-feature-name>.feature.yaml`.
+
+Love, <your-name>
+```
+
+Note: In addition to the npm package, we have Linux and MacOS releases [available on GitHub](https://github.com/acai-sh/cli).
+
+**Step 3 - Review**
+
+No more file-by-file GitHub PR reviews, let's use the ACAI dashboard to review by *requirements* instead.
+
+1. Create a free Team and Access Token at [https://app.acai.sh](https://app.acai.sh)
+2. Save to .env
+    ```sh
+    ACAI_API_TOKEN=<secret_access_token>
+    ```
+3. Push specs and code refs to the dashboard for review
+```sh
+acai push --all
+```
+
+Take a look at the dashboard. Click a requirement to see where it's been referenced.
+
+Mark requirements as "accepted" when you believe they have been met, or "rejected" if it was missed.
+You can use the dashboard to leave comments as well, and even set up advanced multi-branch / multi-repo workflows with inheritance.
+
+Ideally, you just add `acai push` to a GitHub action (example CI/CD workflows coming soon).
+
+**Step 4 - Repeat**
+My goal is that we make changes to the spec, or we use the dashboard to flag issues, and we let agents self-assign and react to these changes.
+With the right agent harness, you should spend far less time spent prompting and re-prompting, and far more time thinking about how to make your product better.
+
+Invite your agents to use the other `acai` CLI commands to pull down any notes and annotations or status changes applied from the dashboard. This makes it possible for multiple agents to coordinate with eachother.
+
+## Comparison to other spec-driven development tools
+
+It turns out, dozens of spec-driven development projects have emerged in the last year or so. And embarrassingly I did not know about any of them until I was almost finished building my own.
+
+The key differentiator is that [Acai.sh](http://Acai.sh) is **focused on helping you track *acceptance coverage* and *spec alignment* across many implementations**, which is a slightly different problem than what other tools are trying to solve.
+
+*I can not offer unbiased feedback, because I suffer from Not Invented Here syndrome. It may be the case that [Acai.sh](http://Acai.sh) actually enhances these tools.*
+
+### **OpenSpec**
+
+I fundamentally disagree with their core mental model, which states: *“Specs […] describe how your system currently behaves.”* In Acai.sh, specs describe how your system **SHOULD** behave. Current behavior is transient. 
+
+In addition, their specs are unstructured, and seem to lean into “AI generated spec writing”, which has never gone great for me. Lastly, the process of iterating, versioning, and diffing specs is just basic gitops, and I don’t need a CLI for that. Same goes for the agentic ops and task creation (my OpenCode agents do just fine).
+
+### GitHub SpecKit
+
+SpecKit reads to me like ‘vibe coding with extra steps’, i.e. a CLI that augments your agents with prompts and skills. This is probably productive, but it is solving a slightly different set of problems.
+
+### Kiro
+
+I don’t like EARS syntax, but I don’t like unstructured markdown either, and Kiro claims to convert the latter into the former. Acai is different-- I came up with feature.yaml to strike a balance between unstructured markdown and cumbersome EARS / gherkin. Unlike Kiro, [Acai.sh](http://Acai.sh) does not try to solve end-to-end delivery either (yet).
+
+### Traycer.ai
+
+Looks like a very useful product for managing artifacts and spawning agents to implement them. But they are still plain-old .md files. Acai is more opinionated about how you should write the spec (feature.yaml).
+
+## Reasons you might not like acai.sh
+Like any tech, it comes with tradeoffs;
+
+- You might not need to write specs. If your product is simple, just have claude write a few more `.md` files for you.
+- Acai specs are opinionated. **You should write 1 spec per feature** although its totally up to you how broadly you define a 'feature'. Our opinion is that cross-cutting feature specs are easier to iterate, and really shine when a feature touches many codebases (frontend / backend / microservice etc.) and has many implementations (Production, Staging, Fix, etc.)
+- Acai **discourages** you from putting design and superficial requirements in your specs. Specs are for behavior, and constraints, and nothing else. I’ve learned from experience: get it working to-spec first, then vibe-code the nail polish last 💅🏼.
+- Acai requires you to adopt the **feature.yaml** format. I have written an introductory guide to writing these, and I have also provided a “spec for the spec” that will teach your agent how to convert your old specs to new feature.yaml files. If you can't imagine moving past stream-of-consciousness prompting, this is not for you.
+- Acai requirements generate **stable identifiers.** This creates zero friction when *drafting* a new spec, but requires care when changing an *existing feature*. This means you must re-align the code whenever your spec changes (almost forgot that this is the whole point?). The feature.yaml synax supports `deprecated` and `replaced_by` flags as well, if you want to maintain a complete spec history inline.
+
+# Future Gazing
+
+This simple MVP is already useful to me personally, and the workflow has unlocked yet another level of productivity. Right now, it the sweet spot of rigour, organization, flexibility and vibes. A few months ago I was reactive, vibey, working prompt-to-prompt. The longer my agents ran, the more likely I was to reject their output. I spent significant energy reviewing piles of code and second-guessing decisions made opaquely by the LLM. Itemizing my acceptance criteria encourages me to focus on the things that matter, and to rethink how I test and validate my output.
+
+I feel confident saying this is where the whole industry moves. The spec will become *everything*. It may not be a `feature.yaml`, or it may not be a file at all, but the spec will still live somewhere and us humans will still read it with our own eyes and care very much when it changes. Though, we will care far less about *how* the spec gets implemented, as we increasingly trust our agent's abilities to ship.
+
+What comes next? A few things follow naturally.
+
+-> **Specsmaxxing leads to Testmaxxing**. When code generation is instant, the bottleneck is purely QA and validation and the ability to merge with confidence. When the app is tested E2E from every angle, and maximally observable, Acai would be a sensible place to converge QA feedback, user feedback, test runs, and agentic code review.
+-> **Testmaxxing unlocks automated reactive software factories**. When a test goes red or observability flags something in production, agents are already empowered to react. They have spec, the bug report, the code.
+
+## Roadmap
+
+High-priority;
+- I need to finish realtime dashboard updates & presence (hell yeah Elixir + Phoenix!).
+- I want to offer GitHub Actions or other CI recipes for better automation of the entire workflow.  
+- Respond to feedback & spend more time studying how other teams write their specs.
+
+Other ideas I’m exploring;
+
+- Augment specs right in the UI.
+- Dispatch agents to respond to spec changes automatically.
+- Plugins or MCP for OpenCode / Claude etc.
+- Too many others to list here.
+
+# Hate it?
+
+Please tell me if you dislike acai and think this is the wrong way to work. Burst my bubble sooner rather than later. Sincere feedback is sincerely appreciated.
