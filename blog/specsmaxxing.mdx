@@ -27,7 +27,7 @@ This is why I still have a job, right?
 
 ### Peak Slop
 
-<Frame caption="Chart showing occurances of the word 'slop' in the code review comments added to my pull requests.">
+<Frame caption="Chart showing occurrences of the word 'slop' in the code review comments added to my pull requests.">
   <img src="/images/slop-trends.png" alt="Google Trends showing interest in the word 'slop' showing a dramatic peak on March 11th, 2026" />
 </Frame>
 
@@ -180,7 +180,7 @@ Copy and paste the prompt below.
 
 </Prompt>
 
-Note: In addition to the npm package (executablew with `pnpx`/`bunx`/`npx`), we have Linux and MacOS releases [available on GitHub](https://github.com/acai-sh/cli).
+Note: In addition to the npm package, there are Linux and MacOS releases for the CLI [available on GitHub](https://github.com/acai-sh/cli).
 
 ### Step 3 - Review
 
@@ -249,9 +249,9 @@ Like any tech, it comes with tradeoffs;
 
 - You might not need to write specs. If your product is simple, or low-stakes, just keep shipping.
 - Acai specs are opinionated. **You should write 1 spec per feature** although its totally up to you how broadly you define a 'feature'. Our opinion is that cross-cutting feature specs are easier to iterate, and really shine when a feature touches many codebases (frontend / backend / microservice etc.) and has many implementations (Production, Staging, Fix, etc.)
-- ACIDs rely on **stable numbering.** This creates zero friction when *drafting* a new spec, but requires care when revising a spec: you must re-align the code whenever your spec changes (almost forgot that this is the whole point?). The feature.yaml synax supports `deprecated` and `replaced_by` flags as well, if you want to maintain a complete spec history inline.
+- ACIDs rely on **stable numbering.** This creates zero friction when *drafting* a new spec, but requires care when revising a spec: you must re-align the code whenever your spec changes (almost forgot that this is the whole point?). The feature.yaml syntax supports `deprecated` and `replaced_by` flags as well, if you want to maintain a complete spec history inline.
 - Acai **discourages** you from putting design and superficial requirements in your specs. Specs are for behavior, and constraints, and nothing else. I’ve learned from experience: get it working to-spec first, then do nail polish last 💅🏼.
-- Acai requires you to adopt the **feature.yaml** format. Almost zero learning curve. I have written an [introductory guide](/writing-specs) to writing them. Use `npx acai skill` to teach your agent how too. We also have a [spec-for-the-spec](/feature-yaml) if you want to go deeper.
+- Acai requires you to adopt the **feature.yaml** format. Almost zero learning curve. I have written an [introductory guide](/writing-specs) to writing them. Use `npx acai skill` to teach your agent how to. We also have a [spec-for-the-spec](/feature-yaml) if you want to go deeper.
 
 
 # Future Gazing
@@ -266,7 +266,7 @@ Will care far less about *how* the spec gets implemented, as we increasingly tru
 
 From these ideas, a few things follow naturally.
 
--> **Specsmaxxing leads to Testmaxxing**. When code generation is instant, the bottleneck is purely QA and validation and the ability to merge with confidence. When the app is tested E2E from every angle, and maximally observable, We will need a platform like Acai to converge specs, implementations, QA feedback, user feedback, test runs, and agentic code review.  
+-> **Specsmaxxing leads to Testmaxxing**. When code generation is instant, the bottleneck is purely QA and validation and the ability to merge with confidence. When the app is tested E2E from every angle, and maximally observable, we will need a platform like Acai to converge specs, implementations, QA feedback, user feedback, test runs, and agentic code review.  
 -> **Testmaxxing unlocks automated reactive software factories**. When a test goes red or observability flags something in production, and the specs are well defined, then the LLM is already empowered to react without a human in the loop.
 
 ## Roadmap
