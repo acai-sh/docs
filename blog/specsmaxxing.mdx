@@ -197,9 +197,7 @@ No more file-by-file GitHub PR reviews. Use the Acai.sh dashboard to review *req
     acai push --all
     ```
 
-Take a look at the dashboard. Click a requirement to see where it's been referenced.
-
-Mark requirements as "accepted" when you believe they have been met, or "rejected" if it was missed.
+Mark requirements as "accepted" when you believe they have been met, or "rejected" if something was missed.
 You can use the dashboard to leave comments as well, and even set up advanced multi-branch / multi-repo workflows with inheritance.
 
 Ideally, you just add `acai push` to a GitHub action (example CI/CD workflows coming soon).
@@ -247,39 +245,40 @@ Looks like a very useful product for managing artifacts and spawning agents to i
 ## Reasons you might not like acai.sh
 Like any tech, it comes with tradeoffs;
 
-- You might not need to write specs. If your product is simple, or low-stakes, just keep shipping.
-- Acai specs are opinionated. **You should write 1 spec per feature** although its totally up to you how broadly you define a 'feature'. Our opinion is that cross-cutting feature specs are easier to iterate, and really shine when a feature touches many codebases (frontend / backend / microservice etc.) and has many implementations (Production, Staging, Fix, etc.)
+- You might not need to write specs. If your product is low-stakes, or simple, just keep prompting.
+- Acai specs are opinionated. **You should write 1 spec per feature** (though the feature boundary or slice is up to you). Our opinion is that cross-cutting feature specs are easier to iterate, and really shine when a feature touches many codebases (frontend / backend / microservice etc.) and has many implementations (Production, Staging, Fix, etc.)
 - ACIDs rely on **stable numbering.** This creates zero friction when *drafting* a new spec, but requires care when revising a spec: you must re-align the code whenever your spec changes (almost forgot that this is the whole point?). The feature.yaml syntax supports `deprecated` and `replaced_by` flags as well, if you want to maintain a complete spec history inline.
-- Acai **discourages** you from putting design and superficial requirements in your specs. Specs are for behavior, and constraints, and nothing else. I’ve learned from experience: get it working to-spec first, then do nail polish last 💅🏼.
-- Acai requires you to adopt the **feature.yaml** format. Almost zero learning curve. I have written an [introductory guide](/writing-specs) to writing them. Use `npx acai skill` to teach your agent how to. We also have a [spec-for-the-spec](/feature-yaml) if you want to go deeper.
-
+- Acai **discourages** you from putting design and superficial requirements in your specs. Specs are for behavior, and constraints, and nothing else. I’ve learned from experience: get it working to-spec first, then do the superficial nail polish last 💅🏼.
+- Acai requires you to adopt the **feature.yaml** format. Almost zero learning curve. I have written an [introductory guide](/writing-specs) to writing them. Use `npx @acai.sh/cli skill` to teach your agent how. I also wrote a [spec-for-the-spec](/feature-yaml) if you want to go deeper.
 
 # Future Gazing
 
-This simple MVP is already useful and productive for me personally. It's the sweet spot between rigour and vibes, structure and flexibility
+This simple MVP is already useful and productive for me personally. It's the sweet spot between rigour and vibes, structure and flexibility.
 
 A few months ago I was reactive, vibey, working prompt-to-prompt. The longer my agents ran, the more likely I was to reject their output. I spent significant energy reviewing piles of code and second-guessing decisions made opaquely by the LLM. Itemizing my acceptance criteria encourages me to step back, focus on the things that matter, and to rethink how I test and validate my output.
 
-I feel confident saying this is where the whole industry moves. When the code costs nothing the spec becomes *everything*. It may not be a `feature.yaml`, or it may not be a file at all, in fact the spec might only live in someones head, and for many teams that will be enough. The point is, the spec lives *somewhere*, and humans will always care what's in the spec when it changes. So you're better off writing it down.
+I feel confident saying this is where the whole industry moves. When the code *costs nothing* the spec becomes *everything*. Your spec may not be a `feature.yaml`, or it may not be a file at all. In fact the spec might only live in your head, and for many teams and products that will be enough. The point is, the spec lives *somewhere*, and humans should always care what's in the spec, and know when it changes. So you're better off writing it down.
 
-Will care far less about *how* the spec gets implemented, as we increasingly trust our agent's abilities to ship.
+At the same time, everyone continues to care less and less about *how* the spec gets implemented, as we increasingly trust our agents abilities to ship.
 
-From these ideas, a few things follow naturally.
+From these assumptions, a few things follow naturally:
 
--> **Specsmaxxing leads to Testmaxxing**. When code generation is instant, the bottleneck is purely QA and validation and the ability to merge with confidence. When the app is tested E2E from every angle, and maximally observable, we will need a platform like Acai to converge specs, implementations, QA feedback, user feedback, test runs, and agentic code review.  
--> **Testmaxxing unlocks automated reactive software factories**. When a test goes red or observability flags something in production, and the specs are well defined, then the LLM is already empowered to react without a human in the loop.
+-> **Specsmaxxing leads to Testmaxxing**. When code generation is instant, the bottleneck is purely QA and validation and your confidence in merging. When the app is tested E2E from every angle, and maximally observable, I believe we will need a platform (like Acai.sh!) to converge specs, implementations, QA feedback, user feedback, test runs, and agentic code review.  
+-> **Testmaxxing leads to reactive software factories**. The final unlock is having LLMs react when a test goes red or observability flags something in production. If the specs are well defined, and you have high confidence in your QA automations, then the LLM is should be empowered to react without minimal human intervention.
 
-## Roadmap
+## Roadmap for Acai.sh
 
 High-priority;
-- I need to finish realtime dashboard updates & presence (hell yeah Elixir + Phoenix!).
-- I want to offer GitHub Actions or other CI recipes for better automation of the entire workflow.  
-- Respond to feedback & spend more time studying how other teams write their specs.
+- I want to offer GitHub Actions or other CI recipes for better automation of the entire spec-driven workflow.  
+- I want to enhance the experience of using Acai.sh as your QA dashboard.
+- I want to finish real-time dashboard updates & multiplayer presence (hell yeah Elixir + Phoenix!).
+- I want to spend more time studying how other teams write their specs, and try out these other spec-driven tools.
 
 Other ideas I’m exploring;
 
 - Augment specs right in the UI.
 - Dispatch agents to respond to spec changes automatically.
+- Acai.sh as a spec-oriented project planner / issue tracker?
 - Plugins or MCP for OpenCode / Claude etc.
 - Too many others to list here.
 
