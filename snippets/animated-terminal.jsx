@@ -12,91 +12,66 @@ export const AnimatedTerminal = () => {
         // animated-terminal.STORY.1
         {
             type: "user-typing",
-            content: "Continue working on the `animated-terminal` feature",
-        },
-        {
-            type: "agent-message",
             content:
-                "Sure! First let me peek at the spec, and then see what's left.",
+                "I've made some changes to the spec @animated-terminal.feature.yaml - start by running `acai skill` to learn spec-driven development.",
         },
+        // animated-terminal.STORY.2
         {
             type: "tool-command",
-            content: "acai status animated-terminal",
+            content: "acai skill",
             output: [
-                "Animated Terminal [TERM]",
-                "0 TODO, 1 INCOMPLETE, 9 IMPLEMENTED, 0 ACCEPTED",
-                "/features/animated-terminal/feature.yaml",
+                "Skill loaded: acai",
+                "Summary: specs first, then code, then status updates.",
+                "Guidance: use ACIDs to keep implementation and review aligned.",
             ],
         },
         {
             type: "agent-message",
             content:
-                "I can see we are building a mock terminal animation for your docs site. There is only 1 requirement left to complete, I will handle it.",
+                "Got it. I will look to see what changed, then re-align the code to spec.",
         },
         {
             type: "tool-command",
-            content: "acai assign animated-terminal.STORY.4",
+            content: "acai feature animated-terminal",
             output: [
-                "animated-terminal.STORY.4 status updated: INCOMPLETE -> ASSIGNED",
+                "Feature: animated-terminal",
+                "Status: 4 implemented, 5 remaining.",
+                "Next focus: STORY.2, STORY.3, STORY.3-1, STORY.4.",
+                "Notes: frame is stable; storyboard needs re-alignment to spec.",
             ],
         },
         {
             type: "agent-message",
             content:
-                "I need more context. I'll start by finding references to the requirement id",
-        },
-        {
-            type: "tool-command",
-            content: "acai list references animated-terminal.STORY.4",
-            output: [
-                "- features/animated-terminal/feature.yaml",
-                "- snippets/animated-terminal.jsx",
-                "- tests/animated-terminal.test.jsx",
-                "- docs/components/terminal.md",
-            ],
-        },
-        {
-            type: "agent-message",
-            content:
-                "I see work was already started on this requirement. I will pick up where they left off 🔨",
+                "I can see STORY.2 through STORY.4 need work. I'll update the animation to match the new storyboard.",
         },
         { type: "system-status", content: "Writing code..." },
         {
             type: "agent-message",
             content:
-                "🎉 I've completed implementation. 3 files were changed, and 2 tests were added. I need to update the status for this ACID",
+                "Done. The animation storyboard and ACID references are now aligned with the spec.",
         },
+        // animated-terminal.STORY.3
+        {
+            type: "user-typing",
+            content:
+                "Nice job. I'm looking at it right now. It's flawless. Go ahead and mark all requirements as accepted.",
+        },
+        { type: "agent-message", content: "👍 On it." },
+        // animated-terminal.STORY.3-1
         {
             type: "tool-command",
-            content: "acai status animated-terminal.STORY.4",
+            content:
+                'acai set-status \'{"animated-terminal.STORY.1":"accepted","animated-terminal.STORY.2":"accepted","animated-terminal.STORY.3":"accepted","animated-terminal.STORY.3-1":"accepted","animated-terminal.STORY.4":"accepted"}\'',
             output: [
-                "animated-terminal.STORY.4: IMPLEMENTED",
-                "Files: 3 changed",
-                "Tests: 2 passed (100% coverage)",
-                "Flagged for review",
+                "Status update accepted.",
+                "Requirements updated: 5.",
+                "Result: all storyboard requirements are now accepted.",
             ],
         },
         {
             type: "agent-message",
-            content:
-                "🎉 Done. animated-terminal.STORY.4 has been flagged for review. There are no remaining tasks to complete.",
-        },
-        {
-            // animated-terminal.STORY.3
-            type: "user-typing",
-            content:
-                "Nice job. I'm looking at it in my browser right now and it's flawless. Go ahead and mark all requirements as accepted.",
-        },
-        { type: "agent-message", content: "🦾💪" },
-        {
-            type: "tool-command",
-            content:
-                "acai accept 'animated-terminal.STORY.1..animated-terminal.STORY.4'",
-            output: [
-                "Accepted 4 requirements.",
-                "Status: animated-terminal.STORY.1-4 -> ACCEPTED",
-                "Checkpoint created: TERM_FINAL",
-            ],
+            content: "All requirements are now accepted.",
         },
     ];
 

@@ -1,6 +1,6 @@
 ---
 title: "Acai.sh"
-description: "The toolkit for spec-driven development. Stop writing prompts, start writing specs. Ship better quality software and minimize slop."
+description: "A toolkit for spec-driven software development. Stop writing prompts, start writing specs. Ship better quality software and minimize slop."
 sidebarTitle: "Introduction"
 mode: "default"
 ---
@@ -8,14 +8,15 @@ mode: "default"
 import { AnimatedTerminal } from "/snippets/animated-terminal.jsx";
 
 <Callout icon="grape" iconType="regular" color="#930d7a">
-    ACAI - **A**cceptance **C**riteria for **AI**
+    **ACAI** - **A**cceptance **C**riteria for **AI**
 </Callout>
 
 <AnimatedTerminal />
 
 ## What is it?
 
-Open-source tools to assist with spec-driven software development.
+Tools to assist with spec-driven software development.
+- A simple spec format
 
 <Steps>
     <Step title="Specify">
@@ -147,16 +148,18 @@ components:
             2-1: Does not accept actual user inputs (no typing, no buttons)
 
     STORY:
+        name: Rough storyboard for the animation
         requirements:
-            1: Animation starts with user typing "Continue working on the `animated-terminal` feature"
-            2: Shows back-and-forth conversation with tool calls and status updates
-            3: Concludes with user typing "Go ahead and mark all requirements as accepted."
+            1: Animation starts with user typing "I've made some changes to the spec @animated-terminal.feature.yaml - start by running `acai skill` to learn spec-driven development."
+            2: Shows the agent run `acai skill`. Agent says "Got it. I will look to see what changed, then re-align the code to spec."
+            3: Concludes with user typing "Nice job. I'm looking at it right now. It's flawless. Go ahead and mark all requirements as accepted."
+            3-1: Agent runs `acai set-status` and marks all requirements as accepted.
             4: The animation stops after the final step and does not loop.
 
 constraints:
     DEV:
         requirements:
-            1: Must be a single, self-contained standalone react component (one export, no imports)
+            1: Must be a single, self-contained standalone react component (a single export, with no imports)
 ```
 
 ```tsx animated-terminal.jsx

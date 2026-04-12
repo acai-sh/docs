@@ -18,9 +18,10 @@ components:
     STORY:
         name: Rough storyboard for the animation
         requirements:
-            1: Animation starts with user typing "Continue working on the `animated-terminal` feature"
-            2: Shows back-and-forth conversation with tool calls and status updates
-            3: Concludes with user typing "I'm looking at it in my browser; you crushed it. Nice job. Mark all requirements as accepted."
+            1: Animation starts with user typing "I've made some changes to the spec @animated-terminal.feature.yaml - start by running `acai skill` to learn spec-driven development."
+            2: Shows the agent run `acai skill`. Agent says "Got it. I will look to see what changed, then re-align the code to spec."
+            3: Concludes with user typing "Nice job. I'm looking at it right now. It's flawless. Go ahead and mark all requirements as accepted."
+            3-1: Agent runs `acai set-status` and marks all requirements as accepted.
             4: The animation stops after the final step and does not loop.
 
 constraints:
