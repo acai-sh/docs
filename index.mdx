@@ -15,8 +15,14 @@ import { AnimatedTerminal } from "/snippets/animated-terminal.jsx";
 
 ## What is it?
 
-Tools to assist with spec-driven software development.
-- A simple spec format
+Open-source tools to assist with spec-driven software development.
+- A **simple format** for spec documents, called `feature.yaml`
+- A **server and dashboard** to facilitate QA, code review, collaboration, and delegation.
+- A **CLI** for you or your agent to push and pull specs, requirements, and status updates.
+
+## Very Quick Start
+
+Acai can be incrementally adopted into any existing project.
 
 <Steps>
     <Step title="Specify">
@@ -25,104 +31,87 @@ Tools to assist with spec-driven software development.
     <Step title="Push">
         Run `acai push` to extract the specs and push them to an Acai Server.
     </Step>
-    <Step title="Delegate">
-        Give your agents access to the server so they can implement, review, delegate, and share status updates.
+    <Step title="Ship">
+        Give your agents access to the cli so they can implement, review, self-assign and share status updates.
     </Step>
 </Steps>
 
-This unlocks a spec-driven development workflow that **replaces GitHub and Linear tickets**. You, your agent swarm, and your product manager can stay in-sync while rapidly iterating on specs and their implementations.
+<Prompt description={`Dear Claude,
+
+  I hope this email finds you well.  
+  
+  Please run \`npx @acai.sh/cli skill\`.
+  
+  This will teach you everything you need to know about our process for spec-driven development. Then, proceed to plan and implement the features specified in the spec I wrote.
+  
+  Love,  
+  [your-name]
+`}>
+Dear Claude,
+I hope this email finds you well.  
+
+Please run \`npx @acai.sh/cli skill\`.
+
+This will teach you everything you need to know about our process for spec-driven development. Then, proceed to plan and implement the features specified in the spec I wrote.
+
+Love,  
+[your-name]
+</Prompt>
+
+
+This unlocks a spec-driven oriented workflow that **replaces GitHub and Linear tickets**. You, your agent swarm, and your product manager can stay in-sync while rapidly iterating on specs and their implementations.
 
 <Frame caption="See implementation status at a glance">
-  <img src="/images/implementation.png" alt="Example dashboard showing status updates for implementation of a feature" />
+  <img src="/images/desktop-feature-impl-view.png" alt="Dashboard screenshot showing progress on implementation of a feature spec" />
 </Frame>
-
-## Very Quick Start
-
-Acai can be incrementally adopted into any existing project.
-
-<CodeGroup>
-
-```md Ask your agent
-> You:
-We should write a spec for `my-new-feature`.
-  
-> 🤖Agent:
-You're absolutely right!  
-I will draft a `feature.yaml` based on your notes.
-
->* acai init my-new-feature
-```
-
-```sh Do it yourself
-acai init my-new-feature
-# created features/my-new-feature/feature.yaml`
-```
-
-</CodeGroup>
 
 ## Key Features
 
-### Turn your spec into tickets
+### Go beyond test coverage
 
-Write simple, plain language, easy-to-read requirements. Run `acai push` and they are synced to your dashboard and surfaced to agents via API/CLI/MCP.
+Have all requirements been implemented?  
+Do all implementations have tests?  
+Have humans QA'd and accepted the implementation?
 
-### Empower agents
 
-Acai becomes your agent's source of truth. It empowers them to confidently self-assign, implement, review and fix work with minimal intervention.
+### Collaborative & multiplayer
+
+Invite your team to a shared Acai dashboard, or create access tokens for AI agents and CLI access to the server.
+
+### Any git workflow
+
+Acai works with monorepos and polyrepos or any combination.
+- Monorepos containing many products with many specs and many branches (`main`, `dev` etc.)
+- Polyrepos where a feature may touch several branches on several git repos (frontend, backend, microservice etc.)
+- 
+<Frame caption="Acai handles the complex journey of a feature and it's spec, even across repos and branches">
+  <img src="/images/desktop-feature-view.png" alt="Example dashboard showing details about a specific feature requirement." />
+</Frame>
 
 ### Monitor progress
 
 Track progress from spec, to implementation, to agent review, to human acceptance:
 
-`TODO` -> `ASSIGNED` -> `IMPLEMENTED` -> `ACCEPTED`
+`No status` -> `Assigned` -> `Completed` -> `Accepted`
 
 ```md Agent Code Reviewer
-I've reviewed BLOCK.MENU.2.
-I see no issues with the implementation.
-Unit tests are satisfactory.
-I am marking the requirement as "IMPLEMENTED"...
+I've reviewed profile.MENU.2 and profile.AUTH.1
+I see no issues. Unit tests are satisfactory.
+I am marking the requirement as `COMPLETED`...
 I am merging the changes to the feature branch...
-```
-
-### See coverage
-
-Have all requirements been implemented?  
-Do all implementations have tests?  
-Have humans accepted the implementation?
-
-```sh
-acai coverage block-user
-```
-
-```
-100% implemented (100 of 100)
-100% tested (100 of 100)
-20% accepted (20 of 100) ⚠️
 ```
 
 ### Grab context
 
-See exactly where a requirement has been implemented or tested. The time savings & token savings add up quickly.
+See exactly where a requirement has been implemented or tested, so you (or your agent) can delegate work, review code, and improve test coverage.
 
 ```sh
-acai list references BLOCK.MENU.2 --json
-```
-
-```json
-[
-  "features/block-user/feature.yaml:15",
-  "src/components/user_settings.tsx:107"
-  "test/components/user_settings.test.ts:42"
-]
+acai feature my-feature-name --json --include-refs
 ```
 
 ### Review code more effectively
 
-Stop reading massive git diffs. Instead, use the acai dashboard and jump straight to the functions, tests or comments that reference each requirement in your spec. Start by reviewing the requirements that matter most; auth, security, performance, and user happyiness.
-
-<Frame caption="Drill down on specific requirements, quickly find relevant tests and code.">
-  <img src="/images/requirement-details.png" alt="Example dashboard showing details about a specific feature requirement." />
-</Frame>
+Stop trying to read huge diffs from top to bottom. Instead, use the acai dashboard and jump straight to the functions, tests or comments that reference each requirement in your spec. Start by reviewing the requirements that matter most; auth, security, performance, and user happiness.
 
 ## Simple example
 
@@ -207,7 +196,9 @@ describe("UI rendering", () => {
 
 </CodeGroup>
 
-As shown above, acai gives each requirement an ID that is unique, stable, and readable. These IDs can be referenced anywhere (in tests, comments, and other specs), and are extracted from code with a single command.
+As shown above, acai gives each requirement an ID that is unique, stable, and readable. These IDs should be referenced liberally (in tests, comments, and other specs), and are extracted from code with a single command.
+
+The idea is when your spec changes, your code must change too.
 
 ## Why acai?
 
