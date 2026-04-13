@@ -21,14 +21,7 @@
                 "groups": [
                     {
                         "group": "Overview",
-                        "pages": [
-                            "index",
-                            "acai-mcp",
-                            "cli",
-                            "api",
-                            "dashboard",
-                            "agents"
-                        ],
+                        "pages": ["index", "cli", "api", "dashboard", "agents"],
                         "icon": { "name": "grape" }
                     },
                     {
@@ -77,7 +70,7 @@
             "charset": "UTF-8",
             "viewport": "width=device-width, initial-scale=1.0",
             "description": "The toolkit for spec-driven development. Write feature specs, not prompts. Ship better software with AI agents that understand your requirements.",
-            "keywords": "spec-driven development, AI agents, MCP server, acceptance criteria, feature requirements, software development, LLM agents, agent workflow",
+            "keywords": "spec-driven development, AI agents, MCP, acceptance criteria, feature requirements, software development, LLM agents, agent workflow",
             "author": "acai.sh",
             "theme-color": "#930d7a",
             "color-scheme": "light dark",

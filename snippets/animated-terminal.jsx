@@ -13,7 +13,7 @@ export const AnimatedTerminal = () => {
         {
             type: "user-typing",
             content:
-                "I've made some changes to the spec @animated-terminal.feature.yaml - start by running `acai skill` to learn spec-driven development.",
+                "I made changes to the spec - @animated-terminal.feature.yaml - please run `acai skill` to learn spec-driven development.",
         },
         // animated-terminal.STORY.2
         {
@@ -28,50 +28,50 @@ export const AnimatedTerminal = () => {
         {
             type: "agent-message",
             content:
-                "Got it. I will look to see what changed, then re-align the code to spec.",
+                "I will read the spec to see what changed, then re-align the code to spec.",
         },
         {
             type: "tool-command",
             content: "acai feature animated-terminal",
             output: [
                 "Feature: animated-terminal",
-                "Status: 4 implemented, 5 remaining.",
-                "Next focus: STORY.2, STORY.3, STORY.3-1, STORY.4.",
-                "Notes: frame is stable; storyboard needs re-alignment to spec.",
+                "Status: 9 implemented, 1 remaining.",
+                "Next focus: STORY.3-1",
             ],
         },
         {
             type: "agent-message",
             content:
-                "I can see STORY.2 through STORY.4 need work. I'll update the animation to match the new storyboard.",
+                "I see the new requirement, animated-terminal.STORY.3-1, which adds a demonstration of the `set-status` command. I'll align the code now.",
         },
-        { type: "system-status", content: "Writing code..." },
+        { type: "system-status", content: "📝 Writing code..." },
+        {
+            type: "agent-message",
+            content: "Now I will make sure all requirements are well tested.",
+        },
+        { type: "system-status", content: "📝 Writing code..." },
         {
             type: "agent-message",
             content:
-                "Done. The animation storyboard and ACID references are now aligned with the spec.",
+                "Done. The animation component and ACID references are now aligned with the spec.",
         },
         // animated-terminal.STORY.3
         {
             type: "user-typing",
             content:
-                "Nice job. I'm looking at it right now. It's flawless. Go ahead and mark all requirements as accepted.",
+                "Nice job. I'm testing it now. It looks acceptable. Mark all requirements as accepted.",
         },
-        { type: "agent-message", content: "👍 On it." },
         // animated-terminal.STORY.3-1
         {
             type: "tool-command",
             content:
-                'acai set-status \'{"animated-terminal.STORY.1":"accepted","animated-terminal.STORY.2":"accepted","animated-terminal.STORY.3":"accepted","animated-terminal.STORY.3-1":"accepted","animated-terminal.STORY.4":"accepted"}\'',
-            output: [
-                "Status update accepted.",
-                "Requirements updated: 5.",
-                "Result: all storyboard requirements are now accepted.",
-            ],
+                'acai set-status \'{"animated-terminal.STORY.3-1":"accepted"}\'',
+            output: ["Requirements updated: 1"],
         },
         {
             type: "agent-message",
-            content: "All requirements are now accepted.",
+            content:
+                "Done. All requirements are now accepted. What should we work on next?",
         },
     ];
 
