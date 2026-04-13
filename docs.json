@@ -20,6 +20,20 @@
         }
     },
     "navigation": {
+        "global": {
+            "anchors": [
+                {
+                    "anchor": "GitHub",
+                    "href": "https://github.com/acai-sh",
+                    "icon": "github"
+                },
+                {
+                    "anchor": "Blog",
+                    "href": "/blog",
+                    "icon": "rss"
+                }
+            ]
+        },
         "tabs": [
             {
                 "tab": "Docs",
@@ -32,19 +46,18 @@
                             "quickstart",
                             "cli",
                             "api",
-                            "dashboard",
-                            "agents"
+                            "dashboard"
                         ],
                         "icon": { "name": "grape" }
                     },
                     {
                         "group": "Guides",
-                        "pages": ["spec-driven-development", "writing-specs"],
+                        "pages": ["spec-driven-development", "agents"],
                         "icon": { "name": "graduation-cap" }
                     },
                     {
                         "group": "Reference",
-                        "pages": ["feature-yaml", "api-reference"],
+                        "pages": ["feature-yaml"],
                         "icon": { "name": "book" }
                     }
                 ]

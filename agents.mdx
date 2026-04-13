@@ -1,80 +1,89 @@
 ---
-title: "Acai Agents & Skills"
-description: "Use our premade skills and agent roles, or install plugins for OpenCode, Amp, Claude Code and others."
-sidebarTitle: "Agents & Skills"
+title: "Agent Recipes"
+description: "Make the most of acai.sh and agentic development by leveraging LLM skills and roles"
+sidebarTitle: "Agent Recipes"
 mode: "wide"
 hideFooterPagination: true
 ---
-import SpecDrivenDevelopment from "/snippets/skills/spec-driven-development.mdx"
-import WriteCode from "/snippets/skills/write-code.mdx"
-import ReviewCode from "/snippets/skills/review-code.mdx"
-import PlanTask from "/snippets/skills/plan-task.mdx"
 
-import PlannerAgent from "/snippets/agents/planner.mdx"
-import ReviewerAgent from "/snippets/agents/reviewer.mdx"
-import DeveloperAgent from "/snippets/agents/developer.mdx"
-import SupervisorAgent from "/snippets/agents/supervisor.mdx"
+import PrepareTasksAgent from "/snippets/agents/prepare-tasks.mdx"
+import ReviewTaskAgent from "/snippets/agents/review-task.mdx"
+import ImplementAgent from "/snippets/agents/implement.mdx"
+import SuperviseAgent from "/snippets/agents/supervise.mdx"
 
-Stop the endless prompting and hand-holding. Never lose progress or throwaway hours of work when your agent goes off the rails.
+We've prepared some example skills and roles so your LLMs and AI agent harness can make the most of acai.sh.
+
+## Acai Skill
+
+The Acai CLI can output a premade acai skill to `.agents/skills/acai/SKILL.md`. The skill teaches your agent the basics of `feature.yaml` and spec-driven development. It consumes ~950 tokens of context.
+
+Omit `--install` and it will write to `stdout`.
+```sh
+acai skill --install
+```
+
+If you don't have the cli yet, you can fetch the skill directly using `npx` or a similar command.
+```sh
+npx @acai.sh/cli skill --install
+```
 
 Just hand off your spec and watch them work!
+
+## Spec-driven Software Factory
+With custom agent and sub-agent roles, and a well-written spec, you can ship ambitious software with very little intervention. All you need are 4 role files, and [OpenCode](https://opencode.ai/).
+
+Write a spec, hand it to the `supervise` agent, and let them handle the rest. It performs a planning, execution, and self-review loop until it believes the project is complete and high-quality.
 
 ```mermaid
 sequenceDiagram
     participant U as You
-    participant P as Planner
-    participant A as acai.sh
-    participant D as Developer
-    participant R as Reviewer
+    participant S as 🤖 Supervise
+    participant T as 🤖 Prepare-Tasks
+    participant D as 🤖 Implement
+    participant R as 🤖 Review-Task
 
-    U->>P: Here's the spec, ship it
-    P->>A: Read & assign requirements
-    P->>D: Implement requirements
-    D->>A: Mark requirements implemented
-    P->>R: Review implementation
-    R->>A: Mark requirements accepted
-    A-->>U: Feature complete
+    U->>S: Spec
+    S->>T: Plan tasks
+    T-->>S: Task files
+
+    loop Until project is complete
+        S->>D: Implement next task
+        D-->>S: Ready for review
+        S->>R: Review task
+
+        alt Changes rejected
+            R-->>S: Rejected with feedback
+            S->>D: Rework task
+        else Changes accepted
+            R-->>S: ACCEPTED
+            S->>S: Integrate task work
+            S->>T: Next task?
+            T-->>S: More tasks or done
+        end
+    end
 ```
 
-By creating agent roles, breaking work into chunks, and synchronizing work via acai.sh, you can;
-- Reduce inference costs (smaller context windows).
-- Choose the right model for the right work (big-brain planners, small-brain task rabbits).
-- Improve accurancy and quality of output (bite-sized tasks with clear acceptance criteria).
-- Support significantly longer-running tasks, getting more work done with less intervention.
+### Factory Agent Roles
+The following agent roles are compatible with **OpenCode's [custom agents](https://opencode.ai/docs/agents/).**
+For planning roles, we recommend using more expensive frontier models. Configure the target model to fit your budget or existing subscriptions.
 
-## Agent Roles
-The following agent roles are compatible with OpenCode's [custom agents](https://opencode.ai/docs/agents/).  
-For planning roles, we recommend using more expensive frontier models.  
-For implementation (of well-planned tasks), you can save significant token costs by using lighter-weight models (Gemini Flash / GLM etc.)
-
-<Accordion title="supervisor.md">
-  <SupervisorAgent />
+<Accordion title="agents/supervise.md">
+  <SuperviseAgent />
 </Accordion>
-<Accordion title="planner.md">
-  <PlannerAgent/>
+<Accordion title="agents/prepare-tasks.md">
+  <PrepareTasksAgent />
 </Accordion>
-<Accordion title="developer.md">
-  <DeveloperAgent />
+<Accordion title="agents/implement.md">
+  <ImplementAgent />
 </Accordion>
-<Accordion title="reviewer.md">
-  <ReviewerAgent />
+<Accordion title="agents/review-task.md">
+  <ReviewTaskAgent />
 </Accordion>
 
-## Markdown Skills
-Add these SKILL.md files where your agent can find them, e.g. `.opencode/skills` or `.agents/skills`. Refer to your AI tooling docs for the correct way to expose these.
+A system like this is empowered by acai.sh. Give your agent access to `acai` CLI and use the acai.sh dashboard to track their progress. Agents can use the CLI to read and write implementation progress, or even kick off automated tasks.
 
-<Accordion title="plan-task/SKILL.md">
-  <PlanTask />
-</Accordion>
-<Accordion title="write-code/SKILL.md">
-  <WriteCode />
-</Accordion>
-<Accordion title="review-code/SKILL.md">
-  <ReviewCode />
-</Accordion>
-<Accordion title="spec-driven-development/SKILL.md">
-  <SpecDrivenDevelopment/>
-</Accordion>
+---
 
-
-## Plugins
+<Card title="Quickstart" icon="circle-play" horizontal href="/quickstart">
+    View our quickstart page to install the CLI and play around.
+</Card>
