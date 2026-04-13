@@ -33,11 +33,7 @@
                     },
                     {
                         "group": "Guides",
-                        "pages": [
-                            "spec-driven-development",
-                            "writing-specs",
-                            "gitops"
-                        ],
+                        "pages": ["spec-driven-development", "writing-specs"],
                         "icon": { "name": "graduation-cap" }
                     },
                     {

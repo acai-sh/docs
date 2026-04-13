@@ -4,7 +4,7 @@ description: "Introduction to `feature.yaml` specs, and best practices for spec-
 sidebarTitle: "Spec-driven Development"
 ---
 
-import {RequirementStatesDiagram} from "./snippets/RequirementStatesDiagram"
+import { StatesDiagram } from "/snippets/states-diagram.jsx"
 
 Spec-driven development balances the speed of "vibe coding" with the professional rigor required to ship high-quality applications.
 
@@ -194,6 +194,8 @@ There are some important best practices to follow.
 
 Specs add the most value to teams working on complex, high-stakes projects. So how do we think about specs when working on a project with many services, many git repos, long-lived branches, and multiple QA cycles?
 
+### Mental model / data model
+
 Acai abstracts this complexity by breaking your project into **4 core concepts**.
 
 | Entity | Example |
@@ -205,18 +207,40 @@ Acai abstracts this complexity by breaking your project into **4 core concepts**
 
 Let's use an example to understand this better. Imagine a spec for a carbon calculator in a travel app.
 
+<StatesDiagram />
+
 1. <Badge stroke color="purple">carbon-calculator.feature.yaml</Badge> lives in your repo, on git branch called `backend/main`.
 2. The git branches `backend/main` and `frontend/main` are both tracked by the <Badge stroke color="blue">Production</Badge> implementation.  
   <Info>This happens automatically, the first time you run `acai push --all --target Production`</Info>
 3. <Badge stroke color="blue">Production</Badge> is an implementation of the <Badge stroke color="green">mobile-app</Badge> product.
 4. When QA is done, all of the requirements defined in <Badge stroke color="purple">carbon-calculator.feature.yaml</Badge> are marked as <Badge stroke color="yellow">Accepted</Badge> on <Badge stroke color="blue">Production</Badge>
 
-<RequirementStatesDiagram />
-
-Acai also supports more complex monorepos and polyrepo projects (See our [advanced GitOps guide](/gitops))
-
-A team can have many products, and a product can have many features and many implementations, which track many git branches on many repos.
+This simple model also works great for more complex monorepos and polyrepo projects. In any case, a team can have many products, and a product can have many features and many implementations, which track many git branches on many repos.
 
 <Frame caption="Example of a product overview showing states of a feature across many implementations.">
   <img src="/images/desktop-feature-view.png" alt="Example dashboard showing a list of implementations of the map-settings feature." />
 </Frame>
+
+### Spec journey
+
+So the lifecycle of a feature from draft spec to production may differ from team to team, but the simplest example is this;
+
+<Steps>
+    <Step title="Create branch & write spec">
+        Create a branch like `feat/carbon-calculator` and draft your `feature.yaml`
+    </Step>
+    <Step title="Push">
+        Run `acai push` to extract the specs and push them to an Acai Server. This creates a new implementation, which is named after your branch by default.
+    </Step>
+    <Step title="Review">
+        Invite your team to review by sending them a link to the Acai.sh dashboard for your new feature + implementation.
+    </Step>
+    <Step title="Integrate">
+        When the spec and code passes QA, merge the code, delete the old implementation.
+    </Step>
+    <Step title="Push">
+        When the feature is merged (e.g. to `main`), push again from the `main` branch so that the dashboard reflects the current state of your app. CI / GitHub actions are useful here.
+    </Step>
+</Steps>
+
+Some teams prefer to review and merge specs to the main branch before even starting implementation. Other teams might even maintain a standalone `specs` repo. Acai.sh should work for all the common git workflows.

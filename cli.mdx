@@ -1,50 +1,18 @@
 ---
-title: "Acai CLI"
-description: "The Acai CLI"
+title: "Acai.sh CLI"
 sidebarTitle: "CLI"
+description: "The Acai Command Line Interface (CLI) facilitates spec-driven development for humans, AI agents, and CI/CD automations."
 ---
 
 ## What is the Acai CLI?
 
-The Acai Command Line Interface (CLI) is your local gateway to spec-driven development. It allows you to parse your local `feature.yaml` specification files, sync them to the Acai platform, and interact with your requirements directly from your terminal.
+It is primarily used to `push` the state of your local specs and code to the server, where they can be reviewed and annotated.
 
-**Why use it?**
-- **Seamless Synchronization:** Easily sync your local plain-language requirements up to the Acai dashboard with a single command.
-- **Local Context & References:** Search your codebase for references to specific ACIDs (Acai IDs) locally.
-- **Agent Integration:** AI agents can run CLI commands (like `acai list` or `acai coverage`) within your repository to understand project requirements, check coverage, and determine their next tasks.
+It is also used to `pull` data and states from the server to facilitate coordination and delegation of work.
 
-## Quickstart
-
-<Steps>
-  <Step title="Installation">
-    Install the Acai CLI globally using npm.
-
-    ```bash
-    npm install -g @acai/cli
-    ```
-  </Step>
-  <Step title="Sync your Specs">
-    After writing or updating your feature requirements in a `feature.yaml` file, push them to the Acai datastore and tracker.
-
-    ```bash
-    acai push
-    ```
-  </Step>
-  <Step title="List Requirements">
-    View the requirements for a specific feature right in your terminal, optionally filtering by their implementation status (like `TODO` or `IMPLEMENTED`).
-
-    ```bash
-    acai list requirements block-user --status TODO
-    ```
-  </Step>
-  <Step title="Check Coverage">
-    See exactly how much of a feature has been implemented, tested, and accepted.
-
-    ```bash
-    acai coverage block-user
-    ```
-  </Step>
-</Steps>
+<Card title="Quickstart" icon="circle-play" horizontal href="/quickstart">
+    View our quickstart page to install the CLI and play around.
+</Card>
 
 ## Next Steps
 
