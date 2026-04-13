@@ -21,7 +21,14 @@
                 "groups": [
                     {
                         "group": "Overview",
-                        "pages": ["index", "cli", "api", "dashboard", "agents"],
+                        "pages": [
+                            "index",
+                            "quickstart",
+                            "cli",
+                            "api",
+                            "dashboard",
+                            "agents"
+                        ],
                         "icon": { "name": "grape" }
                     },
                     {

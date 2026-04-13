@@ -7,7 +7,7 @@ description: "Pushing spec-writing too far, then stumbling on a workflow I actua
 
 ## Does this look familiar?
 
-Wow. Claude. Mind-blowing. The whole feature works great. I forgot to mention though... there is this **very** important edge case.
+Wow. Claude. Mind-blowing. The whole feature works great. But I forgot to mention one **very** important edge case.
 
 > <Icon icon="/images/claudeai.png" size={18} className="inline-claude-icon" /> *You’re absolutely right! Let me fix that.*
 
@@ -47,19 +47,21 @@ A `README.md` and `AGENTS.md` is a good start. Don't forget a `testing-guide.md`
 
 Unironically, yes. Docs and unstructured specs can get you very, very far. Much farther than prompts alone. If you aren’t writing *any* docs yet, you should just stop reading this and start there.
 
-But a few weeks ago, I started asking myself, how far can I take this? How far *should* I take this?
+And remember, nothing beats an organic, pasture-raised, hand-written spec. **Spec-writing is, in my opinion, where the act of *software engineering* really happens**.
+
+So a few weeks ago, I started asking myself, how far can I take this? How far *should* I take this?
 
 ## Dreaming in markdown
 
-I will keep the story short. I fell into an AI psychosis, I became a “spec maxi”, and I spent hours and hours writing the most beautiful PRDs and TRDs you’ve ever seen.
+As the story goes, I fell into an AI psychosis, I became a “spec maxi”, and I spent hours and hours writing the most beautiful PRDs and TRDs you’ve ever seen.
 
 I drafted templates and skills and roles, thinking that maybe my agents can write specs too! I assembled an army, working together like a mini *dark factory,* to turn my specs into reality. My tasks grew more ambitious, and  at one point I broke the vibe-coding sound barrier: *an agent that ran for 1.5 hours unsupervised!*
 
-Exciting. But what did that agent army ship for me? Well, it wasn't slop, in fact it worked better than some of the garbage software I'm still forced to use every day. 
+Exciting. But what did that agent army ship for me? Well, it wasn't slop, in fact it worked better than some of the garbage software I'm forced to use every day. 
 
 But it was still a bit sloppy. This wasn't good enough for me.
 
-One hallmark symptom of AI psychosis is *using AI to build things for AI to build products*, rather than just using AI to build a product. I embraced my illness, threw out the branch, and rewrote my markdown, and started all over again.
+One hallmark symptom of AI psychosis is *using AI to build things that help AI build products*, rather than just using AI to build the damn product. I embraced my illness, threw out the branch, and rewrote my markdown, and started all over again.
 
 ## Acceptance Criteria for AI (ACAI)
 
@@ -86,9 +88,9 @@ Why? I did not ask for this! I was disgusted. This is a tight coupling of code t
 
 *You really expect me to refactor all my code every time I change my spec?*
 
-…oh. I suppose that's a good thing. Maybe I can leverage these tags somehow?
+Oh. I suppose that's a good thing? Interesting. I wonder...
 
-- Perhaps they can help me navigate these massive PRs!
+- Perhaps these tags can help me navigate these massive PRs!
 - Perhaps they can point me to **where, exactly, a requirement is satisfied or tested!**
 - Perhaps I can annotate them with **notes and states (todo, assigned, completed)!**
 - Perhaps I can start tracking **acceptance coverage** as well as test coverage!
@@ -103,7 +105,7 @@ But a few questions remained.
 
 ## [Acai.sh](http://Acai.sh) - an open-source toolkit
 
-I built [Acai.sh](http://Acai.sh) to solve some of these problems.
+I built [Acai.sh](http://Acai.sh) to solve some of these newly invented problems. And I'm very excited about the results.
 
 - A simple and flexible new standard for feature specs, called `feature.yaml`.
 - Tiny CLI to power your CI and your agent (available on npm or via github release).
@@ -232,24 +234,28 @@ Imagine your entire application, no matter how complex, was generated instantly 
   <img src="/images/quickaccess.png" alt="Pop!_OS quick-access search that says 'Generate me a web browser app' and shows Brave as the first result" />
 </Frame>
 
-If you found the output to be unsatisfactory (incomplete, insecure, unfit for purpose), you wouldn't start hand-editing files yourself would you? You would tweak the prompt to bring it up to spec. So if software were free and infinite and instant, your criteria for acceptance are really the only thing that matters. The spec.
+If you found the output to be unsatisfactory (incomplete, insecure, unfit for purpose), you wouldn't start hand-editing files yourself would you? You would tweak the prompt to bring it up to spec. So if software were free and infinite and instant, your criteria for acceptability is really the only thing of value. The spec.
 
-The spec is what you *want* the software to be. Very often the spec is not written down. It exists only in your head or in conversations. We used to spend our time writing down procedures (as code), or writing down invariants (as unit tests), and more recently we've been writing out deltas or changesets to evolve our software (as prompts). But when the procedures and invariants become cheap and invisible, the spec still lives *somewhere*, and humans will **always care what the spec says and care when it changes**. 
+The spec is what you *want* the software to be. Very often the spec is not written down. It exists only in your head or in conversations. We used to spend our time writing down procedures (as code), or writing down invariants (as unit tests), and more recently we've been writing out deltas or changesets to evolve our software (as prompts).
 
-So you're better off writing it down now! And I propose that a plain old list of acceptance criteria is a good place to start.
+But when the procedures and invariants become cheap and invisible, the spec still lives *somewhere*, and **humans will always care what the spec says**. Businesses and product teams will always care when the spec changes. 
+
+So you're better off writing it down now! And I propose that a plain old list of acceptance criteria is a good place to start. (That's really all that `feature.yaml` is.)
 
 A few more things follow from there;
 
 ### -> From Specsmaxxing to Testmaxxing
 
-When your spec is defined and the code is generated faster than you can read it, the bottleneck is purely QA and validation and the ability to ship it confidently. So investing heavily in QA automation and test coverage has a massive ROI.
+When your spec is defined and the code is generated faster than you can read it, the bottleneck is purely QA and validation and your *confidence* in shipping. So investing heavily in QA automation and test coverage has a massive ROI.
 
-And after that, after maximal coverage and observability has been achieved, our attention shifts away from the diffs in GitHub; we need a place to relate the specs to the artifacts that were generated from them (the implementations, QA feedback, user feedback, builds, runs, reviews and reports). Maybe Acai.sh can become that place.
+And after that, after maximal coverage and observability has been achieved, our attention shifts away from the diffs in GitHub; we need a place to relate the specs to the artifacts that were generated from them (the implementations, QA feedback, user feedback, builds, runs, reviews and reports). Maybe Acai.sh can become that place. For now, it is only focused on the specs and their implementations in code.
 
 ### -> From Testmaxxing to reactive software factories
 The final unlock is having our LLMs react when a test goes red or something gets flagged. If the specs are well defined, and you have high confidence in your integration pipelines and QA, then the LLM is already empowered to react without the need for you to intervene.
 
 It seems like every well-funded software team on earth is currently busy building their own bespoke solution for this and I'm excited to see what works and what doesn't.
+
+I have some rudimentary versions of this, but they aren't ready to share yet.
 
 ### Roadmap for Acai.sh
 

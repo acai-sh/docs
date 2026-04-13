@@ -1,24 +1,49 @@
 ---
 title: "Spec-driven Development"
-description: "Learn the core workflow and key principals behind spec-driven development."
+description: "Introduction to `feature.yaml` specs, and best practices for spec-first software development."
 sidebarTitle: "Spec-driven Development"
 ---
 
-**Spec-driven development balances the speed of "vibe coding" with the professional rigor required to ship high-quality, bug-free software.**
+import {RequirementStatesDiagram} from "./snippets/RequirementStatesDiagram"
 
-In short, you should be maintaining clear, concise, and thoughtful Feature Requirements Docs, and you should iterate on them as your product grows and adapts to feedback.
+Spec-driven development balances the speed of "vibe coding" with the professional rigor required to ship high-quality applications.
 
-In a world where everyone is already writing lengthy prompts, SKILL.md files, AGENTS.md and more, **maintaing a structured spec requires almost zero additional effort**, and acai.sh aims to make that even easier.
+It is essential for developers and teams who wish to leverage agentic software development tools like Claude and OpenCode in complex projects.
 
-The result is a workflow that allows you to more confidently 1-shot, re-shot, refactor and rapidy iterate without worrying about your agents losing the plot and going off the rails.
+## What is a spec?
 
-## The Spec
+In Acai.sh, every spec is a 'Functional Requirements Doc' for a single feature in your product. It is written as a `feature.yaml` file.
 
-In Acai.sh, every spec is a feature spec — a single `feature.yaml` file that defines a slice of your product.
+Primarily, the spec is written as a **list of acceptance criteria**. It defines how your feature should *behave*, functionally. It also includes additional constraints or requirements that are neccesary for success.
 
-This guide doesn't get into the details of how to *write* the spec itself, for that see our [feature.yaml guide](./writing-specs).
+Here is a minimalist example:
 
-Specs are most commonly colocated with your code in a `features/` folder, but they don't have to be. Your specs can live anywhere (as long as it's a git repo).
+```yaml
+feature:
+  name: user-authentication
+  product: enterprise-api
+
+components:
+  LOGIN:
+    description: The login UI and journey
+    requirements:
+      1: Shows an email and password input
+      2: Includes a "Forgot Password" link
+      3: On success, navigates to the team overview
+      4: On success, issues secure session token to client
+
+constraints:
+   AUTH:
+    description: Additional eng. constraints
+    requirements:
+      1: Does not leak information about existence or absence of a user's email
+      2: Session expires after 5 minutes of inactivity
+      3: Session expires 12 hours after last login
+```
+
+## Where is the spec?
+
+In Acai, specs are committed to git repositories as `.yaml` files.
 
 <Tree>
   <Tree.Folder name="mapperoni.com" defaultOpen>
@@ -28,74 +53,170 @@ Specs are most commonly colocated with your code in a `features/` folder, but th
                 <Tree.File name="desktop_wireframe.jpg" />
                 <Tree.File name="mobile_wireframe.jpg" />
               </Tree.Folder>
-              <Tree.File name="feature.yaml" />
+              <Tree.File name="map-editor.feature.yaml" />
           </Tree.Folder>
           <Tree.Folder name="map-viewer">
               <Tree.Folder name="artifacts">
                 <Tree.File name="desktop_wireframe.jpg" />
                 <Tree.File name="mobile_wireframe.jpg" />
               </Tree.Folder>
-              <Tree.File name="feature.yaml" />
+              <Tree.File name="map-viewer.feature.yaml" />
           </Tree.Folder>
           <Tree.Folder name="data-export">
-              <Tree.File name="feature.yaml" />
+              <Tree.File name="data-export.feature.yaml" />
           </Tree.Folder>
           <Tree.Folder name="map-data-explorer">
-              <Tree.File name="feature.yaml" />
+              <Tree.File name="map-data-explorer.feature.yaml" />
           </Tree.Folder>
       </Tree.Folder>
+      <Tree.Folder name="src" />
+      <Tree.File name=".gitignore" />
   </Tree.Folder>
 </Tree>
 
+<Check>
+  Specs must be located in a `features/` directory.  
+  The file name must include the name of the feature.
+</Check>
 
-## Key Principles
+## The Feature.yaml Document
 
-<Card title="Function, not form" icon="palette" horizontal>
-  Specs should describe what the software *does for the user*, and how it *behaves*, not how it looks.
-</Card>
+All acai specs are yaml. Yaml has a few key benefits over markdown, but remains lightweight and flexible.
 
-<Card title="Not a status tracker" icon="list-todo" horizontal>
-  Specs describe what your feature *should do*. It is not a todo list nor a notepad. To track progress and delegate work, use an acai.sh server instead.
-</Card>
+### Basic format
 
-<Card title="Requirements vs constraints" icon="goal" horizontal>
-    A good spec focuses on the surface requirements and ignores the plumbing. Only the most important constraints are included in the spec; like authn, security or engineering must-haves.
-</Card>
+As shown in the example spec above, the document has three main sections:
+
+1. <Badge stroke color="purple">feature:</Badge> Metadata about the feature, such as its name, version, product and description.
+2. <Badge stroke color="purple">components:</Badge> Functional requirements, organized into component groups.
+3. <Badge stroke color="purple">constraints:</Badge> Cross-cutting or plumbing requirements (like performance, authorization, data privacy)
+
+<Check>To be compatible with the acai.sh dashboard and CLI, your feature.yaml **must** have a `feature.name` and `feature.product` defined.</Check>
+
+
+### Advanced Tips
+
+Feature.yaml supports some useful patterns for adding additional notes and context in a structured way.
+
+<AccordionGroup>
+  <Accordion title="Notes and annotations">
+  You can attach **notes** directly to requirements.
+  These are passed along to the acai.sh server and included in CLI / API response payloads.
+  
+  There are two ways to add notes.
+  ```yaml
+  # Concise syntax
+  1-1: Hides exact location of the building
+  1-1-note: This was a customer request (April 2026)
+
+  # Verbose syntax
+  1-2:
+    requirement: Hides exact location of the building
+    note: This was a customer request (April 2026)
+  ```
+  </Accordion>
+  <Accordion title="Names and descriptions">
+    Your `components` and `constraint` groups support arbitrary `name` and `description` fields, which is a good place to add additional context.
+    
+    ```yaml
+    components:
+      LOGIN:
+        name: Login Form
+        description: A standard login UI component
+        requirements:
+          1: ...
+    
+    constraints:
+      AUTH:
+        name: Authentication
+        description: Additional eng. constraints around auth and security
+        requirements:
+          1: ...
+    ```
+  </Accordion>
+  <Accordion title="Nested Sub-requirements">
+    You can associate a sub-requirement to a parent (up to 1 level of depth). This makes it easy to insert more requirements without needed to renumber existing ones.
+    
+    ```yaml
+    components:
+      MAP:
+        requirements:
+          1: Clicking a property opens the details panel
+          1-1: Highlights the selected property on the map
+          1-2: Sends an analytics event
+    ```
+  </Accordion>
+
+  <Accordion title="Cross-references">
+      If one requirement relates to another, you can reference it using its complete ID (known as the ACID) like `my-feature.COMPONENT.1-1`.
+      
+      ```yaml
+      1: Opens the Panel (see property-map.PANEL.1)
+      1-1: Also zooms the map, similar to property-map.MAP.4
+      ```
+  </Accordion>
+  
+  <Accordion title="Deprecate requirements">
+    Instead of deleting them, you may want to flag them as `deprecated` to maintain a living history.
+    
+    ```yaml
+    requirements:
+      1-1:
+        deprecated: true
+        requirement: Shows a tutorial on first load
+        note: Removed due to negative user feedback
+      1-2:
+        skipped: true
+        requirement: Shows location search box
+        note: Blocked by geolocation service issue #1234
+      1-3:
+        replaced_by: ["property-map.MAP.1-4", "property-map.MAP.1-5"]
+        requirement: Fly to searched location
+        note: Replaced by better UX
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## What makes a good spec?
+
+There are some important best practices to follow.
+
+- Focus on the **functional behavior**, and key engineering constraints, and ideally only things that can be tested with a pass/fail. Feel free to use `-note` and `description` to provide soft or higher level guidance.
+- **Avoid superficial requirements** (design, layout, aesthetics, copywriting, etc.) unless they are mission-critical. Otherwise your spec will grow too large and your product will grow too rigid.
+- **Omit obvious requirements**. Have faith your developers can fill in the gaps!
+- **Be descriptive, not prescriptive**. Say what needs to be implemented, avoid prescribing how it gets implemented.
+- If you find yourself duplicating requirements in many specs, consider creating a `core.feature.yaml` or just putting guard rails in `AGENTS.md` and other docs.
+- The feature boundary is up to you, but smaller features are more maintainable. A small feature spec is easy to read and review, easy to ship and QA, easier to feature-flag and roll-back.
 
 ---
 
-## Feature & Implementation Boundaries
+## The Spec Lifecycle
 
-Think of your product as a heirarchy. A product has many features, and a feature can have many parallel implementations.
+Specs add the most value to teams working on complex, high-stakes projects. So how do we think about specs when working on a project with many services, many git repos, long-lived branches, and multiple QA cycles?
 
-### 1. Product
+Acai abstracts this complexity by breaking your project into **4 core concepts**.
 
-A **Product** is any software system that has many features. It can be a microservice, an API, an SDK, a robot, a data pipeline, a mobile app, or a website.
+| Entity | Example |
+|---|---|
+|<Badge stroke color="green">Product</Badge> | `mobile-app` `CLI` `web-app` |
+|<Badge stroke color="blue">Implementation</Badge> | `Prod` `dev` `maintenence` |
+|<Badge stroke color="purple">Feature</Badge> | `carbon-calculator` `support-chat` `users-endpoint` |
+|<Badge stroke color="yellow">States</Badge> | `Assigned` `Completed` `Accepted` `Rejected` |
 
-### 2. Feature
+Let's use an example to understand this better. Imagine a spec for a carbon calculator in a travel app.
 
-A **Feature** is a clearly delineated "slice" of your software that brings value to the user. Example features might be `personal-access-tokens`, `account-settings-page`, `role-based-access` or `webhook-service`.
+1. <Badge stroke color="purple">carbon-calculator.feature.yaml</Badge> lives in your repo, on git branch called `backend/main`.
+2. The git branches `backend/main` and `frontend/main` are both tracked by the <Badge stroke color="blue">Production</Badge> implementation.  
+  <Info>This happens automatically, the first time you run `acai push --all --target Production`</Info>
+3. <Badge stroke color="blue">Production</Badge> is an implementation of the <Badge stroke color="green">mobile-app</Badge> product.
+4. When QA is done, all of the requirements defined in <Badge stroke color="purple">carbon-calculator.feature.yaml</Badge> are marked as <Badge stroke color="yellow">Accepted</Badge> on <Badge stroke color="blue">Production</Badge>
 
-Features are strongly user-oriented. They are not tightly coupled to a single UI component or code module, and can often span multiple git repositories.
+<RequirementStatesDiagram />
 
-### 3. Implementation
+Acai also supports more complex monorepos and polyrepo projects (See our [advanced GitOps guide](/gitops))
 
-As you create branches and forks of your code, you will end up with many **implementations** of the same spec.
+A team can have many products, and a product can have many features and many implementations, which track many git branches on many repos.
 
-Within each implementation, you may regress on some requirements while progressing others. This is where the acai.sh toolkit is specially helpful for QA and acceptance testing.
-
-In acai.sh, a single feature can have multiple implementations. For example, a "Dev" implementation on a feature branch, and a "Production" implementation on the main branch. The system gracefully handles changes to your specs or code, even across multiple git repos.
-
-To learn more about how acai and git work together, see our [GitOps Guide](/gitops).
-
-### 4. Status
-
-As stated above, your spec is not a todo list, so status and assignments should live outside of your spec. This is where the Acai CLI & server come in. You (or your agents) can attach status updates and notes to each individual requirement in your spec. This is extremely useful for coordinating work and tracking progress.
-
-Instead of creating github issue tickets to flag bugs and assign work, you create annotations that are tied to the specific requirements you wrote in your spec. At a glance you can see: which requirements are not met? Which have not passed QA? What's left for feature-completion?
-
-## Completion vs Acceptance
-
-Just because your AI agent says they completed the work, does not mean the work is actually in compliance with your spec.
-
-By convention, acai treats "acceptance" as the final status. This means it has passed your human QA and review process, whatever that may be.
+<Frame caption="Example of a product overview showing states of a feature across many implementations.">
+  <img src="/images/desktop-feature-view.png" alt="Example dashboard showing a list of implementations of the map-settings feature." />
+</Frame>

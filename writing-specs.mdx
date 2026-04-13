@@ -17,6 +17,7 @@ Here is a minimal example:
 ```yaml
 feature:
   name: user-authentication
+  product: enterprise-api
 
 components:
   LOGIN:
@@ -95,13 +96,23 @@ requirements:
     note: Privacy requirement from security team
 ```
 
+## Best Practices
+
+The feature boundary is up to you, but it can help to break up products into many small features. That way specs are easy to read and easy to ship.
+
+Focus on the functional behavior, and key engineering constraints, and ideally only things that can be tested with a pass/fail. Feel free to use `-note` and `description` to provide soft or higher level guidance.
+
+**Avoid** superficial requirements (aesthetics, copywriting, etc.) unless they are mission-critical. Otherwise your spec will grow too large and your product will grow too rigid.
+
+**Avoid** specifying things that are obvious. Have faith your developers can fill in the gaps!
+
+If you find yourself duplicating requirements in many specs, consider creating a `core.feature.yaml` or just putting those rails in `AGENTS.md` and other developer docs.
+
 ---
 
 That's really all there is to it.
 This format balances simplicity and flexibility. You can be as precise or vague as you want, as long as your requirements are testable and acceptable.
 Writing in a .yaml rather has a few obvious benefits, like machine readability, consistency, and generation of predictable & stable IDs.
-
-If you want to quickly teach an LLM how to write a feature.yaml, we have formalized the official feature.yaml spec in a [feature.yaml](/feature-yaml) specification!
 
 ---
 
