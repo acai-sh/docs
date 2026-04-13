@@ -1,6 +1,7 @@
 ---
 title: "Specsmaxxing"
 description: "Pushing spec-writing too far, then stumbling on a workflow I actually love (and open-sourcing it for you to try)."
+hideFooterPagination: true
 ---
 
 ---
@@ -310,7 +311,7 @@ Like any tech, it comes with tradeoffs;
 - Acai specs are opinionated. **You should write 1 spec per feature** (though the feature boundary or slice is up to you). My opinion is that cross-cutting feature specs are easier to iterate, and really shine when a feature touches many codebases (frontend / backend / microservice etc.) and has many implementations (Production, Staging, Fix, etc.)
 - ACIDs rely on **stable numbering.** This creates zero friction when *drafting* a new spec, but requires care when revising a spec: you must re-align the code whenever your spec changes (almost forgot that this is the whole point?). The feature.yaml syntax supports `deprecated` and `replaced_by` flags as well, if you want to maintain a complete spec history inline.
 - Acai **discourages** you from putting design and superficial requirements in your specs. Specs are for behavior, and constraints, and nothing else. I’ve learned from experience: get it working to-spec first, then do the superficial nail polish last 💅🏼.
-- Acai requires you to adopt the **feature.yaml** format. Almost zero learning curve. I have written an [introductory guide](/writing-specs) to writing them. Use `npx @acai.sh/cli skill` to teach your agent how. I also wrote a [spec-for-the-spec](/feature-yaml) if you want to go deeper.
+- Acai requires you to adopt the **feature.yaml** format. Almost zero learning curve. I have written an [introductory guide](/spec-driven-development) to writing them. Use `npx @acai.sh/cli skill` to teach your agent how. I also wrote a [spec-for-the-spec](/feature-yaml) if you want to go deeper.
 
 # Hate it?
 

@@ -1,26 +1,45 @@
 ---
 title: "Acai Dashboard"
-description: "Your operational control panel to track progress, visualize coverage, and more."
+description: "A shared view of your team's specs, implementation status, and requirement coverage."
 sidebarTitle: "Dashboard"
 mode: "wide"
+hideFooterPagination: true
 ---
 
-The dashboard let's you quickly review test coverage, check in on implementation progress, navigate references to requirements, and deep-link into github or your code editor.
+## What is the Dashboard?
 
-We've created an interactive demo to show the basic functionality:
+The Acai Dashboard is the shared, server-side view of the work your team is tracking with Acai.
 
-<Card title="Try the Dashboard" href="https://demo.acai.sh/implementations/impl-mapdex-prod" icon="play">
-  Explore test coverage, implementation progress, and more
-</Card>
+<Frame caption="See implementation status at a glance. This screenshot shows progress on the Staging implementation of a feature called 'form-editor'.">
+  <img src="/images/desktop-feature-impl-view.png" alt="Dashboard showing status updates for the Staging implementation of the form-editor feature." />
+</Frame>
+
+It helps you understand:
+
+- which products, features, and implementations exist
+- how acceptance criteria are progressing
+- where requirements are already referenced in code
+- what needs attention next
+
+As your team pushes specs and code references with the CLI, the dashboard turns that data into a browsable view of project status.
+
+## Try It
+
+The best way to understand the dashboard is to use it with your own project:
+
+1. Log in to https://app.acai.sh.
+2. Create a team and an Access Token.
+3. Push a spec with the CLI.
 
 ---
 
-Below is an iframe embed of the same interactive demo:
+## Next Steps
 
-<div id="demo-iframe-container" className="w-full lg:w-[66vw]">
-<iframe 
-  src="https://demo.acai.sh/implementations/impl-mapdex-prod" 
-  title="Acai Dashboard Demo"
-  className="w-full rounded-xl"
-></iframe>
-</div>
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="circle-play" href="/quickstart">
+    Write your first spec, push it, and see it in the dashboard.
+  </Card>
+  <Card title="Spec-driven Development" icon="pen-tool" href="/spec-driven-development">
+    Learn the ideas and workflow behind writing software from specs.
+  </Card>
+</CardGroup>

@@ -1,7 +1,8 @@
 ---
 title: "Acai.sh CLI"
 sidebarTitle: "CLI"
-description: "The Acai Command Line Interface (CLI) facilitates spec-driven development for humans, AI agents, and CI/CD automations."
+description: "Overview of the Acai.sh Command Line Interface. The CLI facilitates spec-driven development for humans, AI agents, and CI/CD automations."
+hideFooterPagination: true
 ---
 
 ## What is the Acai CLI?
@@ -10,25 +11,39 @@ It is primarily used to `push` the state of your local specs and code to the ser
 
 It is also used to `pull` data and states from the server to facilitate coordination and delegation of work.
 
+## Commands at a Glance
+
+Use these commands to move between local spec work and shared project context:
+
+| Command | What it is for |
+| --- | --- |
+| `push` | Sync local specs and ACID references from your repository to the server. |
+| `features` | See the known features for an implementation, along with status and reference counts. |
+| `feature <feature-name>` | Inspect one feature in detail, including ACIDs, statuses, comments, and code references. |
+| `set-status <json>` | Send status updates or issues for a batch of requirements back to the server. |
+| `skill` | Print or install guidance for spec-driven development with Acai. |
+
+
+
+## Next Steps
+
 <Card title="Quickstart" icon="circle-play" horizontal href="/quickstart">
     View our quickstart page to install the CLI and play around.
 </Card>
-
-## Next Steps
 
 <CardGroup cols={2}>
   <Card
     title="Writing Specs"
     icon="pen-tool"
-    href="/writing-specs"
+    href="/spec-driven-development"
   >
-    Learn the syntax and best practices for writing your `feature.yaml` specs.
+    Introduction to acai specs, and best practices for spec-first software.
   </Card>
   <Card
-    title="Dashboard"
-    icon="layout-dashboard"
-    href="/dashboard"
+    title="JSON API"
+    icon="code"
+    href="/api"
   >
-    View your project's realtime operations dashboard and track acceptance coverage.
+      Query the API directly, self-host, or build your own client.
   </Card>
 </CardGroup>

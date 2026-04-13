@@ -2,6 +2,7 @@
     "$schema": "https://mintlify.com/docs.json",
     "theme": "linden",
     "name": "Acai.sh",
+    "logo": "/logo-word.svg",
     "colors": {
         "primary": "#930d7a",
         "light": "#f765f7",
@@ -11,6 +12,11 @@
         "color": {
             "dark": "#140411",
             "light": "#fcf8fb"
+        }
+    },
+    "footer": {
+        "socials": {
+            "github": "https://github.com/acai-sh"
         }
     },
     "navigation": {
@@ -38,7 +44,7 @@
                     },
                     {
                         "group": "Reference",
-                        "pages": ["feature-yaml"],
+                        "pages": ["feature-yaml", "api-reference"],
                         "icon": { "name": "book" }
                     }
                 ]
