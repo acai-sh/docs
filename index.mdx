@@ -19,15 +19,20 @@ import { AnimatedTerminal } from "/snippets/animated-terminal.jsx";
 ## What is it?
 
 Open-source tools to assist with spec-driven software development.
-- A **simple format** for spec documents, called `feature.yaml`
-- A **server and dashboard** to facilitate QA, code review, collaboration, and delegation.
-- A **CLI** for you or your agent to push and pull specs, requirements, and status updates.
+- A **simple spec format** called `feature.yaml`, that keeps your requirements organized and traceable.
+- A **CLI** for you or your LLM to push and pull specs, requirements, coverage, status and comments.
+- A **server and dashboard** to facilitate QA, code review, and collaboration.
+- A **process and convention** for identifying spec requirements from within your code comments and tests, to create a searchable, greppable connection between the two.
 
 ---
 
 ## Very Quick Start
 
 Acai can be incrementally adopted into any existing project.
+
+```sh
+npx @acai.sh/cli --help
+```
 
 <Steps>
     <Step title="Specify">
@@ -87,17 +92,12 @@ Have humans QA'd and accepted the implementation?
 
 Invite your team to a shared Acai dashboard, or create access tokens for AI agents and CLI access to the server.
 
-### Any git workflow
-
-Acai works with monorepos and polyrepos or any combination.
-- Monorepos containing many products with many specs and many branches (`main`, `dev` etc.)
-- Polyrepos where a feature may touch several branches on several git repos (frontend, backend, microservice etc.)
-- 
-<Frame caption="Acai handles the complex journey of a feature and it's spec, even across repos and branches">
-  <img src="/images/desktop-feature-view.png" alt="Example dashboard showing details about a specific feature requirement." />
+<Frame caption="Useful tools for collaboration between humans or agents">
+  <img
+      src="/images/comment-example.png"
+      alt="Example of a comment and a rejected requirement status"
+  />
 </Frame>
-
-### Monitor progress
 
 Track progress from spec, to implementation, to agent review, to human acceptance:
 
@@ -110,9 +110,22 @@ I am marking the requirement as `COMPLETED`...
 I am merging the changes to the feature branch...
 ```
 
+### Any git workflow
+
+Acai works with monorepos and polyrepos or any combination.
+- Monorepos containing many products with many specs and many branches (`main`, `dev` etc.)
+- Polyrepos where a feature may touch several branches on several git repos (frontend, backend, microservice etc.)
+
+<Frame caption="Acai handles the complex journey of a feature and it's spec, even across repos and branches">
+  <img
+      src="/images/desktop-feature-view.png"
+      alt="Example dashboard showing details about a specific feature requirement"
+  />
+</Frame>
+
 ### Grab context
 
-See exactly where a requirement has been implemented or tested, so you (or your agent) can delegate work, review code, and improve test coverage.
+Acai introduces the ACID system for referencing your spec from anywhere in your repo. This makes it easy to see exactly where a requirement has been implemented or tested, so you (or your agent) can improve test coverage, QA, and react to ever-changing requirements.
 
 ```sh
 acai feature my-feature-name --json --include-refs

@@ -108,11 +108,11 @@ But a few questions remained.
 
 I built [Acai.sh](http://Acai.sh) to solve some of these newly invented problems. And I'm very excited about the results.
 
-- A simple and flexible new standard for feature specs, called `feature.yaml`.
+- A simple and flexible template for feature specs, called `feature.yaml`. Feature.yaml makes it possible to reference each requirement by ACID.
 - Tiny CLI to power your CI and your agent (available on npm or via github release).
 - Webapp that serves a dashboard, and a JSON REST API (Elixir, Phoenix, Postgres).
 
-I will keep the hosted version **free for a while, or maybe forever** depending on how popular or expensive this gets.
+I will keep the hosted version **free for a while, or maybe forever** depending on how popular or expensive this gets. The source code is on GitHub under an Apache 2.0 license.
 
 <Frame caption="See implementation status at a glance. This screenshot shows progress on the Staging implementation of a feature called 'form-editor'.">
   <img src="/images/desktop-feature-impl-view.png" alt="Dashboard showing status updates for the Staging implementation of the form-editor feature." />
@@ -185,6 +185,8 @@ Love,
 </Prompt>
 
 Note: In addition to the npm package, there are Linux and MacOS releases for the CLI [available on GitHub](https://github.com/acai-sh/cli).
+
+If all goes well, your agent will embrace ACIDs, referencing them in code and tests, so you can make sure each individual requirement is implemented and tested.
 
 ### Step 3 - Review
 
@@ -260,7 +262,7 @@ High-priority;
 - I want to offer GitHub Actions or other CI recipes for better automation of the entire spec-driven workflow.  
 - I want to enhance the experience of using Acai.sh as your QA dashboard.
 - I want to finish real-time dashboard updates & multiplayer presence (heck yeah Elixir + Phoenix!).
-- I want to spend more time studying how other teams write their specs, and explore alternatives.
+- I want to spend more time studying how other teams write their specs, and explore better alternatives.
 
 Other ideas I’m evaluating;
 
@@ -307,7 +309,7 @@ Like any tech, it comes with tradeoffs;
 - Acai specs are opinionated. **You should write 1 spec per feature** (though the feature boundary or slice is up to you). My opinion is that cross-cutting feature specs are easier to iterate, and really shine when a feature touches many codebases (frontend / backend / microservice etc.) and has many implementations (Production, Staging, Fix, etc.)
 - ACIDs rely on **stable numbering.** This creates zero friction when *drafting* a new spec, but requires care when revising a spec: you must re-align the code whenever your spec changes (almost forgot that this is the whole point?). The feature.yaml syntax supports `deprecated` and `replaced_by` flags as well, if you want to maintain a complete spec history inline.
 - Acai **discourages** you from putting design and superficial requirements in your specs. Specs are for behavior, and constraints, and nothing else. I’ve learned from experience: get it working to-spec first, then do the superficial nail polish last 💅🏼.
-- Acai requires you to adopt the **feature.yaml** format. Almost zero learning curve. I have written an [introductory guide](/spec-driven-development) to writing them. Use `npx @acai.sh/cli skill` to teach your agent how. I also wrote a [spec-for-the-spec](/feature-yaml) if you want to go deeper.
+- Acai requires you to adopt the **feature.yaml** format. Almost zero learning curve. I have written an [introductory guide](/spec-driven-development) to writing them. I recommend reading that first. Use `npx @acai.sh/cli skill` to teach your agent how. I also wrote a [spec-for-the-spec](/feature-yaml) if you want to go deeper.
 
 # Hate it?
 
