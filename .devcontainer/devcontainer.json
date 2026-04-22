@@ -1,7 +1,8 @@
 {
-  "name": "Mintlify Dev",
-  "build": {
-    "dockerfile": "Dockerfile",
-  },
-  "remoteUser": "node",
+    "name": "Mintlify Dev",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "remoteUser": "node",
+    "postCreateCommand": "curl -fsSL https://opencode.ai/install | bash"
 }
