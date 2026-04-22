@@ -205,7 +205,7 @@ Ideally, you just add `acai push` to a GitHub action (example CI/CD workflows co
 
 You (human or robot) can mark requirements as <Badge color="blue">Completed</Badge> when they are ready for review, <Badge color="green">Accepted</Badge> when they pass your review, or <Badge color="red">Rejected</Badge> if something was missed. 
 
-You (human) can use the dashboard to leave comments as well, and even set your team up for complex workflows that track many products and many specs on many repositories and branches.
+You (human) can use the dashboard to leave comments on requirements, making it a good place to collaborate.
 
 ### Step 4 - Iterate / repeat
 The goal is to work spec-first.
@@ -217,46 +217,42 @@ The result should be less time spent prompting and re-prompting, less time revie
   <img src="/images/desktop-feature-view.png" alt="Example dashboard showing a list of implementations of the map-settings feature." />
 </Frame>
 
-These tools, and this approach, should work for any software project. It should encourage collaboration (between humans), and be incrementally adoptable. Acai already supports multi-repo and multi-branch projects.
+These tools, and this approach, should work for any software project. It should encourage collaboration (between humans), and be incrementally adoptable. It supports complex projects that track many products and many specs, across many repositories and branches.
 
 It can (and should) be tied into a larger agentic pipeline, for example one that takes a spec and kicks off an automated `plan → implement → review` loop. That part is not included (yet). I plan to share some powerful examples of that soon.
 
 ## Future Gazing
 
-These very simple tools are already useful and productive for me personally. It's the sweet spot between rigour and vibes, structure and flexibility. Maintaining an itemized list of acceptance criteria encourages me to step back and focus on the things that matter, and to rethink how I test and validate my output. I spend less time reviewing diffs and second-guessing decisions made opaquely by the LLM.
+Even coming out my LLM psychosis, I'm still finding this approach useful and productive. I believe I've found the sweet spot between rigour and vibes, structure and flexibility. Maintaining an itemized list of acceptance criteria encourages me to step back and focus on the things that matter, and to rethink how I test and validate my output.
 
-So I'm happy with the direction, but where does it ultimately lead?
+Again, none of these ideas are really new. But I feel the gravitational pull, and I'm wondering where it all leads, and what comes next.
 
 ### Thought Experiment
 
-Imagine your entire application, no matter how complex, was generated instantly the moment your fingers started typing in the prompt window. Imagine that magically, the same prompt input always created same deterministic output, and cost you nothing, and was generated in milliseconds.
+Imagine your entire application, however complex, was generated instantly *the moment your fingers started typing in the prompt window*. Imagine that magically, the same prompt input always created same deterministic output, and cost you nothing, and was ready in milliseconds.
 
 <Frame caption="What if generating software was like typing in the quick-access panel?">
   <img src="/images/quickaccess.png" alt="Pop!_OS quick-access search that says 'Generate me a web browser app' and shows Brave as the first result" />
 </Frame>
 
-If you found the output to be unsatisfactory (incomplete, insecure, unfit for purpose), you wouldn't start hand-editing files yourself would you? You would tweak the prompt to bring it up to spec. So if software were free and infinite and instant, your criteria for acceptability is really the only thing of value. The spec.
+If you found the output to be unsatisfactory (incomplete, insecure, unfit for purpose), you wouldn't start hand-editing files yourself would you? You would extend the prompt to improve it. So if software were free and infinite and instant, your criteria for acceptability is really the only thing of value. The spec.
 
-The spec is what you *want* the software to be. Very often the spec is not written down. It exists only in your head or in conversations. We used to spend our time writing down procedures (as code), or writing down invariants (as unit tests), and more recently we've been writing out deltas or changesets to evolve our software (as prompts).
+In the past we spent our time writing down procedures (as code), or writing down invariants (as unit tests), and more recently we've been writing out deltas or changesets to evolve our software (as prompts). It's hard to admit that these are all becoming largely disposable, or invisible, when they used to be the primary object of our attention.
 
-But when the procedures and invariants become cheap and invisible, the spec still lives *somewhere*, and **humans will always care what the spec says**. Businesses and product teams will always care when the spec changes. 
-
-So you're better off writing it down now! And I propose that a plain old list of acceptance criteria is a good place to start. (That's really all that `feature.yaml` is.)
+My point is, the spec must live *somewhere*, even if you don't write it down. The spec is what you *want* the software to be. It often exists only in your head or in conversations. You and your team and your business **will always care what the spec says**, and that's never going to change. So you're better off writing it down now! And I think that a plain old list of acceptance criteria is a good place to start. (That's really all that `feature.yaml` is.)
 
 A few more things follow from there;
 
 ### -> From Specsmaxxing to Testmaxxing
 
-When your spec is defined and the code is generated faster than you can read it, the bottleneck is purely QA and validation and your *confidence* in shipping. So investing heavily in QA automation and test coverage has a massive ROI.
+When code is generated faster than you can read it, the bottleneck is becomes QA and validation and your *confidence* that the code is to-spec and can be shipped. So investing heavily in QA automation and test coverage has a massive ROI.
 
-And after that, after maximal coverage and observability has been achieved, our attention shifts away from the diffs in GitHub; we need a place to relate the specs to the artifacts that were generated from them (the implementations, QA feedback, user feedback, builds, runs, reviews and reports). Maybe Acai.sh can become that place. For now, it is only focused on the specs and their implementations in code.
+And after that, after maximal test coverage and observability has been achieved, our attention shifts away from the diffs in GitHub; we need a place to relate the specs to the artifacts that were generated from them (the implementations, QA feedback, user feedback, builds, runs, reviews and reports). Maybe Acai.sh can become that place. For now, it is only focused on the specs and their implementations in code.
 
 ### -> From Testmaxxing to reactive software factories
-The final unlock is having our LLMs react when a test goes red or something gets flagged. If the specs are well defined, and you have high confidence in your integration pipelines and QA, then the LLM is already empowered to react without the need for you to intervene.
+The final unlock is when your LLMs can react to a red test or alert. If the specs are well defined, and you have high confidence in your integration pipelines and QA, then the LLM is fully empowered to react without the need for you to intervene.
 
-It seems like every well-funded software team on earth is currently busy building their own bespoke solution for this and I'm excited to see what works and what doesn't.
-
-I have some rudimentary versions of this, but they aren't ready to share yet.
+It seems every well-funded software team on earth is currently busy building their own bespoke solution for this and I'm excited to see what works and what doesn't.
 
 ### Roadmap for Acai.sh
 
