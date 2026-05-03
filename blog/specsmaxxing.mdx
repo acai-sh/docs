@@ -1,6 +1,6 @@
 ---
 title: "Specsmaxxing"
-description: "Pushing spec-writing too far, then stumbling on a workflow I actually love (and open-sourcing it for you to try)."
+description: "On overcoming AI psychosis, and why I write specs in YAML (plus open-sourcing a toolkit for you to try)"
 hideFooterPagination: true
 ---
 
@@ -28,17 +28,21 @@ This is why I still have a job, right?
 
 ### Peak Slop
 
-<Frame caption="Chart showing occurrences of the word 'slop' in the code review comments added to my pull requests.">
-  <img src="/images/slop-trends.png" alt="Google Trends showing interest in the word 'slop' showing a dramatic peak on March 11th, 2026" />
+I've watched this scene play out many times, but the frequency is decreasing. Both my tools, and my methods for using them, continue to improve. I think Peak Slop has already come and gone.
+
+<Frame caption="Occurrences of the word 'slop' in the code review comments left on my pull requests.">
+  <img src="/images/slop-trends.png" alt="Google Trends charting interest in the word 'slop'. A dramatic peak is shown on March 11th, 2026, flattening after that" />
 </Frame>
 
-Peak Slop has already come and gone. We are post-slop society now. And I see it in my own work. Today, my software is more robust, **better tested**, better automated, and more observable than ever before. And my velocity keeps increasing! 
+We are entering the post-slop era. My software is more robust, better tested, better integrated, and more observable than ever before. And my velocity keeps increasing!
 
-It truly feels like the sky is the limit. **Of course, the sky is not the limit. The context window is the limit.** And what happens when I fill the context window? Or kill a session? Switch machines? Hand off the project to someone else? 
+Some days it feels like the sky is the limit. Other days, I am painfully reminded, **the sky is not the limit. The context window is the limit.** And what happens when I fill the context window? Or kill a session? Switch machines? Hand off the project to someone else? 
 
-We already know what happens. The agent goes off the rails, or requirements get lost, and some important detail gets squashed. So we adapt. We start putting requirements in docs. Look! **A spec!** Is this what we call **_spec-driven development?_**
+We already know what happens. The agent goes off the rails, or requirements get lost, and critically important detail gets squashed. So we adapt and mitigate. We document. We list requirements.
 
-Millions of us are coming to the same realization... we need to put more requirements in writing. We need to update those requirements when they change. Nothing new, our mentors already tried to teach us this decades ago.
+Yes, millions of us are coming to the same realization: we should put more requirements in writing. We should update those requirements when they change. Look! I wrote a spec! Am I doing **_spec-driven development?_**
+
+Perhaps, but it is nothing new. Our mentors tried to teach us these habits decades ago.
 
 ## Specifying the plane while we fly it
 
@@ -48,27 +52,29 @@ A `README.md` and `AGENTS.md` is a good start. Don't forget a `testing-guide.md`
 
 Unironically, yes. Docs and unstructured specs can get you very, very far. Much farther than prompts alone. If you aren’t writing *any* docs yet, you should just stop reading this and start there.
 
-And remember, nothing beats an organic, pasture-raised, hand-written spec. **Spec-writing is, in my opinion, where the act of *software engineering* really happens**.
+And remember, slop in, slop out. Nothing beats an organic, pasture-raised, **hand-written** spec. Spec-writing is where the act of *software engineering* really happens.
 
 So a few weeks ago, I started asking myself, how far can I take this? How far *should* I take this?
 
 ## Dreaming in markdown
 
-As the story goes, I fell into an AI psychosis, I became a “spec maxi”, and I spent hours and hours writing the most beautiful PRDs and TRDs you’ve ever seen.
+As the story goes, I fell into an AI psychosis, I became a “spec maxxi”, and I spent hours and hours writing the most beautiful PRDs and TRDs you’ve ever seen.
 
 I drafted templates and skills and roles, thinking that maybe my agents can write specs too! I assembled an army, working together like a mini *dark factory,* to turn my specs into reality. My tasks grew more ambitious, and  at one point I broke the vibe-coding sound barrier: *an agent that ran for 1.5 hours unsupervised!*
 
-Exciting. But what did that agent army ship for me? Well, it wasn't slop, in fact it worked better than some of the garbage software I'm forced to use every day. 
+Exciting. But what did that army ship for me? Well, it wasn't slop, in fact it *worked*, which is more than I can say about the garbage that other companies force me to use every day. 
 
-But it was still a bit sloppy. This wasn't good enough for me.
+But it was still a bit sloppy. I'm far from a perfectionist and I love cutting corners more than most, but this somehow wasn't good enough.
 
-One hallmark symptom of AI psychosis is *using AI to build things that help AI build products*, rather than just using AI to build the damn product. I embraced my illness, threw out the branch, and rewrote my markdown, and started all over again.
+One hallmark symptom of AI psychosis is *using AI to build AI harnesses for building products*, rather than just using AI to build the damn product. I embraced my illness, threw out the branch, scrapped all my markdown, and started all over again.
 
 ## Acceptance Criteria for AI (ACAI)
 
-Until, one day, I noticed an ambitious little sub-agent doing something unexpected.
+A few days later, I noticed an ambitious little sub-agent doing something unexpected.
 
 ```markdown
+# Requirements
+
 AUTH-1: Accepts `Authorization: Bearer <token>` header
 AUTH-2: Tokens are user-scoped, providing access to any of the user's resources
 AUTH-3: Rejects with 401 Unauthorized
@@ -91,10 +97,10 @@ Why? I did not ask for this! I was disgusted. This is a tight coupling of code t
 
 Oh. I suppose that's a good thing? Interesting. I wonder...
 
-- Perhaps these tags can help me navigate these massive PRs!
+- Perhaps these tags can help me navigate these massive PRs?
 - Perhaps they can point me to **where, exactly, a requirement is satisfied or tested!**
 - Perhaps I can annotate them with **notes and states (todo, assigned, completed)!**
-- Perhaps I can start tracking **acceptance coverage** as well as test coverage!
+- Perhaps I can start tracking **acceptance coverage** instead of test coverage!
 
 I leaned in. I named these tags **ACIDs (Acceptance Criteria IDs).**
 
@@ -247,30 +253,14 @@ A few more things follow from there;
 
 ### -> From Specsmaxxing to Testmaxxing
 
-When code is generated faster than you can read it, the bottleneck is becomes QA and validation and your *confidence* that the code is to-spec and can be shipped. So investing heavily in QA automation and test coverage has a massive ROI.
+When code is generated faster than you can read it, the bottleneck moves to QA and validation and your *confidence* that the code is to-spec. So investing heavily in QA automation and test coverage has a massive ROI.
 
-And after that, after maximal test coverage and observability has been achieved, our attention shifts away from the diffs in GitHub; we need a place to relate the specs to the artifacts that were generated from them (the implementations, QA feedback, user feedback, builds, runs, reviews and reports). Maybe Acai.sh can become that place. For now, it is only focused on the specs and their implementations in code.
+And after that, after maximal test coverage and observability has been achieved, our attention shifts away from the diffs in GitHub; we need a place to relate the specs to the important artifacts (the implementations, the QA feedback, user feedback, builds, runs, reviews and reports). Maybe Acai.sh can become that place. For now, it is only focused on the specs and their implementations in code.
 
 ### -> From Testmaxxing to reactive software factories
 The final unlock is when your LLMs can react to a red test or alert. If the specs are well defined, and you have high confidence in your integration pipelines and QA, then the LLM is fully empowered to react without the need for you to intervene.
 
-It seems every well-funded software team on earth is currently busy building their own bespoke solution for this and I'm excited to see what works and what doesn't.
-
-### Roadmap for Acai.sh
-
-High-priority;
-- I want to offer GitHub Actions or other CI recipes for better automation of the entire spec-driven workflow.  
-- I want to enhance the experience of using Acai.sh as your QA dashboard.
-- I want to finish real-time dashboard updates & multiplayer presence (heck yeah Elixir + Phoenix!).
-- I want to spend more time studying how other teams write their specs, and explore better alternatives.
-
-Other ideas I’m evaluating;
-
-- Augment specs right in the UI?
-- Dispatch agents to respond to spec changes automatically?
-- Acai.sh as a spec-oriented project planner / issue tracker?
-- Plugins or MCP for OpenCode / Claude etc?
-- Too many others to list here...
+It seems every well-funded software team on earth is currently busy building their own bespoke solution for this and I'm excited to see what works and what doesn't. As a first step, I put some OpenCode Agent templates on http://acai.sh that have been working well for me so far.
 
 ## Comparison to other spec-driven development tools
 
