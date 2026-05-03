@@ -16,7 +16,7 @@
     },
     "footer": {
         "socials": {
-            "github": "https://github.com/acai-sh"
+            "github": "https://github.com/acai-sh/cli"
         }
     },
     "integrations": {
@@ -34,7 +34,7 @@
                 },
                 {
                     "anchor": "GitHub",
-                    "href": "https://github.com/acai-sh",
+                    "href": "https://github.com/acai-sh/cli",
                     "icon": "github"
                 },
                 {
